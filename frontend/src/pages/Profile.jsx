@@ -48,6 +48,20 @@ export default function Profile({ navigate, user, profileLinks }) {
         ))}
       </div>
 
+
+      <div className="vehicle-card">
+        <span className="vehicle-card__icon">
+          <Icon name="car" size={18} />
+        </span>
+        <div>
+
+  
+          <strong>Car</strong>
+          <p>{user.car}</p>
+        </div>
+
+    
+      </div>
       <button
         className="logout-card"
         type="button"
@@ -58,16 +72,6 @@ export default function Profile({ navigate, user, profileLinks }) {
         </span>
         <span className="menu-card__label">Se deconnecter</span>
       </button>
-
-      <div className="vehicle-card">
-        <span className="vehicle-card__icon">
-          <Icon name="car" size={18} />
-        </span>
-        <div>
-          <strong>Car</strong>
-          <p>{user.car}</p>
-        </div>
-      </div>
     </div>
   );
 }
