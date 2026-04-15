@@ -1,63 +1,79 @@
 import React from "react";
-import Navbar from "../components/Navbar";
+import { RideArtwork } from "../components/Artwork";
+import AppHeader from "../components/AppHeader";
+import { Icon } from "../components/Icons";
 import TrajetCard from "../components/TrajetCard";
-import "./Home.css";
 
-function Home() {
-
-  const trajets = [
-    {
-      depart: "UPM",
-      destination: "Guéliz",
-      date: "08:30",
-      price: 10,
-    },
-    {
-      depart: "UPM",
-      destination: "Daoudiat",
-      date: "09:00",
-      price: 8,
-    },
-  ];
-
+export default function Home({ navigate, tripOptions }) {
   return (
-    <div className="home">
-
-      <Navbar />
-
-      {/* HEADER */}
-      <div className="header">
-        <h2>Accueil</h2>
-      </div>
-
-      {/* SEARCH */}
-      <input 
-        className="search"
-        placeholder="🔍 Rechercher un trajet..."
+    <div className="screen">
+      <AppHeader
+        title="Accueil"
+        leftIcon="menu"
+        onLeftClick={() => navigate("profile")}
       />
 
-      {/* ACTION BUTTONS */}
-      <div className="actions">
-        <div className="card action green">
-          <p>🔍</p>
-          <span>Rechercher</span>
-        </div>
+      <button
+        className="search-pill"
+        type="button"
+        onClick={() => navigate("search")}
+      >
+        <Icon name="search" size={18} />
+        <span>Rechercher un trajet...</span>
+      </button>
 
-        <div className="card action orange">
-          <p>➕</p>
-          <span>Publier</span>
-        </div>
+      <RideArtwork />
+
+      <div className="action-grid">
+        <button
+          className="action-card action-card--green"
+          type="button"
+          onClick={() => navigate("search")}
+        >
+          <span className="action-card__icon">
+            <Icon name="search" size={22} />
+          </span>
+          <strong>Rechercher</strong>
+          <span>un trajet</span>
+        </button>
+
+        <button
+          className="action-card action-card--orange"
+          type="button"
+          onClick={() => navigate("publish")}
+        >
+          <span className="action-card__icon">
+            <Icon name="ticket" size={22} />
+          </span>
+          <strong>Publier</strong>
+          <span>un trajet</span>
+        </button>
       </div>
 
-      {/* LIST */}
-      <h3 className="title">Trajets disponibles</h3>
+      <div className="section-heading">
+        <div>
+          <h3>Trajets disponibles</h3>
+          <p>Des departs verifies autour du campus</p>
+        </div>
 
-      {trajets.map((t, i) => (
-        <TrajetCard key={i} trajet={t} />
-      ))}
+        <button
+          className="text-link"
+          type="button"
+          onClick={() => navigate("search")}
+        >
+          Voir tout
+        </button>
+      </div>
 
+      <div className="stack-list">
+        {tripOptions.slice(0, 2).map((trip) => (
+          <TrajetCard
+            key={trip.id}
+            trip={trip}
+            onClick={() => navigate("reservation")}
+          />
+        ))}
+      </div>
     </div>
   );
 }
-
-export default Home;
