@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import BottomNav from "./components/BottomNav";
 import Home from "./pages/Home";
+import Login from "./pages/Login";
 import MyReservations from "./pages/MyReservations";
 import MyTrajets from "./pages/MyTrajets";
 import Profile from "./pages/Profile";
@@ -8,6 +9,7 @@ import PublishTrajet from "./pages/PublishTrajet";
 import Register from "./pages/Register";
 import Reservation from "./pages/Reservation";
 import SearchTrajet from "./pages/SearchTrajet";
+import Splash from "./pages/Splash";
 import {
   currentUser,
   profileLinks,
@@ -18,8 +20,9 @@ import {
   tripOptions,
 } from "./data/mockData";
 
-const screenTabs = [
-  { route: "welcome", label: "Bienvenue", note: "ecran d'inscription" },
+const authRoutes = ["splash", "login", "register"];
+
+const appRoutes = [
   { route: "home", label: "Accueil", note: "recherche et trajets" },
   { route: "search", label: "Recherche", note: "filtres et carte" },
   { route: "publish", label: "Publier", note: "creation de trajet" },
@@ -29,14 +32,23 @@ const screenTabs = [
   { route: "my-reservations", label: "Reservations", note: "suivi passager" },
 ];
 
+const allRoutes = [...authRoutes, ...appRoutes.map((screen) => screen.route)];
+
 function getRouteFromHash(hash) {
   const raw = hash.replace(/^#\/?/, "");
-  const exists = screenTabs.some((screen) => screen.route === raw);
-  return exists ? raw : "welcome";
+  return allRoutes.includes(raw) ? raw : "splash";
 }
 
 function renderScreen(route, navigate) {
-  if (route === "welcome") {
+  if (route === "splash") {
+    return <Splash navigate={navigate} />;
+  }
+
+  if (route === "login") {
+    return <Login navigate={navigate} />;
+  }
+
+  if (route === "register") {
     return <Register navigate={navigate} />;
   }
 
@@ -103,7 +115,7 @@ function renderScreen(route, navigate) {
 function App() {
   const [route, setRoute] = useState(() => {
     if (typeof window === "undefined") {
-      return "welcome";
+      return "splash";
     }
 
     return getRouteFromHash(window.location.hash);
@@ -115,7 +127,7 @@ function App() {
     }
 
     if (!window.location.hash) {
-      window.location.hash = "#/welcome";
+      window.location.hash = "#/splash";
     }
 
     window.addEventListener("hashchange", handleHashChange);
@@ -123,11 +135,9 @@ function App() {
   }, []);
 
   function navigate(nextRoute) {
-    const normalizedRoute = screenTabs.some(
-      (screen) => screen.route === nextRoute,
-    )
+    const normalizedRoute = allRoutes.includes(nextRoute)
       ? nextRoute
-      : "welcome";
+      : "splash";
 
     if (typeof window !== "undefined") {
       window.location.hash = `#/${normalizedRoute}`;
@@ -136,19 +146,16 @@ function App() {
     setRoute(normalizedRoute);
   }
 
-  const showNav = route !== "welcome";
+  const isAuthRoute = authRoutes.includes(route);
+  const showNav = !isAuthRoute;
 
   return (
     <div className="app-shell">
-      <section
-        className={`site-stage site-stage--single ${
-          route === "welcome" ? "site-stage--welcome" : ""
-        }`}
-      >
+      <section className="site-stage site-stage--single">
         <div className="stage-orb stage-orb--one" />
         <div className="stage-orb stage-orb--two" />
 
-        <div className="phone-shell">
+        <div className={`phone-shell ${isAuthRoute ? "phone-shell--auth" : "phone-shell--app"}`}>
           <div className="phone-shell__body">{renderScreen(route, navigate)}</div>
           {showNav ? <BottomNav route={route} navigate={navigate} /> : null}
         </div>

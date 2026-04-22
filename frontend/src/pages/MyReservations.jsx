@@ -3,7 +3,7 @@ import AppHeader from "../components/AppHeader";
 
 export default function MyReservations({ navigate, reservations }) {
   return (
-    <div className="screen">
+    <div className="screen screen--records">
       <AppHeader
         title="Mes reservations"
         subtitle="Suivi des trajets confirmes"
@@ -11,7 +11,7 @@ export default function MyReservations({ navigate, reservations }) {
         onLeftClick={() => navigate("profile")}
       />
 
-      <div className="stack-list">
+      <div className="stack-list stack-list--records">
         {reservations.map((reservation) => (
           <article className="list-card" key={reservation.id}>
             <div className="list-card__row">

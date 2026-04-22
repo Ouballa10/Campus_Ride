@@ -3,7 +3,7 @@ import AppHeader from "../components/AppHeader";
 
 export default function MyTrajets({ navigate, user, publishedTrips }) {
   return (
-    <div className="screen">
+    <div className="screen screen--records">
       <AppHeader
         title="Mes trajets"
         subtitle={`${user.name} - conducteur campus`}
@@ -26,7 +26,7 @@ export default function MyTrajets({ navigate, user, publishedTrips }) {
         </div>
       </div>
 
-      <div className="stack-list">
+      <div className="stack-list stack-list--records">
         {publishedTrips.map((trip) => (
           <article className="list-card" key={trip.id}>
             <div className="list-card__row">
