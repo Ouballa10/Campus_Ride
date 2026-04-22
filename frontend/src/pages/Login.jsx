@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import logo from "../assets/images/logo.png";
 import { Icon } from "../components/Icons";
+import { useAuth } from "../context/AuthContext";
 
 const initialForm = {
   email: "",
@@ -8,7 +9,10 @@ const initialForm = {
 };
 
 export default function Login({ navigate }) {
+  const { isConfigured, signIn } = useAuth();
   const [form, setForm] = useState(initialForm);
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function updateField(event) {
     const { name, value } = event.target;
@@ -16,11 +20,33 @@ export default function Login({ navigate }) {
       ...currentForm,
       [name]: value,
     }));
+
+    if (error) {
+      setError("");
+    }
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    navigate("home");
+
+    if (!isConfigured) {
+      setError("Configure d'abord Supabase dans .env.local ou Vercel.");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      setError("");
+      await signIn({
+        email: form.email,
+        password: form.password,
+      });
+      navigate("home");
+    } catch (submissionError) {
+      setError(submissionError.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -46,6 +72,12 @@ export default function Login({ navigate }) {
         <div className="auth-copy">
           <p>Reconnecte-toi rapidement pour gerer tes trajets et reservations.</p>
         </div>
+
+        {!isConfigured ? (
+          <p className="auth-status auth-status--info">
+            Supabase n'est pas encore configure sur had l'environnement.
+          </p>
+        ) : null}
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <label className="auth-field">
@@ -74,8 +106,14 @@ export default function Login({ navigate }) {
             />
           </label>
 
-          <button className="primary-button primary-button--auth" type="submit">
-            Se connecter
+          {error ? <p className="auth-status auth-status--error">{error}</p> : null}
+
+          <button
+            className="primary-button primary-button--auth"
+            disabled={isSubmitting}
+            type="submit"
+          >
+            {isSubmitting ? "Connexion..." : "Se connecter"}
           </button>
         </form>
 

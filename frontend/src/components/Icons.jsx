@@ -120,6 +120,15 @@ function iconPaths(name) {
     );
   }
 
+  if (name === "arrow-right") {
+    return (
+      <>
+        <path d="m10 6 6 6-6 6" />
+        <path d="M6 12h10" />
+      </>
+    );
+  }
+
   if (name === "logout") {
     return (
       <>

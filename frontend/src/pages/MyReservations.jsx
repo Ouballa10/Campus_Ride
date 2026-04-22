@@ -11,6 +11,13 @@ export default function MyReservations({ navigate, reservations }) {
         onLeftClick={() => navigate("profile")}
       />
 
+      {!reservations.length ? (
+        <div className="message-box">
+          <strong>Aucune reservation pour le moment</strong>
+          <p>Quand tu reserves un trajet depuis Supabase, il apparaitra ici.</p>
+        </div>
+      ) : null}
+
       <div className="stack-list stack-list--records">
         {reservations.map((reservation) => (
           <article className="list-card" key={reservation.id}>

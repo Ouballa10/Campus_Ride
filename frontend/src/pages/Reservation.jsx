@@ -5,6 +5,23 @@ import { Icon, Stars } from "../components/Icons";
 export default function Reservation({ navigate, tripOptions }) {
   const [featuredTrip, ...alternatives] = tripOptions;
 
+  if (!featuredTrip) {
+    return (
+      <div className="screen screen--reservation">
+        <AppHeader
+          title="Reservation"
+          leftIcon="arrow-left"
+          onLeftClick={() => navigate("search")}
+        />
+
+        <div className="message-box">
+          <strong>Aucun trajet selectionne</strong>
+          <p>Choisis d'abord un trajet disponible depuis la recherche.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="screen screen--reservation">
       <AppHeader

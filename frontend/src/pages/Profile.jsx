@@ -1,33 +1,51 @@
 import React from "react";
 import { Icon, Stars } from "../components/Icons";
+import { useAuth } from "../context/AuthContext";
 
 export default function Profile({ navigate, user, profileLinks }) {
+  const { signOut } = useAuth();
+  const displayUser = user || {
+    car: "Vehicule a renseigner",
+    initials: "CR",
+    name: "CampusRide",
+    rating: 0,
+    reservationsCount: 0,
+    reviewCount: 0,
+    role: "Etudiant passager",
+    tripsCount: 0,
+  };
+
+  async function handleLogout() {
+    await signOut();
+    navigate("splash");
+  }
+
   return (
     <div className="screen screen--profile">
       <div className="screen-grid screen-grid--profile">
         <div className="screen-panel">
           <div className="profile-hero">
             <div className="profile-hero__top">
-              <div className="avatar-badge avatar-badge--xl">{user.initials}</div>
+              <div className="avatar-badge avatar-badge--xl">{displayUser.initials}</div>
 
               <div className="profile-hero__copy">
-                <h2>{user.name}</h2>
-                <p>{user.role}</p>
-                <Stars value={user.rating} />
+                <h2>{displayUser.name}</h2>
+                <p>{displayUser.role}</p>
+                <Stars value={displayUser.rating} />
               </div>
             </div>
 
             <div className="stat-strip">
               <div>
-                <strong>{user.tripsCount}</strong>
+                <strong>{displayUser.tripsCount}</strong>
                 <span>trajets</span>
               </div>
               <div>
-                <strong>{user.reservationsCount}</strong>
+                <strong>{displayUser.reservationsCount}</strong>
                 <span>reservations</span>
               </div>
               <div>
-                <strong>{user.reviewCount}</strong>
+                <strong>{displayUser.reviewCount}</strong>
                 <span>avis</span>
               </div>
             </div>
@@ -39,14 +57,14 @@ export default function Profile({ navigate, user, profileLinks }) {
             </span>
             <div>
               <strong>Car</strong>
-              <p>{user.car}</p>
+              <p>{displayUser.car}</p>
             </div>
           </div>
 
           <button
             className="logout-card"
             type="button"
-            onClick={() => navigate("splash")}
+            onClick={handleLogout}
           >
             <span className="menu-card__icon">
               <Icon name="logout" size={18} />

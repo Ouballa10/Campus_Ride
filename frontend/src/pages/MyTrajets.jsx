@@ -17,14 +17,21 @@ export default function MyTrajets({ navigate, user, publishedTrips }) {
           <span>annonces</span>
         </div>
         <div>
-          <strong>7</strong>
-          <span>passagers</span>
+          <strong>{publishedTrips.filter((trip) => trip.status === "Actif").length}</strong>
+          <span>actifs</span>
         </div>
         <div>
-          <strong>4.8</strong>
-          <span>note moyenne</span>
+          <strong>{user.reviewCount}</strong>
+          <span>avis</span>
         </div>
       </div>
+
+      {!publishedTrips.length ? (
+        <div className="message-box">
+          <strong>Aucun trajet publie pour le moment</strong>
+          <p>Ton premier trajet apparaitra ici des que tu publies une annonce.</p>
+        </div>
+      ) : null}
 
       <div className="stack-list stack-list--records">
         {publishedTrips.map((trip) => (

@@ -56,6 +56,170 @@ export function WelcomeArtwork() {
   );
 }
 
+export function SplashHeroArtwork() {
+  return (
+    <div className="artwork-panel artwork-panel--splash" aria-hidden="true">
+      <svg viewBox="0 0 360 520">
+        <defs>
+          <linearGradient id="splashSky" x1="50%" x2="50%" y1="0%" y2="100%">
+            <stop offset="0%" stopColor="#d7ebff" />
+            <stop offset="48%" stopColor="#eaf4ff" />
+            <stop offset="100%" stopColor="#9ec4ff" />
+          </linearGradient>
+          <radialGradient id="splashGlow" cx="50%" cy="24%" r="60%">
+            <stop offset="0%" stopColor="rgba(255,255,255,0.95)" />
+            <stop offset="70%" stopColor="rgba(255,255,255,0)" />
+          </radialGradient>
+          <linearGradient id="buildingLeft" x1="0%" x2="100%" y1="0%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="100%" stopColor="#d4e5ff" />
+          </linearGradient>
+          <linearGradient id="buildingRight" x1="0%" x2="100%" y1="0%" y2="100%">
+            <stop offset="0%" stopColor="#f1f7ff" />
+            <stop offset="100%" stopColor="#d8e7ff" />
+          </linearGradient>
+          <linearGradient id="windowBlue" x1="0%" x2="100%">
+            <stop offset="0%" stopColor="#5da5ff" />
+            <stop offset="100%" stopColor="#77c7ff" />
+          </linearGradient>
+          <linearGradient id="roadSurface" x1="50%" x2="50%" y1="0%" y2="100%">
+            <stop offset="0%" stopColor="#aacbff" />
+            <stop offset="100%" stopColor="#7ca8f3" />
+          </linearGradient>
+          <linearGradient id="carBlue" x1="0%" x2="100%">
+            <stop offset="0%" stopColor="#184ec8" />
+            <stop offset="100%" stopColor="#0c86ff" />
+          </linearGradient>
+          <linearGradient id="carGlass" x1="0%" x2="100%">
+            <stop offset="0%" stopColor="#dff3ff" />
+            <stop offset="100%" stopColor="#8fd8ff" />
+          </linearGradient>
+          <filter id="softShadow" colorInterpolationFilters="sRGB">
+            <feDropShadow dx="0" dy="18" floodColor="#3564b9" floodOpacity="0.18" stdDeviation="18" />
+          </filter>
+        </defs>
+
+        <rect fill="url(#splashSky)" height="520" rx="42" width="360" />
+        <ellipse cx="180" cy="112" fill="url(#splashGlow)" rx="150" ry="130" />
+        <circle cx="24" cy="52" fill="#ffffff" opacity="0.24" r="20" />
+        <circle cx="325" cy="115" fill="#ffffff" opacity="0.2" r="54" />
+        <circle cx="8" cy="204" fill="#ffffff" opacity="0.16" r="14" />
+
+        <g opacity="0.95">
+          <circle cx="58" cy="182" fill="#ffffff" r="17" />
+          <circle cx="76" cy="177" fill="#ffffff" r="14" />
+          <circle cx="92" cy="184" fill="#ffffff" r="12" />
+          <rect fill="#ffffff" height="14" rx="7" width="56" x="53" y="185" />
+
+          <circle cx="302" cy="196" fill="#ffffff" r="18" />
+          <circle cx="320" cy="191" fill="#ffffff" r="14" />
+          <circle cx="336" cy="199" fill="#ffffff" r="12" />
+          <rect fill="#ffffff" height="14" rx="7" width="58" x="296" y="199" />
+        </g>
+
+        <g transform="translate(0 248)">
+          <path
+            d="M0 118c47-11 89-22 134-19 41 3 76 16 110 20 43 5 78-4 116-21v174H0Z"
+            fill="url(#roadSurface)"
+          />
+          <path
+            d="M72 74h216l72 45H0Z"
+            fill="#bfd7ff"
+          />
+          <path
+            d="M150 74h60l48 45h-156Z"
+            fill="#dce9ff"
+          />
+          <path
+            d="M174 74h12v164h-12Z"
+            fill="rgba(255,255,255,0.38)"
+          />
+        </g>
+
+        <g filter="url(#softShadow)" transform="translate(0 208)">
+          <g transform="translate(0 48)">
+            <rect fill="url(#buildingLeft)" height="174" rx="8" width="118" x="0" y="0" />
+            <rect fill="url(#windowBlue)" height="24" rx="3" width="78" x="18" y="62" />
+            <rect fill="url(#windowBlue)" height="24" rx="3" width="78" x="18" y="97" />
+            <rect fill="url(#windowBlue)" height="24" rx="3" width="78" x="18" y="132" />
+            <rect fill="#eaf2ff" height="20" rx="4" width="92" x="10" y="28" />
+            <text
+              fill="#2053bf"
+              fontFamily="Aptos, Trebuchet MS, sans-serif"
+              fontSize="22"
+              fontWeight="800"
+              transform="translate(24 40) rotate(10)"
+            >
+              UNIVERSITE
+            </text>
+          </g>
+
+          <g transform="translate(266 58)">
+            <rect fill="url(#buildingRight)" height="164" rx="8" width="94" x="0" y="0" />
+            <rect fill="url(#windowBlue)" height="22" rx="3" width="60" x="16" y="48" />
+            <rect fill="url(#windowBlue)" height="22" rx="3" width="60" x="16" y="81" />
+            <rect fill="url(#windowBlue)" height="22" rx="3" width="60" x="16" y="114" />
+          </g>
+        </g>
+
+        <g filter="url(#softShadow)" transform="translate(26 350)">
+          <ellipse cx="72" cy="112" fill="rgba(51,95,166,0.2)" rx="92" ry="20" />
+          <path d="M14 70c4-20 19-35 39-35h56c23 0 42 15 49 35l11 33H5Z" fill="url(#carBlue)" />
+          <path d="M48 42 72 18h48c14 0 26 9 32 24Z" fill="#1d63db" />
+          <path d="M59 45 77 26h39c11 0 19 7 23 19Z" fill="url(#carGlass)" opacity="0.96" />
+          <rect fill="#163266" height="13" rx="6.5" width="40" x="62" y="69" />
+          <rect fill="#ffffff" height="10" rx="4" width="20" x="24" y="74" />
+          <rect fill="#ffffff" height="10" rx="4" width="20" x="121" y="74" />
+          <rect fill="#61d9ff" height="10" rx="5" width="14" x="26" y="76" />
+          <rect fill="#61d9ff" height="10" rx="5" width="14" x="123" y="76" />
+          <circle cx="39" cy="108" fill="#1c2a4d" r="16" />
+          <circle cx="39" cy="108" fill="#a7b8de" r="7" />
+          <circle cx="129" cy="108" fill="#1c2a4d" r="16" />
+          <circle cx="129" cy="108" fill="#a7b8de" r="7" />
+          <rect fill="#ffffff" height="18" rx="6" width="46" x="58" y="94" />
+        </g>
+
+        <g filter="url(#softShadow)" transform="translate(144 282)">
+          <g transform="translate(0 22)">
+            <ellipse cx="22" cy="136" fill="rgba(52,92,162,0.18)" rx="24" ry="6" />
+            <circle cx="22" cy="18" fill="#f3c8a4" r="16" />
+            <path d="M7 19c0-10 7-18 16-18 5 0 10 2 13.2 5.5L35 19Z" fill="#1f2435" />
+            <rect fill="#1a5fd3" height="58" rx="18" width="34" x="5" y="34" />
+            <rect fill="#173a82" height="50" rx="14" width="13" x="8" y="90" />
+            <rect fill="#173a82" height="50" rx="14" width="13" x="23" y="90" />
+            <rect fill="#eff6ff" height="7" rx="3.5" width="10" x="18" y="46" />
+          </g>
+
+          <g transform="translate(52)">
+            <ellipse cx="20" cy="154" fill="rgba(52,92,162,0.18)" rx="24" ry="6" />
+            <circle cx="20" cy="18" fill="#f3c8a4" r="16" />
+            <path d="M6 20c0-11 8-19 18-19 6 0 11 2 14.8 5.6L35 20Z" fill="#25253a" />
+            <rect fill="#ffffff" height="60" rx="17" width="34" x="3" y="35" />
+            <rect fill="#2f6de8" height="54" rx="14" width="13" x="6" y="93" />
+            <rect fill="#2f6de8" height="54" rx="14" width="13" x="22" y="93" />
+            <rect fill="#1c2746" height="28" rx="8" width="8" x="30" y="60" />
+          </g>
+
+          <g transform="translate(102 14)">
+            <ellipse cx="22" cy="143" fill="rgba(52,92,162,0.18)" rx="24" ry="6" />
+            <circle cx="22" cy="18" fill="#f3c8a4" r="16" />
+            <path d="M7 19c0-10 7-18 16-18 6 0 11 2 14.5 6L35 19Z" fill="#1d2234" />
+            <rect fill="#173a82" height="58" rx="18" width="34" x="5" y="34" />
+            <rect fill="#0f245f" height="50" rx="14" width="13" x="8" y="90" />
+            <rect fill="#0f245f" height="50" rx="14" width="13" x="23" y="90" />
+            <rect fill="#eff6ff" height="7" rx="3.5" width="9" x="18" y="48" />
+          </g>
+        </g>
+
+        <g fill="#6f90d8" opacity="0.5">
+          <path d="M272 308c7-2 13 4 18 6 4 2 10 2 14-1-1 8-12 13-22 10-6-2-9-8-10-15Z" />
+          <path d="M252 316c5-2 10 2 14 4 3 1 7 1 10-1-1 6-9 9-16 7-4-1-7-5-8-10Z" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
 export function RideArtwork() {
   return (
     <div className="artwork-panel artwork-panel--hero" aria-hidden="true">
