@@ -17,7 +17,12 @@
 - Create test users from `Authentication > Users`.
 - Replace the UUID placeholders in [`database/supabase_seed.sql`](/c:/Users/abdelmounaim/Desktop/Campus_Ride/database/supabase_seed.sql:1) and run it if you want sample trips.
 
-## 4. Deploy
+## 4. Profile photos storage
+
+- Run [`database/supabase_storage.sql`](/c:/Users/abdelmounaim/Desktop/Campus_Ride/database/supabase_storage.sql:1) in the Supabase SQL Editor.
+- This creates the public `profile-photos` bucket and the policies needed for each user to upload only their own avatar.
+
+## 5. Deploy
 
 - The app stays in demo mode until the two `VITE_SUPABASE_*` variables are present.
 - Once the keys are added, login/register and data loading switch to Supabase automatically.
