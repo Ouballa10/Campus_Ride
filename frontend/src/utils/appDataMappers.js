@@ -150,16 +150,23 @@ export function mapTrajetToCard(trajet, driverProfile = {}) {
     id: trajet.id,
     depart: trajet.depart,
     destination: trajet.destination,
+    routeLabel: `${trajet.depart} - ${trajet.destination}`,
+    conducteurId: trajet.conducteur_id || "",
+    departureAt: trajet.departure_at,
+    durationMinutes: toNumber(trajet.duration_minutes, 0),
     time: formatTimeWindow(trajet.departure_at, trajet.duration_minutes),
     driver: driverProfile.full_name || "Conducteur CampusRide",
     driverInitials: getInitials(driverProfile.full_name || driverProfile.email),
     car: driverProfile.vehicle_label || "Vehicule a confirmer",
     seats: toNumber(trajet.places_disponibles, 0),
+    totalSeats: toNumber(trajet.places_total, 0),
     duration: formatDuration(trajet.duration_minutes),
     price: toNumber(trajet.prix_par_place, 0),
     rating: toNumber(driverProfile.note_moyenne, 0),
     role: formatRole(driverProfile.role),
+    description: trajet.description || "",
     pickup: trajet.pickup_note || "Point de rendez-vous confirme apres reservation",
+    pickupNote: trajet.pickup_note || "",
   };
 }
 
@@ -195,6 +202,7 @@ export function mapPublishedTrajet(trajet, reservationsCount = null) {
 export function mapReservationRecord(reservation, trajet, driverProfile = {}) {
   return {
     id: reservation.id,
+    trajetId: reservation.trajet_id || "",
     route: trajet
       ? `${trajet.depart} - ${trajet.destination}`
       : "Trajet CampusRide",
@@ -202,6 +210,7 @@ export function mapReservationRecord(reservation, trajet, driverProfile = {}) {
     time: formatClock(trajet?.departure_at),
     driver: driverProfile.full_name || "Conducteur CampusRide",
     pickup: trajet?.pickup_note || "Point de rendez-vous a confirmer",
+    message: reservation.message_passager || "",
     status: formatReservationStatus(reservation.statut),
     price: toNumber(trajet?.prix_par_place, 0),
   };

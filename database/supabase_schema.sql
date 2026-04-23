@@ -53,6 +53,7 @@ create table if not exists public.reservations (
   trajet_id uuid not null references public.trajets (id) on delete cascade,
   passager_id uuid not null references public.profiles (id) on delete cascade,
   date_reservation timestamptz not null default timezone('utc', now()),
+  message_passager text,
   statut public.reservation_status not null default 'en_attente',
   unique (trajet_id, passager_id)
 );

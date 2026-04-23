@@ -1,5 +1,6 @@
 import React from "react";
 import { Icon } from "./Icons";
+import logo from "../assets/images/logo.png";
 
 export default function AppHeader({
   title,
@@ -27,7 +28,9 @@ export default function AppHeader({
           {rightIcon ? <Icon name={rightIcon} size={16} /> : null}
         </button>
       ) : (
-        <span className="app-header__spacer" aria-hidden="true" />
+        <span className="app-header__brand" aria-hidden="true">
+          <img alt="" className="app-header__brand-logo" src={logo} />
+        </span>
       )}
     </header>
   );

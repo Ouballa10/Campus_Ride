@@ -1,80 +1,165 @@
-import React from "react";
+import React, { useState } from "react";
 import AppHeader from "../components/AppHeader";
 import { Icon, Stars } from "../components/Icons";
 
-export default function Reservation({ navigate, tripOptions }) {
-  const [featuredTrip, ...alternatives] = tripOptions;
+export default function Reservation({
+  navigate,
+  onReserve,
+  onTripSelect,
+  reservedTripIds,
+  selectedTrip,
+  tripOptions,
+}) {
+  const [note, setNote] = useState("");
+  const [feedback, setFeedback] = useState({ message: "", tone: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!featuredTrip) {
+  if (!selectedTrip) {
     return (
       <div className="screen screen--reservation">
         <AppHeader
           title="Reservation"
+          subtitle="Selectionne d'abord un trajet"
           leftIcon="arrow-left"
           onLeftClick={() => navigate("search")}
         />
 
         <div className="message-box">
           <strong>Aucun trajet selectionne</strong>
-          <p>Choisis d'abord un trajet disponible depuis la recherche.</p>
+          <p>Choisis un trajet depuis la recherche ou depuis l'accueil.</p>
         </div>
       </div>
     );
   }
 
+  const alternativeTrips = tripOptions
+    .filter((trip) => trip.id !== selectedTrip.id)
+    .slice(0, 4);
+  const alreadyReserved = reservedTripIds.includes(selectedTrip.id);
+  const isUnavailable = selectedTrip.seats <= 0;
+  const reservationBlocked = alreadyReserved || isUnavailable;
+
+  async function handleReserve() {
+    if (reservationBlocked) {
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      setFeedback({ message: "", tone: "" });
+      await onReserve(selectedTrip, note);
+      setFeedback({
+        message: "Reservation enregistree avec succes.",
+        tone: "success",
+      });
+      setNote("");
+      navigate("my-reservations");
+    } catch (error) {
+      setFeedback({
+        message: error.message || "Reservation impossible pour le moment.",
+        tone: "error",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <div className="screen screen--reservation">
       <AppHeader
-        title={`${featuredTrip.depart} - ${featuredTrip.destination}`}
-        subtitle={featuredTrip.time}
+        title={selectedTrip.routeLabel}
+        subtitle={selectedTrip.time}
         leftIcon="arrow-left"
         onLeftClick={() => navigate("search")}
       />
 
       <div className="screen-grid screen-grid--reservation">
         <div className="screen-panel screen-panel--primary">
-          <div className="detail-card detail-card--highlight">
+          <div className="detail-card detail-card--highlight detail-card--reservation">
             <div className="trip-card__middle">
               <div className="avatar-badge avatar-badge--large">
-                {featuredTrip.driverInitials}
+                {selectedTrip.driverInitials}
               </div>
               <div className="trip-card__driver">
-                <strong>{featuredTrip.driver}</strong>
-                <span>{featuredTrip.role}</span>
-                <span>{featuredTrip.car}</span>
+                <strong>{selectedTrip.driver}</strong>
+                <span>{selectedTrip.role}</span>
+                <span>{selectedTrip.car}</span>
               </div>
-              <span className="pill pill--price">{featuredTrip.price} DH</span>
+              <span className="pill pill--price">{selectedTrip.price} DH</span>
             </div>
 
             <div className="trip-card__meta">
               <span className="meta-chip">
                 <Icon name="seat" size={14} />
-                {featuredTrip.seats} places
+                {selectedTrip.seats} place(s) libre(s)
               </span>
               <span className="meta-chip">
                 <Icon name="clock" size={14} />
-                {featuredTrip.duration}
+                {selectedTrip.duration}
               </span>
               <span className="meta-chip">
                 <Icon name="location" size={14} />
-                {featuredTrip.pickup}
+                {selectedTrip.pickup}
               </span>
             </div>
 
-            <Stars value={featuredTrip.rating} />
+            <Stars value={selectedTrip.rating} />
+
+            <div className="reservation-route-grid">
+              <div className="reservation-route-stop">
+                <span className="reservation-route-stop__dot" />
+                <div>
+                  <strong>Depart</strong>
+                  <span>{selectedTrip.depart}</span>
+                </div>
+              </div>
+
+              <div className="reservation-route-stop">
+                <span className="reservation-route-stop__dot reservation-route-stop__dot--end" />
+                <div>
+                  <strong>Arrivee</strong>
+                  <span>{selectedTrip.destination}</span>
+                </div>
+              </div>
+            </div>
+
+            {selectedTrip.description ? (
+              <div className="message-box message-box--soft">
+                <strong>Note conducteur</strong>
+                <p>{selectedTrip.description}</p>
+              </div>
+            ) : null}
           </div>
 
-          <div className="message-box">
-            <strong>Message pour {featuredTrip.driver}</strong>
-            <p>Optionnel: precise ton point de rendez-vous ou ton bagage.</p>
-          </div>
+          <label className="reservation-note-card">
+            <span className="profile-editor-field__label">Message au conducteur</span>
+            <textarea
+              placeholder="Optionnel: point de rendez-vous, bagage, ou info utile."
+              rows="4"
+              value={note}
+              onChange={(event) => setNote(event.target.value)}
+            />
+          </label>
+
+          {feedback.message ? (
+            <p className={`profile-editor-status profile-editor-status--${feedback.tone}`}>
+              {feedback.message}
+            </p>
+          ) : null}
 
           <button
             className="primary-button"
+            disabled={reservationBlocked || isSubmitting}
             type="button"
-            onClick={() => navigate("my-reservations")}
+            onClick={handleReserve}
           >
-            Reserver
+            {alreadyReserved
+              ? "Deja reserve"
+              : isUnavailable
+                ? "Trajet complet"
+                : isSubmitting
+                  ? "Reservation..."
+                  : "Confirmer la reservation"}
           </button>
         </div>
 
@@ -82,13 +167,20 @@ export default function Reservation({ navigate, tripOptions }) {
           <div className="section-heading section-heading--compact">
             <div>
               <h3>Autres propositions</h3>
-              <p>Compare vite les conducteurs disponibles</p>
+              <p>Change rapidement de conducteur si besoin.</p>
             </div>
           </div>
 
+          {!alternativeTrips.length ? (
+            <div className="message-box">
+              <strong>Aucune autre proposition</strong>
+              <p>Cette recherche contient un seul trajet disponible pour le moment.</p>
+            </div>
+          ) : null}
+
           <div className="stack-list stack-list--options">
-            {alternatives.map((trip) => (
-              <article className="option-card" key={trip.id}>
+            {alternativeTrips.map((trip) => (
+              <article className="option-card option-card--interactive" key={trip.id}>
                 <div className="trip-card__middle">
                   <div className="avatar-badge">{trip.driverInitials}</div>
                   <div className="trip-card__driver">
@@ -98,11 +190,24 @@ export default function Reservation({ navigate, tripOptions }) {
                   <button
                     className="check-circle"
                     type="button"
-                    aria-label="Choisir"
+                    aria-label={`Choisir ${trip.driver}`}
+                    onClick={() => onTripSelect(trip.id)}
                   >
                     <span />
                   </button>
                 </div>
+
+                <div className="trip-card__meta">
+                  <span className="meta-chip">
+                    <Icon name="clock" size={14} />
+                    {trip.time}
+                  </span>
+                  <span className="meta-chip">
+                    <Icon name="seat" size={14} />
+                    {trip.seats} place(s)
+                  </span>
+                </div>
+
                 <div className="trip-card__bottom">
                   <Stars value={trip.rating} />
                   <span className="pill">{trip.price} DH</span>

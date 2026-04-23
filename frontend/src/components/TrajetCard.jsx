@@ -2,11 +2,13 @@ import React from "react";
 import { Icon, Stars } from "./Icons";
 
 export default function TrajetCard({ trip, ctaLabel = "Reserver", onClick }) {
+  const isUnavailable = trip.seats <= 0;
+
   return (
     <article className="trip-card">
       <div className="trip-card__top">
         <div>
-          <h4>{trip.depart} - {trip.destination}</h4>
+          <h4>{trip.routeLabel || `${trip.depart} - ${trip.destination}`}</h4>
           <p>{trip.time}</p>
         </div>
 
@@ -36,10 +38,17 @@ export default function TrajetCard({ trip, ctaLabel = "Reserver", onClick }) {
         </span>
       </div>
 
+      <p className="card-note">{trip.pickup}</p>
+
       <div className="trip-card__bottom">
         <Stars value={trip.rating} />
-        <button className="mini-button" type="button" onClick={onClick}>
-          {ctaLabel}
+        <button
+          className="mini-button"
+          disabled={isUnavailable}
+          type="button"
+          onClick={onClick}
+        >
+          {isUnavailable ? "Complet" : ctaLabel}
         </button>
       </div>
     </article>

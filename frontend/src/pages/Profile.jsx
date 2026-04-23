@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import AppHeader from "../components/AppHeader";
 import { Icon, Stars } from "../components/Icons";
 import { useAuth } from "../context/AuthContext";
 import { profileService } from "../services/profileService";
@@ -175,6 +176,13 @@ export default function Profile({ navigate, user, profileLinks }) {
 
   return (
     <div className="screen screen--profile">
+      <AppHeader
+        title="Mon profil"
+        subtitle="Compte, vehicule et preferences"
+        leftIcon="arrow-left"
+        onLeftClick={() => navigate("home")}
+      />
+
       <div className="screen-panel">
         <section className="profile-editor-hero">
           <div className="profile-editor-hero__header">

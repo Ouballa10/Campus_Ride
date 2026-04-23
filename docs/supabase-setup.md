@@ -4,6 +4,7 @@
 
 - Create a new Supabase project from the dashboard.
 - In `SQL Editor`, run [`database/supabase_schema.sql`](/c:/Users/abdelmounaim/Desktop/Campus_Ride/database/supabase_schema.sql:1).
+- Then run [`database/supabase_reservation_rpc.sql`](/c:/Users/abdelmounaim/Desktop/Campus_Ride/database/supabase_reservation_rpc.sql:1) to add transactional reservation helpers and the passenger note field.
 
 ## 2. Add frontend environment variables
 

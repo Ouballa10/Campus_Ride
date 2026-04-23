@@ -67,6 +67,8 @@ async function listAvailableTrajets() {
   const { data, error } = await client
     .from("trajets")
     .select("*")
+    .gt("places_disponibles", 0)
+    .gte("departure_at", new Date().toISOString())
     .order("departure_at", { ascending: true })
     .limit(12);
 
