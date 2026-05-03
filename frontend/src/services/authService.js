@@ -33,6 +33,25 @@ async function signIn({ email, password }) {
   return data;
 }
 
+async function signInWithGoogle() {
+  const client = requireSupabase();
+  const redirectTo =
+    typeof window !== "undefined" ? window.location.origin : undefined;
+
+  const { data, error } = await client.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo,
+    },
+  });
+
+  if (error) {
+    throw formatSupabaseError(error, "Connexion Google impossible.");
+  }
+
+  return data;
+}
+
 async function signUp({ email, password, fullName, phone, role = "passager" }) {
   const client = requireSupabase();
   const { data, error } = await client.auth.signUp({
@@ -89,6 +108,7 @@ export const authService = {
   getSession,
   onAuthStateChange,
   signIn,
+  signInWithGoogle,
   signOut,
   signUp,
 };

@@ -101,6 +101,10 @@ export function AuthProvider({ children }) {
     return { ...data, profile: null };
   }
 
+  async function signInWithGoogle() {
+    return authService.signInWithGoogle();
+  }
+
   async function signUp(payload) {
     const data = await authService.signUp(payload);
 
@@ -134,6 +138,7 @@ export function AuthProvider({ children }) {
     refreshProfile,
     session,
     signIn,
+    signInWithGoogle,
     signOut,
     signUp,
     user: session?.user ?? null,
