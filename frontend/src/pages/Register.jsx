@@ -12,11 +12,12 @@ const initialForm = {
 };
 
 export default function Register({ navigate }) {
-  const { isConfigured, signUp } = useAuth();
+  const { isConfigured, signInWithGoogle, signUp } = useAuth();
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
 
   function updateField(event) {
     const { name, value } = event.target;
@@ -71,6 +72,23 @@ export default function Register({ navigate }) {
       setError(submissionError.message);
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleGoogleSignIn() {
+    if (!isConfigured) {
+      setError("Configure d'abord Supabase dans .env.local ou Vercel.");
+      return;
+    }
+
+    try {
+      setIsGoogleSubmitting(true);
+      setError("");
+      setSuccess("");
+      await signInWithGoogle();
+    } catch (submissionError) {
+      setError(submissionError.message);
+      setIsGoogleSubmitting(false);
     }
   }
 
@@ -175,12 +193,26 @@ export default function Register({ navigate }) {
 
           <button
             className="primary-button primary-button--auth"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isGoogleSubmitting}
             type="submit"
           >
             {isSubmitting ? "Creation..." : "Creer mon compte"}
           </button>
         </form>
+
+        <div className="auth-divider">
+          <span>ou</span>
+        </div>
+
+        <button
+          className="oauth-button"
+          disabled={isSubmitting || isGoogleSubmitting}
+          type="button"
+          onClick={handleGoogleSignIn}
+        >
+          <span className="oauth-button__mark" aria-hidden="true">G</span>
+          <span>{isGoogleSubmitting ? "Redirection..." : "Continuer avec Google"}</span>
+        </button>
 
         <button
           className="text-link text-link--center"
