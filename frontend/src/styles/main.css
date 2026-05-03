@@ -670,6 +670,11 @@ img { display: block; max-width: 100%; }
 
 .logout-card { background: linear-gradient(180deg, #84c85d, #63a844); }
 
+.logout-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.78;
+}
+
 .menu-card__icon,
 .vehicle-card__icon {
   width: 38px;
@@ -920,8 +925,11 @@ img { display: block; max-width: 100%; }
 }
 
 .profile-editor-logout {
-  width: auto;
-  min-width: 196px;
+  width: min(100%, 240px);
+  justify-self: center;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  margin: 2px auto 0;
 }
 
 .stars { display: inline-flex; gap: 5px; }
@@ -1963,7 +1971,6 @@ img { display: block; max-width: 100%; }
   }
 
   .profile-editor-logout {
-    width: 100%;
-    min-width: 0;
+    width: min(100%, 240px);
   }
 }
