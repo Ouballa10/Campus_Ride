@@ -119,15 +119,21 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut() {
-    if (!isSupabaseConfigured) {
-      setSession(null);
-      setProfile(null);
-      return;
+    let signOutError = null;
+
+    if (isSupabaseConfigured) {
+      try {
+        await authService.signOut();
+      } catch (error) {
+        signOutError = error;
+        console.error("Supabase sign out failed:", error);
+      }
     }
 
-    await authService.signOut();
     setSession(null);
     setProfile(null);
+
+    return { error: signOutError };
   }
 
   const value = {
