@@ -228,6 +228,7 @@ function App() {
   }, [canUseSupabaseData, profile, sessionUserId]);
 
   const isAuthRoute = authRoutes.includes(route);
+  const isSplashRoute = route === "splash";
   const showNav = !isAuthRoute;
 
   return (
@@ -236,8 +237,19 @@ function App() {
         <div className="stage-orb stage-orb--one" />
         <div className="stage-orb stage-orb--two" />
 
-        <div className={`phone-shell ${isAuthRoute ? "phone-shell--auth" : "phone-shell--app"}`}>
-          <div className="phone-shell__body">
+        <div
+          className={[
+            "phone-shell",
+            isAuthRoute ? "phone-shell--auth" : "phone-shell--app",
+            isSplashRoute ? "phone-shell--splash" : "",
+          ].filter(Boolean).join(" ")}
+        >
+          <div
+            className={[
+              "phone-shell__body",
+              isSplashRoute ? "phone-shell__body--splash" : "",
+            ].filter(Boolean).join(" ")}
+          >
             {dataError && !demoMode && !isAuthRoute ? (
               <div className="sync-banner sync-banner--error">{dataError}</div>
             ) : null}
