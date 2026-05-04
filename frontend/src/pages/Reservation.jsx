@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import AppHeader from "../components/AppHeader";
+import CampusMap from "../components/CampusMap";
 import { Icon, Stars } from "../components/Icons";
 
 export default function Reservation({
@@ -49,7 +50,7 @@ export default function Reservation({
       setFeedback({ message: "", tone: "" });
       await onReserve(selectedTrip, note);
       setFeedback({
-        message: "Reservation confirmee. Elle apparait dans tes reservations.",
+        message: "Demande envoyee. Le driver peut la confirmer depuis ses trajets.",
         tone: "success",
       });
       setNote("");
@@ -158,12 +159,19 @@ export default function Reservation({
               : isUnavailable
                 ? "Trajet complet"
                 : isSubmitting
-                  ? "Confirmation..."
-                  : "Confirmer la reservation"}
+                  ? "Envoi..."
+                  : "Envoyer la demande"}
           </button>
         </div>
 
         <div className="screen-panel screen-panel--secondary">
+          <CampusMap
+            compact
+            selectedTrip={selectedTrip}
+            trips={[selectedTrip, ...alternativeTrips]}
+            onTripSelect={onTripSelect}
+          />
+
           <div className="section-heading section-heading--compact">
             <div>
               <h3>Autres propositions</h3>

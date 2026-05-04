@@ -2,12 +2,12 @@ alter table public.reservations
 add column if not exists message_passager text;
 
 alter table public.reservations
-alter column statut set default 'confirmee';
+alter column statut set default 'en_attente';
 
 create or replace function public.reserve_trajet_seat(
   p_trajet_id uuid,
   p_passager_id uuid,
-  p_statut public.reservation_status default 'confirmee',
+  p_statut public.reservation_status default 'en_attente',
   p_message_passager text default null
 )
 returns uuid

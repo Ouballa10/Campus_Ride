@@ -176,6 +176,12 @@ export function mapPublishedTrajet(trajet, reservations = null) {
   const totalPlaces = toNumber(trajet.places_total, 0);
   const availablePlaces = toNumber(trajet.places_disponibles, 0);
   const passengerReservations = Array.isArray(reservations) ? reservations : [];
+  const confirmedReservations = passengerReservations.filter(
+    (reservation) => reservation.status === "Confirmee",
+  ).length;
+  const pendingReservations = passengerReservations.filter(
+    (reservation) => reservation.status === "En attente",
+  ).length;
   const reservationsCount =
     typeof reservations === "number"
       ? reservations
@@ -185,6 +191,12 @@ export function mapPublishedTrajet(trajet, reservations = null) {
           ).length
         : null;
   const confirmedPassengers = reservationsCount ?? Math.max(totalPlaces - availablePlaces, 0);
+  const passengerSummary = Array.isArray(reservations)
+    ? [
+        confirmedReservations ? `${confirmedReservations} confirme(s)` : "",
+        pendingReservations ? `${pendingReservations} en attente` : "",
+      ].filter(Boolean).join(" - ")
+    : "";
   const departureDate = toDate(trajet.departure_at);
 
   let status = "Actif";
@@ -203,10 +215,11 @@ export function mapPublishedTrajet(trajet, reservations = null) {
     price: toNumber(trajet.prix_par_place, 0),
     seats: `${availablePlaces}/${totalPlaces}`,
     status,
-    passengers:
+    passengers: passengerSummary || (
       confirmedPassengers > 0
-        ? `${confirmedPassengers} passagers confirmes`
-        : `Encore ${availablePlaces} places`,
+        ? `${confirmedPassengers} demande(s)`
+        : `Encore ${availablePlaces} places`
+    ),
     passengerReservations,
   };
 }

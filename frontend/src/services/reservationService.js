@@ -202,7 +202,7 @@ async function createReservationFallback({
 async function createReservation({
   trajetId,
   passagerId,
-  statut = "confirmee",
+  statut = "en_attente",
   messagePassager = "",
 }) {
   const client = requireSupabase();

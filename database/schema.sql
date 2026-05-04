@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS reservations (
   trajet_id INT NOT NULL,
   passager_id INT NOT NULL,
   date_reservation DATETIME DEFAULT CURRENT_TIMESTAMP,
-  statut ENUM('confirmee', 'annulee', 'en_attente') DEFAULT 'confirmee',
+  statut ENUM('confirmee', 'annulee', 'en_attente') DEFAULT 'en_attente',
   FOREIGN KEY (trajet_id) REFERENCES trajets(id) ON DELETE CASCADE,
   FOREIGN KEY (passager_id) REFERENCES users(id) ON DELETE CASCADE
 );

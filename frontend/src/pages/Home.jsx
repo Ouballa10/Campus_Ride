@@ -156,10 +156,10 @@ export default function Home({
           </div>
         ) : null}
 
-        {isDriverMode && !featuredPublishedTrips.length ? (
+            {isDriverMode && !featuredPublishedTrips.length ? (
           <div className="message-box">
             <strong>Aucune annonce driver</strong>
-            <p>Publie ton premier trajet pour recevoir des reservations confirmees.</p>
+            <p>Publie ton premier trajet pour recevoir des demandes passagers.</p>
           </div>
         ) : null}
 

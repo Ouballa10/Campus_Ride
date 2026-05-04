@@ -147,7 +147,8 @@ function buildPublishedTripFromCard(trip) {
   const totalSeats = Number(trip.totalSeats || trip.seats || 0);
   const isPast = new Date(trip.departureAt) < new Date();
   const status = isPast ? "Passe" : seatsLeft <= 0 ? "Complet" : "Actif";
-  const remainingLabel = seatsLeft > 1 ? "places" : "place";
+  const passengerReservations = trip.passengerReservations || [];
+  const passengers = buildPassengerSummary(passengerReservations, seatsLeft);
 
   return {
     id: trip.id,
@@ -157,11 +158,43 @@ function buildPublishedTripFromCard(trip) {
     price: trip.price,
     seats: `${seatsLeft}/${totalSeats}`,
     status,
-    passengers:
-      seatsLeft <= 0
-        ? "Liste complete"
-        : `Encore ${seatsLeft} ${remainingLabel}`,
-    passengerReservations: trip.passengerReservations || [],
+    passengers,
+    passengerReservations,
+  };
+}
+
+function buildPassengerSummary(passengerReservations = [], seatsLeft = 0) {
+  const confirmedCount = passengerReservations.filter(
+    (reservation) => reservation.status === "Confirmee",
+  ).length;
+  const pendingCount = passengerReservations.filter(
+    (reservation) => reservation.status === "En attente",
+  ).length;
+
+  if (confirmedCount || pendingCount) {
+    return [
+      confirmedCount ? `${confirmedCount} confirme(s)` : "",
+      pendingCount ? `${pendingCount} en attente` : "",
+    ].filter(Boolean).join(" - ");
+  }
+
+  const remainingLabel = seatsLeft > 1 ? "places" : "place";
+
+  return seatsLeft <= 0 ? "Liste complete" : `Encore ${seatsLeft} ${remainingLabel}`;
+}
+
+function parsePublishedSeatsLeft(seats = "0/0") {
+  return Number(`${seats}`.split("/")[0] || 0);
+}
+
+function applyPassengerReservationsToPublishedTrip(trip, passengerReservations) {
+  return {
+    ...trip,
+    passengers: buildPassengerSummary(
+      passengerReservations,
+      parsePublishedSeatsLeft(trip.seats),
+    ),
+    passengerReservations,
   };
 }
 
@@ -175,7 +208,7 @@ function buildDemoReservation(trip, message) {
     driver: trip.driver,
     pickup: trip.pickup,
     message: message.trim(),
-    status: "Confirmee",
+    status: "En attente",
     price: trip.price,
   };
 }
@@ -440,13 +473,15 @@ function App() {
           return trip;
         }
 
-        return {
-          ...buildPublishedTripFromCard(updatedTrip),
-          passengerReservations: [
-            buildDemoPassengerReservation(nextReservation, currentUser),
-            ...(trip.passengerReservations || []),
-          ],
-        };
+        const passengerReservations = [
+          buildDemoPassengerReservation(nextReservation, currentUser),
+          ...(trip.passengerReservations || []),
+        ];
+
+        return buildPublishedTripFromCard({
+          ...updatedTrip,
+          passengerReservations,
+        });
       });
 
       return {
@@ -508,14 +543,16 @@ function App() {
           return trip;
         }
 
-        return {
-          ...buildPublishedTripFromCard(updatedTrip),
-          passengerReservations: (trip.passengerReservations || []).map((reservation) =>
-            reservation.id === reservationId
-              ? { ...reservation, status: "Annulee" }
-              : reservation,
-          ),
-        };
+        const passengerReservations = (trip.passengerReservations || []).map((reservation) =>
+          reservation.id === reservationId
+            ? { ...reservation, status: "Annulee" }
+            : reservation,
+        );
+
+        return buildPublishedTripFromCard({
+          ...updatedTrip,
+          passengerReservations,
+        });
       });
 
       return {
@@ -540,14 +577,15 @@ function App() {
 
     setAppData((currentData) => ({
       ...currentData,
-      publishedTrips: currentData.publishedTrips.map((trip) => ({
-        ...trip,
-        passengerReservations: (trip.passengerReservations || []).map((reservation) =>
+      publishedTrips: currentData.publishedTrips.map((trip) => {
+        const passengerReservations = (trip.passengerReservations || []).map((reservation) =>
           reservation.id === reservationId
             ? { ...reservation, status: "Confirmee" }
             : reservation,
-        ),
-      })),
+        );
+
+        return applyPassengerReservationsToPublishedTrip(trip, passengerReservations);
+      }),
     }));
   }
 

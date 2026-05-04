@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { MapArtwork } from "../components/Artwork";
 import AppHeader from "../components/AppHeader";
+import CampusMap from "../components/CampusMap";
 import SearchBar from "../components/SearchBar";
 import TrajetCard from "../components/TrajetCard";
 import { Icon } from "../components/Icons";
@@ -103,7 +103,7 @@ export default function SearchTrajet({ navigate, onTripSelect, tripOptions }) {
         </div>
 
         <div className="screen-panel screen-panel--map">
-          <MapArtwork />
+          <CampusMap trips={filteredTrips} onTripSelect={onTripSelect} />
         </div>
       </div>
 

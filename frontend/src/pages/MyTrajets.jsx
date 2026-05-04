@@ -24,7 +24,7 @@ export default function MyTrajets({
       setFeedback({ message: "", tone: "" });
       await onConfirmReservation(reservationId);
       setFeedback({
-        message: "Reservation confirmee et visible dans l'espace passager.",
+        message: "Demande confirmee et visible dans l'espace passager.",
         tone: "success",
       });
     } catch (error) {
@@ -54,7 +54,7 @@ export default function MyTrajets({
           <span className="eyebrow">Conducteur</span>
           <h3>Suivi de tes annonces campus</h3>
           <p>
-            Retrouve tes departs actifs, les trajets deja passes et l'etat des
+            Retrouve tes departs actifs, les demandes passagers et l'etat des
             places restantes.
           </p>
         </div>
@@ -125,7 +125,7 @@ export default function MyTrajets({
               {pendingReservations.length ? (
                 <div className="message-box message-box--soft">
                   <strong>{pendingReservations.length} demande(s) a confirmer</strong>
-                  <p>Les anciennes reservations en attente peuvent etre confirmees ici.</p>
+                  <p>Les demandes en attente peuvent etre confirmees ici.</p>
                 </div>
               ) : null}
 
@@ -160,7 +160,7 @@ export default function MyTrajets({
               ) : (
                 <div className="message-box message-box--soft">
                   <strong>Aucun passager pour ce trajet</strong>
-                  <p>Des qu'une reservation est confirmee, elle apparait ici.</p>
+                  <p>Des qu'une demande arrive, elle apparait ici.</p>
                 </div>
               )}
             </article>
