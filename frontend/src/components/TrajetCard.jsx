@@ -23,6 +23,23 @@ export default function TrajetCard({ trip, ctaLabel = "Reserver", onClick }) {
         </div>
       </div>
 
+      <div className="ride-timeline ride-timeline--compact">
+        <div className="ride-timeline__stop">
+          <span className="ride-timeline__pin ride-timeline__pin--start" />
+          <div>
+            <strong>{trip.depart}</strong>
+            <span>Depart</span>
+          </div>
+        </div>
+        <div className="ride-timeline__stop">
+          <span className="ride-timeline__pin ride-timeline__pin--end" />
+          <div>
+            <strong>{trip.destination}</strong>
+            <span>Arrivee</span>
+          </div>
+        </div>
+      </div>
+
       <div className="trip-card__meta">
         <span className="meta-chip">
           <Icon name="seat" size={14} />

@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import AppHeader from "../components/AppHeader";
 import { Icon } from "../components/Icons";
 
+function getStatusClass(status = "") {
+  return `status-pill status-pill--${status.toLowerCase().replace(/\s+/g, "-")}`;
+}
+
 export default function MyTrajets({
   navigate,
   onConfirmReservation,
@@ -16,6 +20,9 @@ export default function MyTrajets({
   );
   const activePassengers = passengerReservations.filter(
     (reservation) => reservation.status !== "Annulee",
+  ).length;
+  const pendingRequests = passengerReservations.filter(
+    (reservation) => reservation.status === "En attente",
   ).length;
 
   async function handleConfirmReservation(reservationId) {
@@ -72,6 +79,10 @@ export default function MyTrajets({
             <strong>{activePassengers}</strong>
             <span>passagers</span>
           </div>
+          <div>
+            <strong>{pendingRequests}</strong>
+            <span>a confirmer</span>
+          </div>
         </div>
       </section>
 
@@ -96,13 +107,28 @@ export default function MyTrajets({
           );
 
           return (
-            <article className="list-card list-card--trip" key={trip.id}>
+            <article className="list-card list-card--trip ride-card ride-card--driver" key={trip.id}>
               <div className="list-card__row">
                 <div>
                   <h4>{trip.route}</h4>
                   <p>{trip.date} - {trip.time}</p>
                 </div>
-                <span className="pill">{trip.status}</span>
+                <span className={getStatusClass(trip.status)}>{trip.status}</span>
+              </div>
+
+              <div className="driver-trip-rail">
+                <div>
+                  <span>Places</span>
+                  <strong>{trip.seats}</strong>
+                </div>
+                <div>
+                  <span>Prix</span>
+                  <strong>{trip.price} DH</strong>
+                </div>
+                <div>
+                  <span>Demandes</span>
+                  <strong>{reservations.length}</strong>
+                </div>
               </div>
 
               <div className="trip-card__meta">
@@ -123,16 +149,19 @@ export default function MyTrajets({
               <p className="card-note">{trip.passengers}</p>
 
               {pendingReservations.length ? (
-                <div className="message-box message-box--soft">
-                  <strong>{pendingReservations.length} demande(s) a confirmer</strong>
-                  <p>Les demandes en attente peuvent etre confirmees ici.</p>
+                <div className="driver-request-banner">
+                  <div>
+                    <strong>{pendingReservations.length} demande(s) a confirmer</strong>
+                    <p>Traite les demandes avant le depart pour garder le trajet propre.</p>
+                  </div>
+                  <Icon name="send" size={20} />
                 </div>
               ) : null}
 
               {reservations.length ? (
                 <div className="passenger-list">
                   {reservations.map((reservation) => (
-                    <div className="passenger-row" key={reservation.id}>
+                    <div className="passenger-row passenger-row--request" key={reservation.id}>
                       <div className="avatar-badge">{reservation.passengerInitials}</div>
                       <div className="passenger-row__copy">
                         <strong>{reservation.passenger}</strong>
@@ -140,7 +169,7 @@ export default function MyTrajets({
                         {reservation.message ? <p>{reservation.message}</p> : null}
                       </div>
                       <div className="passenger-row__actions">
-                        <span className="pill">{reservation.status}</span>
+                        <span className={getStatusClass(reservation.status)}>{reservation.status}</span>
                         {reservation.status === "En attente" ? (
                           <button
                             className="mini-button mini-button--ghost"

@@ -144,7 +144,16 @@ export default function Profile({
   async function handleSave(event) {
     event.preventDefault();
 
-    if (!isConfigured || !session?.user?.id) {
+    if (!isConfigured) {
+      setSelectedPhoto(null);
+      setFeedback({
+        message: "Mode demo: ton apercu profil est pret. Connecte Supabase pour le sauvegarder.",
+        tone: "success",
+      });
+      return;
+    }
+
+    if (!session?.user?.id) {
       setFeedback({
         message: "Connecte Supabase correctement pour enregistrer les modifications.",
         tone: "error",
@@ -266,6 +275,20 @@ export default function Profile({
               <h3>{form.fullName || displayUser.name}</h3>
               <p>{roleLabel}</p>
               <Stars value={displayUser.rating} />
+            </div>
+          </div>
+
+          <div className="profile-vibe-card">
+            <span className="profile-vibe-card__icon">
+              <Icon name={isDriverMode ? "car" : "location"} size={18} />
+            </span>
+            <div>
+              <strong>{isDriverMode ? "Driver profile ready" : "Passenger profile ready"}</strong>
+              <p>
+                {isDriverMode
+                  ? "Photo, telephone et vehicule rendent tes annonces plus fiables."
+                  : "Une photo claire aide les drivers a reconnaitre rapidement le passager."}
+              </p>
             </div>
           </div>
 
