@@ -101,6 +101,10 @@ export function AuthProvider({ children }) {
     return { ...data, profile: null };
   }
 
+  async function signInWithGoogle() {
+    return authService.signInWithGoogle();
+  }
+
   async function signUp(payload) {
     const data = await authService.signUp(payload);
 
@@ -115,15 +119,21 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut() {
-    if (!isSupabaseConfigured) {
-      setSession(null);
-      setProfile(null);
-      return;
+    let signOutError = null;
+
+    if (isSupabaseConfigured) {
+      try {
+        await authService.signOut();
+      } catch (error) {
+        signOutError = error;
+        console.error("Supabase sign out failed:", error);
+      }
     }
 
-    await authService.signOut();
     setSession(null);
     setProfile(null);
+
+    return { error: signOutError };
   }
 
   const value = {
@@ -134,6 +144,7 @@ export function AuthProvider({ children }) {
     refreshProfile,
     session,
     signIn,
+    signInWithGoogle,
     signOut,
     signUp,
     user: session?.user ?? null,

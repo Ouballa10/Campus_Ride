@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import logo from "../assets/images/logo.png";
 import { SplashHeroArtwork } from "../components/Artwork";
+<<<<<<< HEAD
 import { Icon } from "../components/Icons";
 <<<<<<< Updated upstream
 =======
@@ -23,13 +23,47 @@ const splashHighlights = [
   },
 ];
 >>>>>>> Stashed changes
+=======
+>>>>>>> 2ecf0db849ce921d2d053d93173074987598e222
 
 export default function Splash({ navigate }) {
   const [useFallbackArtwork, setUseFallbackArtwork] = useState(false);
-  const showHeader = useFallbackArtwork;
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const slides = [
+    {
+      src: "/images/splash-photo.png",
+      alt: "CampusRide splash",
+      imageClassName: "splash-hero__image--slide-one",
+    },
+    {
+      src: "/images/splash-page-2.png",
+      alt: "CampusRide search splash",
+      imageClassName: "splash-hero__image--slide-two",
+    },
+  ];
+
+  function handleNext() {
+    if (currentSlide < slides.length - 1) {
+      setCurrentSlide((previous) => previous + 1);
+      return;
+    }
+
+    navigate("login");
+  }
+
+  function handleDotClick(index) {
+    if (index < slides.length) {
+      setCurrentSlide(index);
+      return;
+    }
+
+    navigate("login");
+  }
 
   return (
     <div className="screen screen--splash">
+<<<<<<< HEAD
 <<<<<<< Updated upstream
       <div className="splash-screen">
         <div className="splash-orb splash-orb--left" aria-hidden="true" />
@@ -58,31 +92,41 @@ export default function Splash({ navigate }) {
             style={{ "--splash-bg-image": `url(${slides[currentSlide].src})` }}
           >
 >>>>>>> Stashed changes
+=======
+      <div className="splash-screen splash-screen--full-image">
+        <div className="splash-body splash-body--full-image">
+          <div className="splash-hero splash-hero--full-image">
+>>>>>>> 2ecf0db849ce921d2d053d93173074987598e222
             {useFallbackArtwork ? (
               <SplashHeroArtwork />
             ) : (
               <img
-                alt="CampusRide splash"
-                className="splash-hero__image"
-                src="/images/splash-photo.png"
+                alt={slides[currentSlide].alt}
+                className={`splash-hero__image ${slides[currentSlide].imageClassName}`.trim()}
+                src={slides[currentSlide].src}
                 onError={() => setUseFallbackArtwork(true)}
               />
             )}
           </div>
         </div>
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
         <div className="splash-footer">
+=======
+        <div className="splash-footer splash-footer--overlay">
+>>>>>>> 2ecf0db849ce921d2d053d93173074987598e222
           <button
-            className="splash-button splash-button--primary"
             type="button"
-            onClick={() => navigate("login")}
+            className="splash-next-chip"
+            onClick={handleNext}
           >
-            <span>Commencer</span>
-            <span className="splash-button__icon">
-              <Icon name="arrow-right" size={24} />
+            <span className="splash-next-chip__label">Suivant</span>
+            <span className="splash-next-chip__icon" aria-hidden="true">
+              &rarr;
             </span>
           </button>
+<<<<<<< HEAD
 
           <button
             className="splash-button splash-button--secondary"
@@ -131,6 +175,8 @@ export default function Splash({ navigate }) {
               </span>
             </button>
           ) : null}
+=======
+>>>>>>> 2ecf0db849ce921d2d053d93173074987598e222
           <div className="splash-dots" aria-label="Navigation des pages">
             <button
               type="button"
@@ -152,7 +198,10 @@ export default function Splash({ navigate }) {
               onClick={() => handleDotClick(2)}
               aria-label="Aller a la page de connexion"
             />
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+>>>>>>> 2ecf0db849ce921d2d053d93173074987598e222
           </div>
         </div>
       </div>

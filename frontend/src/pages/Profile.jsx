@@ -38,6 +38,7 @@ export default function Profile({ navigate, user, profileLinks }) {
   const [photoPreview, setPhotoPreview] = useState("");
   const [feedback, setFeedback] = useState({ message: "", tone: "" });
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const displayUser = user || {
     car: "Vehicule a renseigner",
@@ -170,8 +171,18 @@ export default function Profile({ navigate, user, profileLinks }) {
   }
 
   async function handleLogout() {
-    await signOut();
-    navigate("splash");
+    try {
+      setIsLoggingOut(true);
+      const result = await signOut();
+
+      if (result?.error) {
+        console.warn("Session cleared locally after sign out error:", result.error);
+      }
+
+      navigate("splash");
+    } finally {
+      setIsLoggingOut(false);
+    }
   }
 
   return (
@@ -250,6 +261,20 @@ export default function Profile({ navigate, user, profileLinks }) {
               <span>avis</span>
             </div>
           </div>
+
+          <button
+            className="logout-card profile-editor-logout"
+            disabled={isLoggingOut}
+            type="button"
+            onClick={handleLogout}
+          >
+            <span className="menu-card__icon">
+              <Icon name="logout" size={18} />
+            </span>
+            <span className="menu-card__label">
+              {isLoggingOut ? "Deconnexion..." : "Se deconnecter"}
+            </span>
+          </button>
         </section>
 
         <form className="profile-editor-card" onSubmit={handleSave}>
@@ -348,17 +373,6 @@ export default function Profile({ navigate, user, profileLinks }) {
               type="submit"
             >
               {isSaving ? "Enregistrement..." : "Enregistrer les modifications"}
-            </button>
-
-            <button
-              className="logout-card profile-editor-logout"
-              type="button"
-              onClick={handleLogout}
-            >
-              <span className="menu-card__icon">
-                <Icon name="logout" size={18} />
-              </span>
-              <span className="menu-card__label">Se deconnecter</span>
             </button>
           </div>
         </form>
