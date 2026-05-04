@@ -224,6 +224,13 @@ img { display: block; max-width: 100%; }
   overflow: hidden;
 }
 
+.phone-shell--splash {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
 .phone-shell::before {
   content: "";
   width: 34%;
@@ -240,6 +247,11 @@ img { display: block; max-width: 100%; }
   overflow: visible;
   padding: 4px 4px 24px;
   scrollbar-width: none;
+}
+
+.phone-shell__body--splash {
+  padding: 0;
+  overflow: hidden;
 }
 
 .phone-shell__body::-webkit-scrollbar { display: none; }
@@ -1252,6 +1264,36 @@ img { display: block; max-width: 100%; }
   flex: 1;
   display: flex;
   align-items: center;
+<<<<<<< Updated upstream
+=======
+  justify-content: center;
+}
+
+.splash-hero--page-one {
+  margin-top: 8px;
+  align-items: flex-start;
+}
+
+.splash-hero--full-image {
+  margin: 0;
+  min-height: 100dvh;
+  align-items: stretch;
+  isolation: isolate;
+}
+
+.splash-hero--full-image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--splash-bg-image);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  filter: blur(18px) saturate(1.08) brightness(0.96);
+  transform: scale(1.08);
+  opacity: 0.9;
+>>>>>>> Stashed changes
 }
 
 .splash-hero--image-only {
@@ -1261,10 +1303,41 @@ img { display: block; max-width: 100%; }
 
 .splash-hero__image {
   display: block;
+<<<<<<< Updated upstream
   width: 100%;
   height: auto;
   max-height: 72dvh;
   object-fit: cover;
+=======
+  width: min(100%, 760px);
+  height: auto;
+  max-height: 54dvh;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 28px 44px rgba(26, 72, 170, 0.2));
+}
+
+.splash-hero--full-image .splash-hero__image {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  min-height: 100dvh;
+  max-height: 100dvh;
+  object-fit: contain;
+  object-position: center center;
+  filter: none;
+}
+
+.splash-hero--full-image .splash-hero__image--slide-one {
+  object-fit: cover;
+  object-position: center 70%;
+}
+
+.splash-hero--full-image .splash-hero__image--slide-two {
+  object-position: center 38%;
+>>>>>>> Stashed changes
 }
 
 .splash-hero--image-only .splash-hero__image {
@@ -1288,8 +1361,132 @@ img { display: block; max-width: 100%; }
 
 .splash-footer {
   display: grid;
+<<<<<<< Updated upstream
   gap: 12px;
   padding: 2px 8px 0;
+=======
+  gap: 14px;
+  padding: 6px 10px 0;
+}
+
+.splash-footer--dots-only {
+  min-height: 92px;
+  align-items: center;
+  justify-items: center;
+  padding-bottom: 24px;
+}
+
+.splash-footer--overlay {
+  position: absolute;
+  right: 0;
+  bottom: 22px;
+  left: 0;
+  z-index: 3;
+  justify-items: center;
+  gap: 14px;
+  padding: 0 20px;
+}
+
+.splash-highlights {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  align-items: stretch;
+}
+
+.splash-highlight-card {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  min-height: 146px;
+  padding: 14px 10px 13px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 250, 255, 0.94));
+  box-shadow:
+    0 16px 36px rgba(39, 76, 146, 0.14),
+    inset 0 0 0 1px rgba(220, 232, 255, 0.9);
+  text-align: center;
+}
+
+.splash-highlight-card__icon {
+  width: 44px;
+  height: 44px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #f3f7ff, #e9f0ff);
+  color: #2467ee;
+  box-shadow: inset 0 0 0 1px rgba(188, 210, 250, 0.85);
+}
+
+.splash-highlight-card strong {
+  color: #152d68;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.splash-highlight-card p {
+  margin: 0;
+  color: #4e628f;
+  font-size: 0.71rem;
+  line-height: 1.45;
+}
+
+.splash-next-chip {
+  width: min(280px, calc(100vw - 116px));
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 12px 12px 22px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #2f86ff 0%, #1d69ed 100%);
+  color: #ffffff;
+  font-size: 0.96rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  box-shadow:
+    0 10px 22px rgba(24, 89, 209, 0.22),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
+}
+
+.splash-next-chip:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 14px 28px rgba(24, 89, 209, 0.28),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+  filter: brightness(1.03);
+}
+
+.splash-next-chip:focus-visible {
+  outline: 3px solid rgba(148, 233, 255, 0.96);
+  outline-offset: 4px;
+}
+
+.splash-next-chip__label {
+  flex: 1;
+  text-align: center;
+}
+
+.splash-next-chip__icon {
+  width: 34px;
+  height: 34px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  font-size: 1.1rem;
+  line-height: 1;
+>>>>>>> Stashed changes
 }
 
 .splash-button {
@@ -1383,6 +1580,87 @@ img { display: block; max-width: 100%; }
     inset 0 0 0 1px rgba(255, 255, 255, 0.22);
 }
 
+<<<<<<< Updated upstream
+=======
+.splash-dots__item:hover {
+  transform: scale(1.08);
+}
+
+.splash-dots__item:focus-visible {
+  outline: 2px solid rgba(148, 233, 255, 0.96);
+  outline-offset: 3px;
+}
+
+@media (min-width: 720px) {
+  .splash-screen {
+    padding-inline: 48px;
+  }
+
+  .splash-pixels {
+    left: 48px;
+  }
+
+  .splash-hero {
+    margin-inline: -48px;
+  }
+
+  .splash-hero__image {
+    max-height: 58dvh;
+  }
+
+  .splash-hero--full-image {
+    margin-inline: -48px;
+  }
+
+  .splash-next-chip {
+    width: 300px;
+  }
+}
+
+@media (max-width: 719px) {
+  .splash-footer--overlay {
+    bottom: 20px;
+    gap: 12px;
+    padding: 0 16px;
+  }
+
+  .splash-highlights {
+    gap: 8px;
+  }
+
+  .splash-highlight-card {
+    min-height: 132px;
+    padding: 12px 8px 11px;
+    border-radius: 20px;
+  }
+
+  .splash-highlight-card__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .splash-highlight-card strong {
+    font-size: 0.78rem;
+  }
+
+  .splash-highlight-card p {
+    font-size: 0.68rem;
+  }
+
+  .splash-next-chip {
+    width: min(256px, calc(100vw - 128px));
+    padding: 11px 11px 11px 20px;
+    font-size: 0.92rem;
+  }
+
+  .splash-next-chip__icon {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+}
+
+>>>>>>> Stashed changes
 .primary-button--auth {
   background: linear-gradient(180deg, #2c6de9, #1f59d3);
   box-shadow: 0 18px 28px rgba(37, 88, 184, 0.22);
