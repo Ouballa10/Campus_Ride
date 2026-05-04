@@ -26,7 +26,11 @@ export const tripOptions = [
     destination: "UPM",
     routeLabel: "Marrakech - UPM",
     conducteurId: "demo-user-1",
+<<<<<<< HEAD
     departureAt: "2026-05-05T17:00:00.000",
+=======
+    departureAt: "2026-04-24T17:00:00.000Z",
+>>>>>>> origin/main
     durationMinutes: 120,
     time: "17:00 - 19:00",
     driver: "Abdelmounim O.",
@@ -48,7 +52,11 @@ export const tripOptions = [
     destination: "UPM",
     routeLabel: "Gueliz - UPM",
     conducteurId: "demo-user-2",
+<<<<<<< HEAD
     departureAt: "2026-05-05T07:15:00.000",
+=======
+    departureAt: "2026-04-24T07:15:00.000Z",
+>>>>>>> origin/main
     durationMinutes: 25,
     time: "07:15 - 07:40",
     driver: "Safaa M.",
@@ -70,7 +78,11 @@ export const tripOptions = [
     destination: "UPM",
     routeLabel: "Semlalia - UPM",
     conducteurId: "demo-user-3",
+<<<<<<< HEAD
     departureAt: "2026-05-06T08:00:00.000",
+=======
+    departureAt: "2026-04-25T08:00:00.000Z",
+>>>>>>> origin/main
     durationMinutes: 30,
     time: "08:00 - 08:30",
     driver: "Youssef T.",
@@ -129,6 +141,7 @@ export const publishedTrips = [
     seats: "2/4",
     status: "Actif",
     passengers: "2 passagers confirmes",
+<<<<<<< HEAD
     passengerReservations: [
       {
         id: "demo-driver-res-1",
@@ -149,6 +162,8 @@ export const publishedTrips = [
         createdAt: "2026-05-04T09:15:00.000",
       },
     ],
+=======
+>>>>>>> origin/main
   },
   {
     id: "pub-2",
@@ -159,6 +174,7 @@ export const publishedTrips = [
     seats: "3/3",
     status: "Complet",
     passengers: "Liste complete",
+<<<<<<< HEAD
     passengerReservations: [
       {
         id: "demo-driver-res-3",
@@ -170,6 +186,8 @@ export const publishedTrips = [
         createdAt: "2026-05-04T10:00:00.000",
       },
     ],
+=======
+>>>>>>> origin/main
   },
   {
     id: "pub-3",
@@ -180,7 +198,10 @@ export const publishedTrips = [
     seats: "1/4",
     status: "Nouveau",
     passengers: "Encore 3 places",
+<<<<<<< HEAD
     passengerReservations: [],
+=======
+>>>>>>> origin/main
   },
 ];
 

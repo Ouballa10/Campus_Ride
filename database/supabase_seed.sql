@@ -1,0 +1,33 @@
+-- 1. Create a few users from Supabase Authentication first.
+-- 2. Copy their UUIDs from the Auth dashboard.
+-- 3. Replace the placeholder UUIDs below before running this file.
+
+-- update public.profiles
+-- set vehicle_label = 'Toyota Yaris - Gris - 4045 AB'
+-- where id = '11111111-1111-1111-1111-111111111111';
+
+-- insert into public.trajets (
+--   depart,
+--   destination,
+--   departure_at,
+--   duration_minutes,
+--   places_total,
+--   places_disponibles,
+--   prix_par_place,
+--   description,
+--   pickup_note,
+--   conducteur_id
+-- )
+-- values
+--   (
+--     'Marrakech',
+--     'UPM',
+--     timezone('utc', now()) + interval '1 day' + interval '7 hours',
+--     35,
+--     4,
+--     3,
+--     30,
+--     'Depart ponctuel depuis le centre ville',
+--     'Devant la bibliotheque',
+--     '11111111-1111-1111-1111-111111111111'
+--   );

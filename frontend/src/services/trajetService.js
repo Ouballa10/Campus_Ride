@@ -1,8 +1,12 @@
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 export const trajetService = {};
 =======
 import {
   mapDriverReservationRecord,
+=======
+import {
+>>>>>>> origin/main
   mapPublishedTrajet,
   mapTrajetToCard,
 } from "../utils/appDataMappers";
@@ -42,8 +46,12 @@ async function fetchReservationCountsByTripIds(tripIds) {
   const { data, error } = await client
     .from("reservations")
     .select("trajet_id")
+<<<<<<< HEAD
     .in("trajet_id", tripIds)
     .neq("statut", "annulee");
+=======
+    .in("trajet_id", tripIds);
+>>>>>>> origin/main
 
   if (error) {
     throw formatSupabaseError(error, "Impossible de charger les reservations.");
@@ -55,6 +63,7 @@ async function fetchReservationCountsByTripIds(tripIds) {
   }, {});
 }
 
+<<<<<<< HEAD
 async function fetchReservationsByTripIds(tripIds) {
   if (!tripIds.length) {
     return {};
@@ -107,6 +116,18 @@ function buildDepartureAt(payload) {
   }
 
   return departureDate.toISOString();
+=======
+function buildDepartureAt(payload) {
+  if (payload.departureAt) {
+    return payload.departureAt;
+  }
+
+  if (!payload.date || !payload.time) {
+    throw new Error("La date et l'heure du trajet sont obligatoires.");
+  }
+
+  return new Date(`${payload.date}T${payload.time}`).toISOString();
+>>>>>>> origin/main
 }
 
 async function listAvailableTrajets() {
@@ -117,7 +138,11 @@ async function listAvailableTrajets() {
     .gt("places_disponibles", 0)
     .gte("departure_at", new Date().toISOString())
     .order("departure_at", { ascending: true })
+<<<<<<< HEAD
     .limit(50);
+=======
+    .limit(12);
+>>>>>>> origin/main
 
   if (error) {
     throw formatSupabaseError(error, "Impossible de charger les trajets.");
@@ -143,6 +168,7 @@ async function listPublishedTrajets(userId) {
     throw formatSupabaseError(error, "Impossible de charger tes trajets.");
   }
 
+<<<<<<< HEAD
   const tripIds = data.map((trajet) => trajet.id);
 
   try {
@@ -159,6 +185,15 @@ async function listPublishedTrajets(userId) {
       mapPublishedTrajet(trajet, reservationCounts[trajet.id] || 0),
     );
   }
+=======
+  const reservationCounts = await fetchReservationCountsByTripIds(
+    data.map((trajet) => trajet.id),
+  );
+
+  return data.map((trajet) =>
+    mapPublishedTrajet(trajet, reservationCounts[trajet.id] || 0),
+  );
+>>>>>>> origin/main
 }
 
 async function createTrajet(payload, conducteurId) {
@@ -195,4 +230,7 @@ export const trajetService = {
   listAvailableTrajets,
   listPublishedTrajets,
 };
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+>>>>>>> origin/main

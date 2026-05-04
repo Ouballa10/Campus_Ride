@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 export default function Register() {
   return <div>Register Page</div>;
@@ -6,12 +7,20 @@ import React, { useState } from "react";
 import logo from "../assets/images/logo.png";
 import { Icon } from "../components/Icons";
 import ModeSwitch from "../components/ModeSwitch";
+=======
+import React, { useState } from "react";
+import logo from "../assets/images/logo.png";
+import { Icon } from "../components/Icons";
+>>>>>>> origin/main
 import { useAuth } from "../context/AuthContext";
 
 const initialForm = {
   fullName: "",
   email: "",
+<<<<<<< HEAD
   mode: "passenger",
+=======
+>>>>>>> origin/main
   phone: "",
   password: "",
   confirmPassword: "",
@@ -64,7 +73,10 @@ export default function Register({ navigate }) {
         fullName: form.fullName,
         password: form.password,
         phone: form.phone,
+<<<<<<< HEAD
         role: form.mode === "driver" ? "conducteur" : "passager",
+=======
+>>>>>>> origin/main
       });
 
       if (response.session) {
@@ -120,6 +132,7 @@ export default function Register({ navigate }) {
         </div>
 
         <div className="auth-copy">
+<<<<<<< HEAD
           <p>Inscris-toi en quelques secondes puis switch entre passager et driver quand tu veux.</p>
         </div>
 
@@ -130,6 +143,11 @@ export default function Register({ navigate }) {
           }
         />
 
+=======
+          <p>Inscris-toi en quelques secondes pour publier ou reserver un trajet.</p>
+        </div>
+
+>>>>>>> origin/main
         {!isConfigured ? (
           <p className="auth-status auth-status--info">
             Supabase n'est pas encore configure sur had l'environnement.
@@ -238,5 +256,8 @@ export default function Register({ navigate }) {
       </div>
     </div>
   );
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+>>>>>>> origin/main
 }

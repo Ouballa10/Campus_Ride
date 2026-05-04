@@ -1,6 +1,7 @@
 import React from "react";
 import { Icon } from "./Icons";
 
+<<<<<<< HEAD
 const navItemsByMode = {
   passenger: [
     { route: "home", label: "Accueil", icon: "home" },
@@ -17,20 +18,40 @@ const navItemsByMode = {
 };
 
 function getActiveTab(route, mode) {
+=======
+const navItems = [
+  { route: "home", label: "Accueil", icon: "home" },
+  { route: "search", label: "Recherche", icon: "search" },
+  { route: "publish", label: "Publier", icon: "plus", featured: true },
+  { route: "my-trips", label: "Trajets", icon: "route" },
+  { route: "profile", label: "Profil", icon: "user" },
+];
+
+function getActiveTab(route) {
+>>>>>>> origin/main
   if (route === "reservation") {
     return "search";
   }
 
+<<<<<<< HEAD
   if (route === "my-reservations" && mode === "driver") {
+=======
+  if (route === "my-reservations") {
+>>>>>>> origin/main
     return "my-trips";
   }
 
   return route;
 }
 
+<<<<<<< HEAD
 export default function BottomNav({ mode = "passenger", route, navigate }) {
   const activeTab = getActiveTab(route, mode);
   const navItems = navItemsByMode[mode] || navItemsByMode.passenger;
+=======
+export default function BottomNav({ route, navigate }) {
+  const activeTab = getActiveTab(route);
+>>>>>>> origin/main
 
   return (
     <nav className="bottom-nav" aria-label="Navigation principale">

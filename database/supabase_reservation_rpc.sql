@@ -1,6 +1,7 @@
 alter table public.reservations
 add column if not exists message_passager text;
 
+<<<<<<< HEAD
 alter table public.reservations
 alter column statut set default 'confirmee';
 
@@ -8,6 +9,12 @@ create or replace function public.reserve_trajet_seat(
   p_trajet_id uuid,
   p_passager_id uuid,
   p_statut public.reservation_status default 'confirmee',
+=======
+create or replace function public.reserve_trajet_seat(
+  p_trajet_id uuid,
+  p_passager_id uuid,
+  p_statut public.reservation_status default 'en_attente',
+>>>>>>> origin/main
   p_message_passager text default null
 )
 returns uuid
@@ -19,10 +26,13 @@ declare
   v_trajet public.trajets%rowtype;
   v_reservation_id uuid;
 begin
+<<<<<<< HEAD
   if auth.uid() is null or auth.uid() <> p_passager_id then
     raise exception 'Session invalide pour cette reservation.';
   end if;
 
+=======
+>>>>>>> origin/main
   select *
   into v_trajet
   from public.trajets
@@ -33,10 +43,13 @@ begin
     raise exception 'Trajet introuvable.';
   end if;
 
+<<<<<<< HEAD
   if v_trajet.departure_at < now() then
     raise exception 'Ce trajet est deja passe.';
   end if;
 
+=======
+>>>>>>> origin/main
   if v_trajet.conducteur_id = p_passager_id then
     raise exception 'Tu ne peux pas reserver ton propre trajet.';
   end if;
@@ -83,10 +96,13 @@ declare
   v_reservation public.reservations%rowtype;
   v_trajet public.trajets%rowtype;
 begin
+<<<<<<< HEAD
   if auth.uid() is null or auth.uid() <> p_passager_id then
     raise exception 'Session invalide pour cette annulation.';
   end if;
 
+=======
+>>>>>>> origin/main
   select *
   into v_reservation
   from public.reservations

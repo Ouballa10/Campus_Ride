@@ -1,4 +1,5 @@
 node_modules/
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 .env
 =======
@@ -7,3 +8,8 @@ frontend/.env.local
 frontend/.env.*.local
 *.log
 >>>>>>> Stashed changes
+=======
+.env
+frontend/.env.local
+frontend/.env.*.local
+>>>>>>> origin/main

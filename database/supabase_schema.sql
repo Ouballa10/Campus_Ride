@@ -54,6 +54,7 @@ create table if not exists public.reservations (
   passager_id uuid not null references public.profiles (id) on delete cascade,
   date_reservation timestamptz not null default timezone('utc', now()),
   message_passager text,
+<<<<<<< HEAD
   statut public.reservation_status not null default 'confirmee',
   unique (trajet_id, passager_id)
 );
@@ -61,6 +62,12 @@ create table if not exists public.reservations (
 alter table public.reservations
 alter column statut set default 'confirmee';
 
+=======
+  statut public.reservation_status not null default 'en_attente',
+  unique (trajet_id, passager_id)
+);
+
+>>>>>>> origin/main
 create table if not exists public.evaluations (
   id uuid primary key default gen_random_uuid(),
   utilisateur_id uuid not null references public.profiles (id) on delete cascade,
