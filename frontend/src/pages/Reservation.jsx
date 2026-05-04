@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-export default function Reservation() {
-  return <div>Reservation Page</div>;
-=======
-=======
->>>>>>> origin/main
 import React, { useState } from "react";
 import AppHeader from "../components/AppHeader";
 import { Icon, Stars } from "../components/Icons";
@@ -56,11 +49,7 @@ export default function Reservation({
       setFeedback({ message: "", tone: "" });
       await onReserve(selectedTrip, note);
       setFeedback({
-<<<<<<< HEAD
         message: "Reservation confirmee. Elle apparait dans tes reservations.",
-=======
-        message: "Reservation enregistree avec succes.",
->>>>>>> origin/main
         tone: "success",
       });
       setNote("");
@@ -169,11 +158,7 @@ export default function Reservation({
               : isUnavailable
                 ? "Trajet complet"
                 : isSubmitting
-<<<<<<< HEAD
                   ? "Confirmation..."
-=======
-                  ? "Reservation..."
->>>>>>> origin/main
                   : "Confirmer la reservation"}
           </button>
         </div>
@@ -234,8 +219,4 @@ export default function Reservation({
       </div>
     </div>
   );
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> origin/main
 }

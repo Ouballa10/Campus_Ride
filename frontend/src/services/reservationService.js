@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-export const reservationService = {};
-=======
-=======
->>>>>>> origin/main
 import { mapReservationRecord } from "../utils/appDataMappers";
 import { requireSupabase } from "./supabaseClient";
 
@@ -208,11 +202,7 @@ async function createReservationFallback({
 async function createReservation({
   trajetId,
   passagerId,
-<<<<<<< HEAD
   statut = "confirmee",
-=======
-  statut = "en_attente",
->>>>>>> origin/main
   messagePassager = "",
 }) {
   const client = requireSupabase();
@@ -239,7 +229,6 @@ async function createReservation({
   });
 }
 
-<<<<<<< HEAD
 async function updateReservationStatus({
   conducteurId,
   reservationId,
@@ -285,8 +274,6 @@ async function updateReservationStatus({
   return data;
 }
 
-=======
->>>>>>> origin/main
 async function cancelReservationFallback({ reservationId, passagerId }) {
   const client = requireSupabase();
   const reservation = await fetchReservationById(reservationId, passagerId);
@@ -365,10 +352,5 @@ export const reservationService = {
   cancelReservation,
   createReservation,
   listReservations,
-<<<<<<< HEAD
   updateReservationStatus,
 };
->>>>>>> Stashed changes
-=======
-};
->>>>>>> origin/main

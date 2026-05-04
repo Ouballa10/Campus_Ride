@@ -29,12 +29,6 @@ import {
   getInitials,
 } from "./utils/appDataMappers";
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-export default function App() {
-  return <AppRoutes />;
-}
-=======
 const authRoutes = ["splash", "login", "register"];
 
 const appRoutes = [
@@ -116,32 +110,6 @@ function applyModeToUser(user, mode) {
     roleValue: modeConfig.roleValue,
   };
 }
-=======
-const authRoutes = ["splash", "login", "register"];
-
-const appRoutes = [
-  { route: "home", label: "Accueil" },
-  { route: "search", label: "Recherche" },
-  { route: "publish", label: "Publier" },
-  { route: "reservation", label: "Reservation" },
-  { route: "profile", label: "Profil" },
-  { route: "my-trips", label: "Mes trajets" },
-  { route: "my-reservations", label: "Reservations" },
-];
-
-const allRoutes = [...authRoutes, ...appRoutes.map((screen) => screen.route)];
-const defaultAppData = {
-  currentUser: defaultCurrentUser,
-  publishedTrips: defaultPublishedTrips,
-  reservations: defaultReservations,
-  tripOptions: defaultTripOptions,
-};
-
-function getRouteFromHash(hash) {
-  const raw = hash.replace(/^#\/?/, "");
-  return allRoutes.includes(raw) ? raw : "splash";
-}
->>>>>>> origin/main
 
 function buildDemoTripCard(payload, user, conducteurId) {
   const departureAt = new Date(`${payload.date}T${payload.time}`).toISOString();
@@ -193,10 +161,7 @@ function buildPublishedTripFromCard(trip) {
       seatsLeft <= 0
         ? "Liste complete"
         : `Encore ${seatsLeft} ${remainingLabel}`,
-<<<<<<< HEAD
     passengerReservations: trip.passengerReservations || [],
-=======
->>>>>>> origin/main
   };
 }
 
@@ -210,16 +175,11 @@ function buildDemoReservation(trip, message) {
     driver: trip.driver,
     pickup: trip.pickup,
     message: message.trim(),
-<<<<<<< HEAD
     status: "Confirmee",
-=======
-    status: "En attente",
->>>>>>> origin/main
     price: trip.price,
   };
 }
 
-<<<<<<< HEAD
 function buildDemoPassengerReservation(reservation, user) {
   return {
     id: reservation.id,
@@ -232,8 +192,6 @@ function buildDemoPassengerReservation(reservation, user) {
   };
 }
 
-=======
->>>>>>> origin/main
 function isTripOwnedByCurrentUser(trip, user, sessionUserId) {
   if (!trip || !user) {
     return false;
@@ -257,7 +215,6 @@ function App() {
 
     return getRouteFromHash(window.location.hash);
   });
-<<<<<<< HEAD
   const [activeMode, setActiveMode] = useState(() => {
     if (typeof window === "undefined") {
       return "passenger";
@@ -265,8 +222,6 @@ function App() {
 
     return readInitialMode(getRouteFromHash(window.location.hash));
   });
-=======
->>>>>>> origin/main
   const [appData, setAppData] = useState(defaultAppData);
   const [dataError, setDataError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
@@ -278,7 +233,6 @@ function App() {
 
   useEffect(() => {
     function handleHashChange() {
-<<<<<<< HEAD
       const nextRoute = getRouteFromHash(window.location.hash);
       const hintedMode = routeModeHints[nextRoute];
 
@@ -288,9 +242,6 @@ function App() {
         setActiveMode(hintedMode);
         persistMode(hintedMode);
       }
-=======
-      setRoute(getRouteFromHash(window.location.hash));
->>>>>>> origin/main
     }
 
     if (!window.location.hash) {
@@ -305,15 +256,12 @@ function App() {
     const normalizedRoute = allRoutes.includes(nextRoute)
       ? nextRoute
       : "splash";
-<<<<<<< HEAD
     const hintedMode = routeModeHints[normalizedRoute];
 
     if (hintedMode) {
       setActiveMode(hintedMode);
       persistMode(hintedMode);
     }
-=======
->>>>>>> origin/main
 
     if (typeof window !== "undefined") {
       window.location.hash = `#/${normalizedRoute}`;
@@ -322,7 +270,6 @@ function App() {
     setRoute(normalizedRoute);
   }
 
-<<<<<<< HEAD
   function handleModeChange(nextMode, preferredRoute = "") {
     const normalizedMode = normalizeMode(nextMode);
     setActiveMode(normalizedMode);
@@ -340,8 +287,6 @@ function App() {
     }
   }
 
-=======
->>>>>>> origin/main
   useEffect(() => {
     if (authLoading || !isConfigured) {
       return;
@@ -416,14 +361,9 @@ function App() {
     };
   }, [canUseSupabaseData, profile, refreshKey, sessionUserId]);
 
-<<<<<<< HEAD
   const currentUser = applyModeToUser(appData.currentUser, activeMode);
   const discoverableTrips = appData.tripOptions.filter(
     (trip) => !isTripOwnedByCurrentUser(trip, currentUser, sessionUserId),
-=======
-  const discoverableTrips = appData.tripOptions.filter(
-    (trip) => !isTripOwnedByCurrentUser(trip, appData.currentUser, sessionUserId),
->>>>>>> origin/main
   );
 
   const reservedTripIds = appData.reservations
@@ -447,11 +387,7 @@ function App() {
     }
 
     const conducteurId = sessionUserId || "demo-current-user";
-<<<<<<< HEAD
     const nextTrip = buildDemoTripCard(payload, currentUser, conducteurId);
-=======
-    const nextTrip = buildDemoTripCard(payload, appData.currentUser, conducteurId);
->>>>>>> origin/main
 
     setAppData((currentData) => ({
       ...currentData,
@@ -499,7 +435,6 @@ function App() {
           : trip,
       );
       const updatedTrip = nextTripOptions.find((trip) => trip.id === selectedTripOption.id);
-<<<<<<< HEAD
       const nextPublishedTrips = currentData.publishedTrips.map((trip) => {
         if (trip.id !== selectedTripOption.id || !updatedTrip) {
           return trip;
@@ -513,13 +448,6 @@ function App() {
           ],
         };
       });
-=======
-      const nextPublishedTrips = currentData.publishedTrips.map((trip) =>
-        trip.id === selectedTripOption.id && updatedTrip
-          ? buildPublishedTripFromCard(updatedTrip)
-          : trip,
-      );
->>>>>>> origin/main
 
       return {
         ...currentData,
@@ -575,7 +503,6 @@ function App() {
       const updatedTrip = nextTripOptions.find(
         (trip) => trip.id === reservationToCancel.trajetId,
       );
-<<<<<<< HEAD
       const nextPublishedTrips = currentData.publishedTrips.map((trip) => {
         if (trip.id !== reservationToCancel.trajetId || !updatedTrip) {
           return trip;
@@ -590,13 +517,6 @@ function App() {
           ),
         };
       });
-=======
-      const nextPublishedTrips = currentData.publishedTrips.map((trip) =>
-        trip.id === reservationToCancel.trajetId && updatedTrip
-          ? buildPublishedTripFromCard(updatedTrip)
-          : trip,
-      );
->>>>>>> origin/main
 
       return {
         ...currentData,
@@ -607,7 +527,6 @@ function App() {
     });
   }
 
-<<<<<<< HEAD
   async function handleConfirmPassengerReservation(reservationId) {
     if (canUseSupabaseData) {
       await reservationService.updateReservationStatus({
@@ -632,8 +551,6 @@ function App() {
     }));
   }
 
-=======
->>>>>>> origin/main
   const isAuthRoute = authRoutes.includes(route);
   const isSplashRoute = route === "splash";
   const showNav = !isAuthRoute;
@@ -648,7 +565,6 @@ function App() {
   } else if (route === "home") {
     screen = (
       <Home
-<<<<<<< HEAD
         mode={activeMode}
         navigate={navigate}
         onModeChange={handleModeChange}
@@ -657,12 +573,6 @@ function App() {
         reservations={appData.reservations}
         tripOptions={discoverableTrips}
         user={currentUser}
-=======
-        navigate={navigate}
-        onTripSelect={openTripReservation}
-        tripOptions={discoverableTrips}
-        user={appData.currentUser}
->>>>>>> origin/main
       />
     );
   } else if (route === "search") {
@@ -678,11 +588,7 @@ function App() {
       <PublishTrajet
         navigate={navigate}
         onPublish={handlePublish}
-<<<<<<< HEAD
         user={currentUser}
-=======
-        user={appData.currentUser}
->>>>>>> origin/main
       />
     );
   } else if (route === "reservation") {
@@ -699,31 +605,20 @@ function App() {
   } else if (route === "profile") {
     screen = (
       <Profile
-<<<<<<< HEAD
         mode={activeMode}
         navigate={navigate}
         onModeChange={handleModeChange}
         profileLinks={profileLinks}
         user={currentUser}
-=======
-        navigate={navigate}
-        profileLinks={profileLinks}
-        user={appData.currentUser}
->>>>>>> origin/main
       />
     );
   } else if (route === "my-trips") {
     screen = (
       <MyTrajets
         navigate={navigate}
-<<<<<<< HEAD
         onConfirmReservation={handleConfirmPassengerReservation}
         publishedTrips={appData.publishedTrips}
         user={currentUser}
-=======
-        publishedTrips={appData.publishedTrips}
-        user={appData.currentUser}
->>>>>>> origin/main
       />
     );
   } else {
@@ -760,7 +655,6 @@ function App() {
             ) : null}
             {screen}
           </div>
-<<<<<<< HEAD
           {showNav ? (
             <BottomNav
               mode={activeMode}
@@ -768,9 +662,6 @@ function App() {
               navigate={navigate}
             />
           ) : null}
-=======
-          {showNav ? <BottomNav route={route} navigate={navigate} /> : null}
->>>>>>> origin/main
         </div>
       </section>
     </div>
@@ -778,7 +669,3 @@ function App() {
 }
 
 export default App;
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> origin/main

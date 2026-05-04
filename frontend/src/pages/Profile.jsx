@@ -1,17 +1,7 @@
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-export default function Profile() {
-  return <div>Profile Page</div>;
-=======
 import React, { useEffect, useRef, useState } from "react";
 import AppHeader from "../components/AppHeader";
 import { Icon, Stars } from "../components/Icons";
 import ModeSwitch from "../components/ModeSwitch";
-=======
-import React, { useEffect, useRef, useState } from "react";
-import AppHeader from "../components/AppHeader";
-import { Icon, Stars } from "../components/Icons";
->>>>>>> origin/main
 import { useAuth } from "../context/AuthContext";
 import { profileService } from "../services/profileService";
 
@@ -24,30 +14,21 @@ const defaultProfileState = {
   vehicleLabel: "",
 };
 
-<<<<<<< HEAD
 function getRoleFromMode(mode = "passenger") {
   return mode === "driver" ? "conducteur" : "passager";
 }
 
 function buildProfileForm(profile, fallbackUser, mode = "passenger") {
-=======
-function buildProfileForm(profile, fallbackUser) {
->>>>>>> origin/main
   return {
     email: profile?.email || fallbackUser?.email || "",
     fullName: profile?.full_name || fallbackUser?.name || "",
     phone: profile?.phone || fallbackUser?.phone || "",
     photoProfil: profile?.photo_profil || fallbackUser?.photo || "",
-<<<<<<< HEAD
     role: getRoleFromMode(mode) || profile?.role || fallbackUser?.roleValue || "passager",
-=======
-    role: profile?.role || fallbackUser?.roleValue || "passager",
->>>>>>> origin/main
     vehicleLabel: profile?.vehicle_label || fallbackUser?.car || "",
   };
 }
 
-<<<<<<< HEAD
 export default function Profile({
   mode = "passenger",
   navigate,
@@ -55,9 +36,6 @@ export default function Profile({
   user,
   profileLinks,
 }) {
-=======
-export default function Profile({ navigate, user, profileLinks }) {
->>>>>>> origin/main
   const fileInputRef = useRef(null);
   const {
     isConfigured,
@@ -66,11 +44,7 @@ export default function Profile({ navigate, user, profileLinks }) {
     session,
     signOut,
   } = useAuth();
-<<<<<<< HEAD
   const [form, setForm] = useState(() => buildProfileForm(profile, user, mode));
-=======
-  const [form, setForm] = useState(() => buildProfileForm(profile, user));
->>>>>>> origin/main
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState("");
   const [feedback, setFeedback] = useState({ message: "", tone: "" });
@@ -93,13 +67,8 @@ export default function Profile({ navigate, user, profileLinks }) {
   };
 
   useEffect(() => {
-<<<<<<< HEAD
     setForm(buildProfileForm(profile, user, mode));
   }, [mode, profile, user]);
-=======
-    setForm(buildProfileForm(profile, user));
-  }, [profile, user]);
->>>>>>> origin/main
 
   useEffect(() => {
     return () => {
@@ -110,7 +79,6 @@ export default function Profile({ navigate, user, profileLinks }) {
   }, [photoPreview]);
 
   const avatarSource = photoPreview || form.photoProfil || displayUser.photo || "";
-<<<<<<< HEAD
   const isDriverMode = mode === "driver";
   const roleLabel = isDriverMode ? "Conducteur campus" : "Passager campus";
   const profileRoleDiffers =
@@ -124,12 +92,6 @@ export default function Profile({ navigate, user, profileLinks }) {
     JSON.stringify(form) !== JSON.stringify(buildProfileForm(profile, user, mode)) ||
     Boolean(selectedPhoto) ||
     profileRoleDiffers;
-=======
-  const roleLabel = form.role === "conducteur" ? "Conducteur campus" : "Passager campus";
-  const formDirty =
-    JSON.stringify(form) !== JSON.stringify(buildProfileForm(profile, user)) ||
-    Boolean(selectedPhoto);
->>>>>>> origin/main
 
   function updateField(event) {
     const { name, value } = event.target;
@@ -207,11 +169,7 @@ export default function Profile({ navigate, user, profileLinks }) {
         full_name: form.fullName.trim(),
         phone: form.phone.trim(),
         photo_profil: photoProfil || null,
-<<<<<<< HEAD
         role: getRoleFromMode(mode),
-=======
-        role: form.role,
->>>>>>> origin/main
         vehicle_label: form.vehicleLabel.trim(),
       });
 
@@ -261,7 +219,6 @@ export default function Profile({ navigate, user, profileLinks }) {
           <div className="profile-editor-hero__header">
             <div>
               <span className="eyebrow">Compte</span>
-<<<<<<< HEAD
               <h2>{isDriverMode ? "Profil driver" : "Profil passager"}</h2>
             </div>
             <span className="profile-editor-badge">
@@ -272,16 +229,6 @@ export default function Profile({ navigate, user, profileLinks }) {
 
           <ModeSwitch mode={mode} onChange={onModeChange} />
 
-=======
-              <h2>Modifier mon profil</h2>
-            </div>
-            <span className="profile-editor-badge">
-              <Icon name="check-badge" size={16} />
-              Profil actif
-            </span>
-          </div>
-
->>>>>>> origin/main
           <div className="profile-editor-identity">
             <div className="profile-photo-block">
               <div className="profile-photo-frame">
@@ -355,7 +302,6 @@ export default function Profile({ navigate, user, profileLinks }) {
         <form className="profile-editor-card" onSubmit={handleSave}>
           <div className="section-heading section-heading--compact">
             <div>
-<<<<<<< HEAD
               <h3>
                 {isDriverMode
                   ? "Informations conducteur"
@@ -366,10 +312,6 @@ export default function Profile({ navigate, user, profileLinks }) {
                   ? "Ajoute ton vehicule et tes coordonnees pour inspirer confiance aux passagers."
                   : "Garde tes informations propres pour confirmer les trajets plus vite."}
               </p>
-=======
-              <h3>Informations personnelles</h3>
-              <p>Un profil complet inspire plus de confiance comme sur une app VTC pro.</p>
->>>>>>> origin/main
             </div>
           </div>
 
@@ -419,7 +361,6 @@ export default function Profile({ navigate, user, profileLinks }) {
             </label>
 
             <label className="profile-editor-field">
-<<<<<<< HEAD
               <span className="profile-editor-field__label">Mode actuel</span>
               <div className="profile-editor-field__control profile-editor-field__control--disabled">
                 <Icon name={isDriverMode ? "car" : "user"} size={18} />
@@ -428,36 +369,10 @@ export default function Profile({ navigate, user, profileLinks }) {
                   name="role"
                   type="text"
                   value={roleLabel}
-=======
-              <span className="profile-editor-field__label">Role principal</span>
-              <div className="profile-editor-field__control">
-                <Icon name="user" size={18} />
-                <select
-                  name="role"
-                  value={form.role}
-                  onChange={updateField}
-                >
-                  <option value="passager">Passager</option>
-                  <option value="conducteur">Conducteur</option>
-                </select>
-              </div>
-            </label>
-
-            <label className="profile-editor-field profile-editor-field--wide">
-              <span className="profile-editor-field__label">Vehicule</span>
-              <div className="profile-editor-field__control">
-                <Icon name="car" size={18} />
-                <input
-                  name="vehicleLabel"
-                  placeholder="Ex: Dacia Logan - Blanc - 12345"
-                  type="text"
-                  value={form.vehicleLabel}
->>>>>>> origin/main
                   onChange={updateField}
                 />
               </div>
             </label>
-<<<<<<< HEAD
 
             {isDriverMode ? (
               <label className="profile-editor-field profile-editor-field--wide">
@@ -479,8 +394,6 @@ export default function Profile({ navigate, user, profileLinks }) {
                 <p>Ton vehicule reste garde pour le mode driver, sans encombrer ce profil.</p>
               </div>
             )}
-=======
->>>>>>> origin/main
           </div>
 
           {feedback.message ? (
@@ -509,11 +422,7 @@ export default function Profile({ navigate, user, profileLinks }) {
           </div>
 
           <div className="menu-list">
-<<<<<<< HEAD
             {visibleProfileLinks.map((link) => (
-=======
-            {profileLinks.map((link) => (
->>>>>>> origin/main
               <button
                 className="menu-card"
                 key={link.id}
@@ -532,8 +441,4 @@ export default function Profile({ navigate, user, profileLinks }) {
       </div>
     </div>
   );
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> origin/main
 }

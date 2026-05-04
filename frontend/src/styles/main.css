@@ -18,12 +18,6 @@ html, body, #root { min-height: 100%; }
 
 body {
   margin: 0;
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-  font-family: Arial, sans-serif;
-=======
-=======
->>>>>>> origin/main
   min-height: 100vh;
   background:
     radial-gradient(circle at top left, rgba(111, 170, 255, 0.28), transparent 34%),
@@ -1054,15 +1048,12 @@ img { display: block; max-width: 100%; }
   .stack-list--records {
     grid-template-columns: 1fr;
   }
-<<<<<<< HEAD
   .publish-flow {
     grid-template-columns: 1fr;
   }
   .publish-sidebar {
     position: static;
   }
-=======
->>>>>>> origin/main
   .screen-panel--map .artwork-panel { min-height: 0; }
   .bottom-nav {
     width: 100%;
@@ -1940,7 +1931,6 @@ img { display: block; max-width: 100%; }
   gap: 16px;
 }
 
-<<<<<<< HEAD
 .publish-flow {
   display: grid;
   grid-template-columns: 1fr;
@@ -2222,8 +2212,6 @@ img { display: block; max-width: 100%; }
   box-shadow: 0 18px 28px rgba(37, 88, 184, 0.22);
 }
 
-=======
->>>>>>> origin/main
 .reservation-route-grid {
   display: grid;
   gap: 12px;
@@ -2339,7 +2327,6 @@ img { display: block; max-width: 100%; }
     grid-template-columns: 1fr;
   }
 
-<<<<<<< HEAD
   .publish-flow,
   .publish-route-fields,
   .publish-grid,
@@ -2362,8 +2349,6 @@ img { display: block; max-width: 100%; }
     white-space: normal;
   }
 
-=======
->>>>>>> origin/main
   .home-brand-row {
     flex-direction: column;
     align-items: flex-start;
@@ -2391,8 +2376,6 @@ img { display: block; max-width: 100%; }
   .profile-editor-logout {
     width: min(100%, 240px);
   }
-<<<<<<< HEAD
->>>>>>> Stashed changes
 }
 
 .mode-switch {
@@ -2962,6 +2945,4 @@ body {
     border-left: none;
     border-radius: 22px 22px 0 0;
   }
-=======
->>>>>>> origin/main
 }

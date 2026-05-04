@@ -115,7 +115,6 @@ export function formatDuration(durationMinutes = 0) {
 }
 
 export function formatReservationStatus(status = "en_attente") {
-<<<<<<< HEAD
   const normalizedStatus = `${status}`.trim().toLowerCase();
 
   if (normalizedStatus === "confirmee") {
@@ -123,13 +122,6 @@ export function formatReservationStatus(status = "en_attente") {
   }
 
   if (normalizedStatus === "annulee") {
-=======
-  if (status === "confirmee") {
-    return "Confirmee";
-  }
-
-  if (status === "annulee") {
->>>>>>> origin/main
     return "Annulee";
   }
 
@@ -180,7 +172,6 @@ export function mapTrajetToCard(trajet, driverProfile = {}) {
   };
 }
 
-<<<<<<< HEAD
 export function mapPublishedTrajet(trajet, reservations = null) {
   const totalPlaces = toNumber(trajet.places_total, 0);
   const availablePlaces = toNumber(trajet.places_disponibles, 0);
@@ -193,11 +184,6 @@ export function mapPublishedTrajet(trajet, reservations = null) {
             (reservation) => reservation.status !== "Annulee",
           ).length
         : null;
-=======
-export function mapPublishedTrajet(trajet, reservationsCount = null) {
-  const totalPlaces = toNumber(trajet.places_total, 0);
-  const availablePlaces = toNumber(trajet.places_disponibles, 0);
->>>>>>> origin/main
   const confirmedPassengers = reservationsCount ?? Math.max(totalPlaces - availablePlaces, 0);
   const departureDate = toDate(trajet.departure_at);
 
@@ -221,10 +207,7 @@ export function mapPublishedTrajet(trajet, reservationsCount = null) {
       confirmedPassengers > 0
         ? `${confirmedPassengers} passagers confirmes`
         : `Encore ${availablePlaces} places`,
-<<<<<<< HEAD
     passengerReservations,
-=======
->>>>>>> origin/main
   };
 }
 
@@ -244,7 +227,6 @@ export function mapReservationRecord(reservation, trajet, driverProfile = {}) {
     price: toNumber(trajet?.prix_par_place, 0),
   };
 }
-<<<<<<< HEAD
 
 export function mapDriverReservationRecord(reservation, passengerProfile = {}) {
   const passengerName =
@@ -261,5 +243,3 @@ export function mapDriverReservationRecord(reservation, passengerProfile = {}) {
     createdAt: reservation.date_reservation || "",
   };
 }
-=======
->>>>>>> origin/main
