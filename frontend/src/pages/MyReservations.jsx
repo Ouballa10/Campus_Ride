@@ -1,6 +1,81 @@
 import React, { useState } from "react";
 import AppHeader from "../components/AppHeader";
 import { Icon } from "../components/Icons";
+import { getStatusPillClass, isReservationHistory } from "../utils/statusUi";
+
+function ReservationStatusSection({ children, count, title, tone }) {
+  return (
+    <section className={`reservation-status-section reservation-status-section--${tone}`}>
+      <div className="reservation-status-section__header">
+        <strong>{title}</strong>
+        <span>{count}</span>
+      </div>
+      <div className="stack-list stack-list--records">{children}</div>
+    </section>
+  );
+}
+
+function ReservationCard({ busyId, navigate, onCancelReservation, reservation }) {
+  const isCancellable = !["Annulee", "Terminee"].includes(reservation.status);
+  const cancelLabel =
+    reservation.status === "Annulee" || reservation.status === "Terminee"
+      ? reservation.status
+      : busyId === reservation.id
+        ? "Annulation..."
+        : "Annuler";
+
+  return (
+    <article className="list-card list-card--reservation" key={reservation.id}>
+      <div className="list-card__row">
+        <div>
+          <h4>{reservation.route}</h4>
+          <p>{reservation.date} - {reservation.time}</p>
+        </div>
+        <span className={getStatusPillClass(reservation.status)}>
+          {reservation.status}
+        </span>
+      </div>
+
+      <div className="card-note">
+        <strong>{reservation.driver}</strong>
+        <span>{reservation.pickup}</span>
+      </div>
+
+      {reservation.message ? (
+        <div className="message-box message-box--soft">
+          <strong>Ta note</strong>
+          <p>{reservation.message}</p>
+        </div>
+      ) : null}
+
+      <div className="trip-card__bottom">
+        <span className="meta-chip">
+          <Icon name="ticket" size={14} />
+          {reservation.price} DH
+        </span>
+
+        <div className="button-row">
+          <button
+            className="mini-button mini-button--ghost"
+            type="button"
+            onClick={() => navigate("search")}
+          >
+            Rechercher
+          </button>
+
+          <button
+            className="mini-button mini-button--ghost"
+            disabled={!isCancellable || busyId === reservation.id}
+            type="button"
+            onClick={() => onCancelReservation(reservation.id)}
+          >
+            {cancelLabel}
+          </button>
+        </div>
+      </div>
+    </article>
+  );
+}
 
 export default function MyReservations({
   navigate,
@@ -11,10 +86,13 @@ export default function MyReservations({
   const [feedback, setFeedback] = useState({ message: "", tone: "" });
   const confirmedReservations = reservations.filter(
     (reservation) => reservation.status === "Confirmee",
-  ).length;
+  );
   const pendingReservations = reservations.filter(
     (reservation) => reservation.status === "En attente",
-  ).length;
+  );
+  const historyReservations = reservations.filter((reservation) =>
+    isReservationHistory(reservation.status),
+  );
 
   async function handleCancelReservation(reservationId) {
     try {
@@ -60,11 +138,11 @@ export default function MyReservations({
             <span>au total</span>
           </div>
           <div>
-            <strong>{confirmedReservations}</strong>
+            <strong>{confirmedReservations.length}</strong>
             <span>confirmees</span>
           </div>
           <div>
-            <strong>{pendingReservations}</strong>
+            <strong>{pendingReservations.length}</strong>
             <span>en attente</span>
           </div>
         </div>
@@ -83,65 +161,63 @@ export default function MyReservations({
         </div>
       ) : null}
 
-      <div className="stack-list stack-list--records">
-        {reservations.map((reservation) => {
-          const isCancellable = reservation.status !== "Annulee";
+      {reservations.length ? (
+        <div className="reservation-page-board">
+          {pendingReservations.length ? (
+            <ReservationStatusSection
+              count={pendingReservations.length}
+              title="Demandes en attente"
+              tone="pending"
+            >
+              {pendingReservations.map((reservation) => (
+                <ReservationCard
+                  busyId={busyId}
+                  key={reservation.id}
+                  navigate={navigate}
+                  onCancelReservation={handleCancelReservation}
+                  reservation={reservation}
+                />
+              ))}
+            </ReservationStatusSection>
+          ) : null}
 
-          return (
-            <article className="list-card list-card--reservation" key={reservation.id}>
-              <div className="list-card__row">
-                <div>
-                  <h4>{reservation.route}</h4>
-                  <p>{reservation.date} - {reservation.time}</p>
-                </div>
-                <span className="pill">{reservation.status}</span>
-              </div>
+          {confirmedReservations.length ? (
+            <ReservationStatusSection
+              count={confirmedReservations.length}
+              title="Trajets confirmes"
+              tone="confirmed"
+            >
+              {confirmedReservations.map((reservation) => (
+                <ReservationCard
+                  busyId={busyId}
+                  key={reservation.id}
+                  navigate={navigate}
+                  onCancelReservation={handleCancelReservation}
+                  reservation={reservation}
+                />
+              ))}
+            </ReservationStatusSection>
+          ) : null}
 
-              <div className="card-note">
-                <strong>{reservation.driver}</strong>
-                <span>{reservation.pickup}</span>
-              </div>
-
-              {reservation.message ? (
-                <div className="message-box message-box--soft">
-                  <strong>Ta note</strong>
-                  <p>{reservation.message}</p>
-                </div>
-              ) : null}
-
-              <div className="trip-card__bottom">
-                <span className="meta-chip">
-                  <Icon name="ticket" size={14} />
-                  {reservation.price} DH
-                </span>
-
-                <div className="button-row">
-                  <button
-                    className="mini-button mini-button--ghost"
-                    type="button"
-                    onClick={() => navigate("search")}
-                  >
-                    Rechercher
-                  </button>
-
-                  <button
-                    className="mini-button mini-button--ghost"
-                    disabled={!isCancellable || busyId === reservation.id}
-                    type="button"
-                    onClick={() => handleCancelReservation(reservation.id)}
-                  >
-                    {reservation.status === "Annulee"
-                      ? "Annulee"
-                      : busyId === reservation.id
-                        ? "Annulation..."
-                        : "Annuler"}
-                  </button>
-                </div>
-              </div>
-            </article>
-          );
-        })}
-      </div>
+          {historyReservations.length ? (
+            <ReservationStatusSection
+              count={historyReservations.length}
+              title="Historique"
+              tone="history"
+            >
+              {historyReservations.map((reservation) => (
+                <ReservationCard
+                  busyId={busyId}
+                  key={reservation.id}
+                  navigate={navigate}
+                  onCancelReservation={handleCancelReservation}
+                  reservation={reservation}
+                />
+              ))}
+            </ReservationStatusSection>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

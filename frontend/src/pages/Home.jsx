@@ -5,6 +5,7 @@ import AppHeader from "../components/AppHeader";
 import { Icon } from "../components/Icons";
 import ModeSwitch from "../components/ModeSwitch";
 import TrajetCard from "../components/TrajetCard";
+import { getStatusPillClass } from "../utils/statusUi";
 
 export default function Home({
   mode,
@@ -183,7 +184,9 @@ export default function Home({
                     <h4>{trip.route}</h4>
                     <p>{trip.date} - {trip.time}</p>
                   </div>
-                  <span className="pill">{trip.status}</span>
+                  <span className={getStatusPillClass(trip.status)}>
+                    {trip.status}
+                  </span>
                 </div>
                 <div className="trip-card__meta">
                   <span className="meta-chip">
