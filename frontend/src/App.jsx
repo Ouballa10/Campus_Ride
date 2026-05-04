@@ -1,6 +1,649 @@
 import AppRoutes from './routes/AppRoutes';
 import './styles/main.css';
 
+<<<<<<< Updated upstream
 export default function App() {
   return <AppRoutes />;
 }
+=======
+const authRoutes = ["splash", "login", "register"];
+
+const appRoutes = [
+  { route: "home", label: "Accueil" },
+  { route: "search", label: "Recherche" },
+  { route: "publish", label: "Publier" },
+  { route: "reservation", label: "Reservation" },
+  { route: "profile", label: "Profil" },
+  { route: "my-trips", label: "Mes trajets" },
+  { route: "my-reservations", label: "Reservations" },
+];
+
+const allRoutes = [...authRoutes, ...appRoutes.map((screen) => screen.route)];
+const defaultAppData = {
+  currentUser: defaultCurrentUser,
+  publishedTrips: defaultPublishedTrips,
+  reservations: defaultReservations,
+  tripOptions: defaultTripOptions,
+};
+
+const appModeConfig = {
+  passenger: {
+    defaultRoute: "search",
+    label: "Passager",
+    role: "Etudiant passager",
+    roleValue: "passager",
+  },
+  driver: {
+    defaultRoute: "my-trips",
+    label: "Driver",
+    role: "Etudiant conducteur",
+    roleValue: "conducteur",
+  },
+};
+
+const routeModeHints = {
+  publish: "driver",
+  "my-trips": "driver",
+  reservation: "passenger",
+  search: "passenger",
+  "my-reservations": "passenger",
+};
+
+function getRouteFromHash(hash) {
+  const raw = hash.replace(/^#\/?/, "");
+  return allRoutes.includes(raw) ? raw : "splash";
+}
+
+function normalizeMode(mode) {
+  return mode === "driver" ? "driver" : "passenger";
+}
+
+function persistMode(mode) {
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem("campusride-mode", normalizeMode(mode));
+  }
+}
+
+function readInitialMode(initialRoute) {
+  const hintedMode = routeModeHints[initialRoute];
+
+  if (hintedMode) {
+    return hintedMode;
+  }
+
+  if (typeof window !== "undefined") {
+    return normalizeMode(window.localStorage.getItem("campusride-mode"));
+  }
+
+  return "passenger";
+}
+
+function applyModeToUser(user, mode) {
+  const modeConfig = appModeConfig[normalizeMode(mode)];
+
+  return {
+    ...user,
+    role: modeConfig.role,
+    roleValue: modeConfig.roleValue,
+  };
+}
+
+function buildDemoTripCard(payload, user, conducteurId) {
+  const departureAt = new Date(`${payload.date}T${payload.time}`).toISOString();
+  const seats = Number(payload.seats || 1);
+  const durationMinutes = Number(payload.durationMinutes || 30);
+  const price = Number(payload.price || 0);
+  const pickup = payload.pickupNote?.trim() || "Point de rendez-vous confirme apres reservation";
+
+  return {
+    id: `demo-trip-${Date.now()}`,
+    depart: payload.depart.trim(),
+    destination: payload.destination.trim(),
+    routeLabel: `${payload.depart.trim()} - ${payload.destination.trim()}`,
+    conducteurId,
+    departureAt,
+    durationMinutes,
+    time: formatTimeWindow(departureAt, durationMinutes),
+    driver: user.name,
+    driverInitials: user.initials || getInitials(user.name),
+    car: user.car || "Vehicule a renseigner",
+    seats,
+    totalSeats: seats,
+    duration: formatDuration(durationMinutes),
+    price,
+    rating: Number(user.rating || 0),
+    role: user.role,
+    description: payload.description?.trim() || "",
+    pickup,
+    pickupNote: pickup,
+  };
+}
+
+function buildPublishedTripFromCard(trip) {
+  const seatsLeft = Number(trip.seats || 0);
+  const totalSeats = Number(trip.totalSeats || trip.seats || 0);
+  const isPast = new Date(trip.departureAt) < new Date();
+  const status = isPast ? "Passe" : seatsLeft <= 0 ? "Complet" : "Actif";
+  const remainingLabel = seatsLeft > 1 ? "places" : "place";
+
+  return {
+    id: trip.id,
+    route: trip.routeLabel,
+    date: formatRelativeDate(trip.departureAt),
+    time: formatClock(trip.departureAt),
+    price: trip.price,
+    seats: `${seatsLeft}/${totalSeats}`,
+    status,
+    passengers:
+      seatsLeft <= 0
+        ? "Liste complete"
+        : `Encore ${seatsLeft} ${remainingLabel}`,
+    passengerReservations: trip.passengerReservations || [],
+  };
+}
+
+function buildDemoReservation(trip, message) {
+  return {
+    id: `demo-reservation-${Date.now()}`,
+    trajetId: trip.id,
+    route: trip.routeLabel,
+    date: formatRelativeDate(trip.departureAt),
+    time: formatClock(trip.departureAt),
+    driver: trip.driver,
+    pickup: trip.pickup,
+    message: message.trim(),
+    status: "Confirmee",
+    price: trip.price,
+  };
+}
+
+function buildDemoPassengerReservation(reservation, user) {
+  return {
+    id: reservation.id,
+    passenger: user.name,
+    passengerInitials: user.initials,
+    phone: user.phone,
+    status: reservation.status,
+    message: reservation.message,
+    createdAt: new Date().toISOString(),
+  };
+}
+
+function isTripOwnedByCurrentUser(trip, user, sessionUserId) {
+  if (!trip || !user) {
+    return false;
+  }
+
+  if (sessionUserId && trip.conducteurId) {
+    return trip.conducteurId === sessionUserId;
+  }
+
+  return (
+    trip.driver?.trim().toLowerCase() === user.name?.trim().toLowerCase()
+  );
+}
+
+function App() {
+  const { isConfigured, loading: authLoading, profile, session } = useAuth();
+  const [route, setRoute] = useState(() => {
+    if (typeof window === "undefined") {
+      return "splash";
+    }
+
+    return getRouteFromHash(window.location.hash);
+  });
+  const [activeMode, setActiveMode] = useState(() => {
+    if (typeof window === "undefined") {
+      return "passenger";
+    }
+
+    return readInitialMode(getRouteFromHash(window.location.hash));
+  });
+  const [appData, setAppData] = useState(defaultAppData);
+  const [dataError, setDataError] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [selectedTripId, setSelectedTripId] = useState("");
+
+  const sessionUserId = session?.user?.id || "";
+  const demoMode = !isConfigured;
+  const canUseSupabaseData = isConfigured && Boolean(sessionUserId);
+
+  useEffect(() => {
+    function handleHashChange() {
+      const nextRoute = getRouteFromHash(window.location.hash);
+      const hintedMode = routeModeHints[nextRoute];
+
+      setRoute(nextRoute);
+
+      if (hintedMode) {
+        setActiveMode(hintedMode);
+        persistMode(hintedMode);
+      }
+    }
+
+    if (!window.location.hash) {
+      window.location.hash = "#/splash";
+    }
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  function navigate(nextRoute) {
+    const normalizedRoute = allRoutes.includes(nextRoute)
+      ? nextRoute
+      : "splash";
+    const hintedMode = routeModeHints[normalizedRoute];
+
+    if (hintedMode) {
+      setActiveMode(hintedMode);
+      persistMode(hintedMode);
+    }
+
+    if (typeof window !== "undefined") {
+      window.location.hash = `#/${normalizedRoute}`;
+    }
+
+    setRoute(normalizedRoute);
+  }
+
+  function handleModeChange(nextMode, preferredRoute = "") {
+    const normalizedMode = normalizeMode(nextMode);
+    setActiveMode(normalizedMode);
+    persistMode(normalizedMode);
+
+    if (preferredRoute) {
+      navigate(preferredRoute);
+      return;
+    }
+
+    const routeMode = routeModeHints[route];
+
+    if (routeMode && routeMode !== normalizedMode) {
+      navigate(appModeConfig[normalizedMode].defaultRoute);
+    }
+  }
+
+  useEffect(() => {
+    if (authLoading || !isConfigured) {
+      return;
+    }
+
+    if (!sessionUserId && !authRoutes.includes(route)) {
+      navigate("splash");
+      return;
+    }
+
+    if (sessionUserId && authRoutes.includes(route)) {
+      navigate("home");
+    }
+  }, [authLoading, isConfigured, route, sessionUserId]);
+
+  useEffect(() => {
+    if (!canUseSupabaseData) {
+      setDataError("");
+      setAppData(defaultAppData);
+      return;
+    }
+
+    let isActive = true;
+
+    async function loadSupabaseData() {
+      try {
+        const [availableTrajets, myTrajets, myReservations] = await Promise.all([
+          trajetService.listAvailableTrajets(),
+          trajetService.listPublishedTrajets(sessionUserId),
+          reservationService.listReservations(sessionUserId),
+        ]);
+
+        if (!isActive) {
+          return;
+        }
+
+        setDataError("");
+        setAppData({
+          currentUser: buildCurrentUser(profile, {
+            reservationsCount: myReservations.length,
+            reviewCount: 0,
+            tripsCount: myTrajets.length,
+          }),
+          publishedTrips: myTrajets,
+          reservations: myReservations,
+          tripOptions: availableTrajets,
+        });
+      } catch (error) {
+        if (!isActive) {
+          return;
+        }
+
+        console.error("Supabase data sync failed:", error);
+        setDataError(error.message || "Synchronisation Supabase impossible.");
+        setAppData({
+          currentUser: buildCurrentUser(profile, {
+            reservationsCount: 0,
+            reviewCount: 0,
+            tripsCount: 0,
+          }),
+          publishedTrips: [],
+          reservations: [],
+          tripOptions: [],
+        });
+      }
+    }
+
+    loadSupabaseData();
+
+    return () => {
+      isActive = false;
+    };
+  }, [canUseSupabaseData, profile, refreshKey, sessionUserId]);
+
+  const currentUser = applyModeToUser(appData.currentUser, activeMode);
+  const discoverableTrips = appData.tripOptions.filter(
+    (trip) => !isTripOwnedByCurrentUser(trip, currentUser, sessionUserId),
+  );
+
+  const reservedTripIds = appData.reservations
+    .filter((reservation) => reservation.status !== "Annulee")
+    .map((reservation) => reservation.trajetId)
+    .filter(Boolean);
+
+  const selectedTrip =
+    discoverableTrips.find((trip) => trip.id === selectedTripId) || null;
+
+  function openTripReservation(tripId) {
+    setSelectedTripId(tripId);
+    navigate("reservation");
+  }
+
+  async function handlePublish(payload) {
+    if (canUseSupabaseData) {
+      await trajetService.createTrajet(payload, sessionUserId);
+      setRefreshKey((currentKey) => currentKey + 1);
+      return;
+    }
+
+    const conducteurId = sessionUserId || "demo-current-user";
+    const nextTrip = buildDemoTripCard(payload, currentUser, conducteurId);
+
+    setAppData((currentData) => ({
+      ...currentData,
+      currentUser: {
+        ...currentData.currentUser,
+        tripsCount: currentData.currentUser.tripsCount + 1,
+      },
+      publishedTrips: [
+        buildPublishedTripFromCard(nextTrip),
+        ...currentData.publishedTrips,
+      ],
+      tripOptions: [nextTrip, ...currentData.tripOptions],
+    }));
+  }
+
+  async function handleReserve(selectedTripOption, message) {
+    if (!selectedTripOption?.id) {
+      throw new Error("Choisis d'abord un trajet avant de reserver.");
+    }
+
+    if (reservedTripIds.includes(selectedTripOption.id)) {
+      throw new Error("Ce trajet est deja present dans tes reservations.");
+    }
+
+    if (selectedTripOption.seats <= 0) {
+      throw new Error("Ce trajet n'a plus de place disponible.");
+    }
+
+    if (canUseSupabaseData) {
+      await reservationService.createReservation({
+        trajetId: selectedTripOption.id,
+        passagerId: sessionUserId,
+        messagePassager: message,
+      });
+      setRefreshKey((currentKey) => currentKey + 1);
+      return;
+    }
+
+    const nextReservation = buildDemoReservation(selectedTripOption, message);
+
+    setAppData((currentData) => {
+      const nextTripOptions = currentData.tripOptions.map((trip) =>
+        trip.id === selectedTripOption.id
+          ? { ...trip, seats: Math.max(Number(trip.seats) - 1, 0) }
+          : trip,
+      );
+      const updatedTrip = nextTripOptions.find((trip) => trip.id === selectedTripOption.id);
+      const nextPublishedTrips = currentData.publishedTrips.map((trip) => {
+        if (trip.id !== selectedTripOption.id || !updatedTrip) {
+          return trip;
+        }
+
+        return {
+          ...buildPublishedTripFromCard(updatedTrip),
+          passengerReservations: [
+            buildDemoPassengerReservation(nextReservation, currentUser),
+            ...(trip.passengerReservations || []),
+          ],
+        };
+      });
+
+      return {
+        ...currentData,
+        currentUser: {
+          ...currentData.currentUser,
+          reservationsCount: currentData.currentUser.reservationsCount + 1,
+        },
+        publishedTrips: nextPublishedTrips,
+        reservations: [nextReservation, ...currentData.reservations],
+        tripOptions: nextTripOptions,
+      };
+    });
+  }
+
+  async function handleCancelReservation(reservationId) {
+    if (canUseSupabaseData) {
+      await reservationService.cancelReservation({
+        reservationId,
+        passagerId: sessionUserId,
+      });
+      setRefreshKey((currentKey) => currentKey + 1);
+      return;
+    }
+
+    const reservationToCancel = appData.reservations.find(
+      (reservation) => reservation.id === reservationId,
+    );
+
+    if (!reservationToCancel) {
+      throw new Error("Reservation introuvable.");
+    }
+
+    if (reservationToCancel.status === "Annulee") {
+      return;
+    }
+
+    setAppData((currentData) => {
+      const nextReservations = currentData.reservations.map((reservation) =>
+        reservation.id === reservationId
+          ? { ...reservation, status: "Annulee" }
+          : reservation,
+      );
+      const nextTripOptions = currentData.tripOptions.map((trip) => {
+        if (trip.id !== reservationToCancel.trajetId) {
+          return trip;
+        }
+
+        return {
+          ...trip,
+          seats: Math.min(Number(trip.totalSeats || trip.seats), Number(trip.seats) + 1),
+        };
+      });
+      const updatedTrip = nextTripOptions.find(
+        (trip) => trip.id === reservationToCancel.trajetId,
+      );
+      const nextPublishedTrips = currentData.publishedTrips.map((trip) => {
+        if (trip.id !== reservationToCancel.trajetId || !updatedTrip) {
+          return trip;
+        }
+
+        return {
+          ...buildPublishedTripFromCard(updatedTrip),
+          passengerReservations: (trip.passengerReservations || []).map((reservation) =>
+            reservation.id === reservationId
+              ? { ...reservation, status: "Annulee" }
+              : reservation,
+          ),
+        };
+      });
+
+      return {
+        ...currentData,
+        publishedTrips: nextPublishedTrips,
+        reservations: nextReservations,
+        tripOptions: nextTripOptions,
+      };
+    });
+  }
+
+  async function handleConfirmPassengerReservation(reservationId) {
+    if (canUseSupabaseData) {
+      await reservationService.updateReservationStatus({
+        conducteurId: sessionUserId,
+        reservationId,
+        statut: "confirmee",
+      });
+      setRefreshKey((currentKey) => currentKey + 1);
+      return;
+    }
+
+    setAppData((currentData) => ({
+      ...currentData,
+      publishedTrips: currentData.publishedTrips.map((trip) => ({
+        ...trip,
+        passengerReservations: (trip.passengerReservations || []).map((reservation) =>
+          reservation.id === reservationId
+            ? { ...reservation, status: "Confirmee" }
+            : reservation,
+        ),
+      })),
+    }));
+  }
+
+  const isAuthRoute = authRoutes.includes(route);
+  const isSplashRoute = route === "splash";
+  const showNav = !isAuthRoute;
+  let screen = null;
+
+  if (route === "splash") {
+    screen = <Splash navigate={navigate} />;
+  } else if (route === "login") {
+    screen = <Login navigate={navigate} />;
+  } else if (route === "register") {
+    screen = <Register navigate={navigate} />;
+  } else if (route === "home") {
+    screen = (
+      <Home
+        mode={activeMode}
+        navigate={navigate}
+        onModeChange={handleModeChange}
+        onTripSelect={openTripReservation}
+        publishedTrips={appData.publishedTrips}
+        reservations={appData.reservations}
+        tripOptions={discoverableTrips}
+        user={currentUser}
+      />
+    );
+  } else if (route === "search") {
+    screen = (
+      <SearchTrajet
+        navigate={navigate}
+        onTripSelect={openTripReservation}
+        tripOptions={discoverableTrips}
+      />
+    );
+  } else if (route === "publish") {
+    screen = (
+      <PublishTrajet
+        navigate={navigate}
+        onPublish={handlePublish}
+        user={currentUser}
+      />
+    );
+  } else if (route === "reservation") {
+    screen = (
+      <Reservation
+        navigate={navigate}
+        onReserve={handleReserve}
+        onTripSelect={openTripReservation}
+        reservedTripIds={reservedTripIds}
+        selectedTrip={selectedTrip}
+        tripOptions={discoverableTrips}
+      />
+    );
+  } else if (route === "profile") {
+    screen = (
+      <Profile
+        mode={activeMode}
+        navigate={navigate}
+        onModeChange={handleModeChange}
+        profileLinks={profileLinks}
+        user={currentUser}
+      />
+    );
+  } else if (route === "my-trips") {
+    screen = (
+      <MyTrajets
+        navigate={navigate}
+        onConfirmReservation={handleConfirmPassengerReservation}
+        publishedTrips={appData.publishedTrips}
+        user={currentUser}
+      />
+    );
+  } else {
+    screen = (
+      <MyReservations
+        navigate={navigate}
+        onCancelReservation={handleCancelReservation}
+        reservations={appData.reservations}
+      />
+    );
+  }
+
+  return (
+    <div className="app-shell">
+      <section className="site-stage site-stage--single">
+        <div className="stage-orb stage-orb--one" />
+        <div className="stage-orb stage-orb--two" />
+
+        <div
+          className={[
+            "phone-shell",
+            isAuthRoute ? "phone-shell--auth" : "phone-shell--app",
+            isSplashRoute ? "phone-shell--splash" : "",
+          ].filter(Boolean).join(" ")}
+        >
+          <div
+            className={[
+              "phone-shell__body",
+              isSplashRoute ? "phone-shell__body--splash" : "",
+            ].filter(Boolean).join(" ")}
+          >
+            {dataError && !demoMode && !isAuthRoute ? (
+              <div className="sync-banner sync-banner--error">{dataError}</div>
+            ) : null}
+            {screen}
+          </div>
+          {showNav ? (
+            <BottomNav
+              mode={activeMode}
+              route={route}
+              navigate={navigate}
+            />
+          ) : null}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+export default App;
+>>>>>>> Stashed changes
