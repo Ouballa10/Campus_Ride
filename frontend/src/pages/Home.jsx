@@ -6,10 +6,6 @@ import { Icon } from "../components/Icons";
 import ModeSwitch from "../components/ModeSwitch";
 import TrajetCard from "../components/TrajetCard";
 
-function getFirstActive(items = []) {
-  return items.find((item) => item.status !== "Annulee" && item.status !== "Terminee") || null;
-}
-
 export default function Home({
   mode,
   navigate,
@@ -27,9 +23,6 @@ export default function Home({
   const confirmedReservations = reservations.filter(
     (reservation) => reservation.status === "Confirmee",
   ).length;
-  const pendingReservations = reservations.filter(
-    (reservation) => reservation.status === "En attente",
-  ).length;
   const passengerCount = publishedTrips.reduce(
     (total, trip) =>
       total +
@@ -38,17 +31,6 @@ export default function Home({
       ).length,
     0,
   );
-  const nextPassengerRide = getFirstActive(reservations);
-  const nextDriverTrip = getFirstActive(publishedTrips);
-  const pendingRequests = publishedTrips.reduce(
-    (total, trip) =>
-      total +
-      (trip.passengerReservations || []).filter(
-        (reservation) => reservation.status === "En attente",
-      ).length,
-    0,
-  );
-  const headlineTrip = isDriverMode ? nextDriverTrip : nextPassengerRide;
 
   return (
     <div className="screen screen--home">
@@ -60,45 +42,6 @@ export default function Home({
       />
 
       <ModeSwitch mode={mode} onChange={onModeChange} />
-
-      <section className={`ride-command ride-command--${isDriverMode ? "driver" : "passenger"}`}>
-        <div className="ride-command__copy">
-          <span className="eyebrow">{isDriverMode ? "Driver cockpit" : "Passenger cockpit"}</span>
-          <h2>{isDriverMode ? "Tes courses, tes demandes, ton planning" : "Trouve ton prochain trajet sans friction"}</h2>
-          <p>
-            {isDriverMode
-              ? "Pilote tes annonces comme un tableau de bord: demandes en attente, places restantes et departs proches."
-              : "Compare les drivers, choisis le trajet et garde le suivi jusqu'a la confirmation."}
-          </p>
-        </div>
-
-        <div className="ride-command__panel">
-          <div className="ride-command__status">
-            <span>{isDriverMode ? "Demandes" : "Statut"}</span>
-            <strong>
-              {isDriverMode
-                ? pendingRequests
-                  ? `${pendingRequests} a traiter`
-                  : "A jour"
-                : nextPassengerRide?.status || "Pret"}
-            </strong>
-          </div>
-          <div className="ride-command__route">
-            <span className="ride-command__dot" />
-            <div>
-              <strong>{headlineTrip?.route || headlineTrip?.routeLabel || "Aucun trajet actif"}</strong>
-              <span>{headlineTrip ? `${headlineTrip.date || "Aujourd'hui"} - ${headlineTrip.time}` : "Lance une recherche ou publie une annonce"}</span>
-            </div>
-          </div>
-          <button
-            className="primary-button ride-command__cta"
-            type="button"
-            onClick={() => navigate(isDriverMode ? "publish" : "search")}
-          >
-            {isDriverMode ? "Publier une course" : "Trouver un trajet"}
-          </button>
-        </div>
-      </section>
 
       <section className="home-hero-card">
         <div className="home-hero-card__copy">
@@ -130,8 +73,8 @@ export default function Home({
               <span>{isDriverMode ? "actifs" : "reservations"}</span>
             </div>
             <div>
-              <strong>{isDriverMode ? passengerCount : pendingReservations}</strong>
-              <span>{isDriverMode ? "passagers" : "en attente"}</span>
+              <strong>{isDriverMode ? passengerCount : confirmedReservations}</strong>
+              <span>{isDriverMode ? "passagers" : "confirmees"}</span>
             </div>
           </div>
         </div>
@@ -213,7 +156,7 @@ export default function Home({
           </div>
         ) : null}
 
-        {isDriverMode && !featuredPublishedTrips.length ? (
+            {isDriverMode && !featuredPublishedTrips.length ? (
           <div className="message-box">
             <strong>Aucune annonce driver</strong>
             <p>Publie ton premier trajet pour recevoir des demandes passagers.</p>

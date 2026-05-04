@@ -2,10 +2,6 @@ import React, { useState } from "react";
 import AppHeader from "../components/AppHeader";
 import { Icon } from "../components/Icons";
 
-function getStatusClass(status = "") {
-  return `status-pill status-pill--${status.toLowerCase().replace(/\s+/g, "-")}`;
-}
-
 export default function MyReservations({
   navigate,
   onCancelReservation,
@@ -19,12 +15,6 @@ export default function MyReservations({
   const pendingReservations = reservations.filter(
     (reservation) => reservation.status === "En attente",
   ).length;
-  const activeReservations = reservations.filter(
-    (reservation) => !["Annulee", "Terminee"].includes(reservation.status),
-  );
-  const historyReservations = reservations.filter(
-    (reservation) => ["Annulee", "Terminee"].includes(reservation.status),
-  );
 
   async function handleCancelReservation(reservationId) {
     try {
@@ -93,44 +83,18 @@ export default function MyReservations({
         </div>
       ) : null}
 
-      <section className="ride-board">
-        <div className="section-heading section-heading--compact">
-          <div>
-            <h3>Trajets actifs</h3>
-            <p>Les demandes et reservations qui comptent maintenant.</p>
-          </div>
-          <span className="status-count">{activeReservations.length}</span>
-        </div>
+      <div className="stack-list stack-list--records">
+        {reservations.map((reservation) => {
+          const isCancellable = reservation.status !== "Annulee";
 
-        <div className="stack-list stack-list--records">
-          {activeReservations.map((reservation) => {
-            const isCancellable = reservation.status !== "Annulee";
-
-            return (
-              <article className="list-card list-card--reservation ride-card" key={reservation.id}>
+          return (
+            <article className="list-card list-card--reservation" key={reservation.id}>
               <div className="list-card__row">
                 <div>
                   <h4>{reservation.route}</h4>
                   <p>{reservation.date} - {reservation.time}</p>
                 </div>
-                <span className={getStatusClass(reservation.status)}>{reservation.status}</span>
-              </div>
-
-              <div className="ride-timeline">
-                <div className="ride-timeline__stop">
-                  <span className="ride-timeline__pin ride-timeline__pin--start" />
-                  <div>
-                    <strong>{reservation.route.split(" - ")[0] || "Depart"}</strong>
-                    <span>{reservation.pickup}</span>
-                  </div>
-                </div>
-                <div className="ride-timeline__stop">
-                  <span className="ride-timeline__pin ride-timeline__pin--end" />
-                  <div>
-                    <strong>{reservation.route.split(" - ")[1] || "Destination"}</strong>
-                    <span>{reservation.driver}</span>
-                  </div>
-                </div>
+                <span className="pill">{reservation.status}</span>
               </div>
 
               <div className="card-note">
@@ -174,52 +138,10 @@ export default function MyReservations({
                   </button>
                 </div>
               </div>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="ride-board ride-board--history">
-        <div className="section-heading section-heading--compact">
-          <div>
-            <h3>Historique</h3>
-            <p>Les trajets termines ou annules restent propres ici.</p>
-          </div>
-          <span className="status-count">{historyReservations.length}</span>
-        </div>
-
-        {!historyReservations.length ? (
-          <div className="message-box message-box--soft">
-            <strong>Aucun historique encore</strong>
-            <p>Les anciens trajets apparaitront ici apres annulation ou fin de course.</p>
-          </div>
-        ) : null}
-
-        <div className="stack-list stack-list--records">
-          {historyReservations.map((reservation) => (
-            <article className="list-card list-card--reservation ride-card ride-card--muted" key={reservation.id}>
-              <div className="list-card__row">
-                <div>
-                  <h4>{reservation.route}</h4>
-                  <p>{reservation.date} - {reservation.time}</p>
-                </div>
-                <span className={getStatusClass(reservation.status)}>{reservation.status}</span>
-              </div>
-              <div className="trip-card__meta">
-                <span className="meta-chip">
-                  <Icon name="user" size={14} />
-                  {reservation.driver}
-                </span>
-                <span className="meta-chip">
-                  <Icon name="ticket" size={14} />
-                  {reservation.price} DH
-                </span>
-              </div>
             </article>
-          ))}
-        </div>
-      </section>
+          );
+        })}
+      </div>
     </div>
   );
 }
