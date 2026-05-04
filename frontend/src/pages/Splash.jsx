@@ -1,5 +1,24 @@
 import React, { useState } from "react";
 import { SplashHeroArtwork } from "../components/Artwork";
+import { Icon } from "../components/Icons";
+
+const splashHighlights = [
+  {
+    icon: "send",
+    title: "Rapide",
+    copy: "Trouvez votre trajet en quelques clics.",
+  },
+  {
+    icon: "shield",
+    title: "Securise",
+    copy: "Vos trajets sont verifies et rassurants.",
+  },
+  {
+    icon: "location",
+    title: "Partout",
+    copy: "Disponible sur tous les campus.",
+  },
+];
 
 export default function Splash({ navigate }) {
   const [useFallbackArtwork, setUseFallbackArtwork] = useState(false);
@@ -40,7 +59,10 @@ export default function Splash({ navigate }) {
     <div className="screen screen--splash">
       <div className="splash-screen splash-screen--full-image">
         <div className="splash-body splash-body--full-image">
-          <div className="splash-hero splash-hero--full-image">
+          <div
+            className="splash-hero splash-hero--full-image"
+            style={{ "--splash-bg-image": `url(${slides[currentSlide].src})` }}
+          >
             {useFallbackArtwork ? (
               <SplashHeroArtwork />
             ) : (
@@ -55,16 +77,31 @@ export default function Splash({ navigate }) {
         </div>
 
         <div className="splash-footer splash-footer--overlay">
-          <button
-            type="button"
-            className="splash-next-chip"
-            onClick={handleNext}
-          >
-            <span className="splash-next-chip__label">Suivant</span>
-            <span className="splash-next-chip__icon" aria-hidden="true">
-              &rarr;
-            </span>
-          </button>
+          {currentSlide === 0 ? (
+            <div className="splash-highlights" aria-label="Points forts CampusRide">
+              {splashHighlights.map((item) => (
+                <article className="splash-highlight-card" key={item.title}>
+                  <span className="splash-highlight-card__icon">
+                    <Icon name={item.icon} size={24} />
+                  </span>
+                  <strong>{item.title}</strong>
+                  <p>{item.copy}</p>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="splash-next-chip"
+              onClick={handleNext}
+            >
+              <span className="splash-next-chip__label">Suivant</span>
+              <span className="splash-next-chip__icon" aria-hidden="true">
+                &rarr;
+              </span>
+            </button>
+          )}
+
           <div className="splash-dots" aria-label="Navigation des pages">
             <button
               type="button"
