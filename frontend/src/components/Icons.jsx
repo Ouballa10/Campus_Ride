@@ -11,6 +11,45 @@ function iconPaths(name) {
     );
   }
 
+  if (name === "x") {
+    return (
+      <>
+        <path d="M6 6l12 12" />
+        <path d="M18 6 6 18" />
+      </>
+    );
+  }
+
+  if (name === "settings") {
+    return (
+      <>
+        <path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z" />
+        <path d="m12 3 1.2 2.1 2.4.6 2-1.1 1.8 3.1-1.8 1.5.2 2.8 1.8 1.5-1.8 3.1-2-1.1-2.4.6L12 21l-1.2-2.1-2.4-.6-2 1.1-1.8-3.1 1.8-1.5-.2-2.8-1.8-1.5 1.8-3.1 2 1.1 2.4-.6Z" />
+      </>
+    );
+  }
+
+  if (name === "image") {
+    return (
+      <>
+        <rect x="4" y="5" width="16" height="14" rx="3" />
+        <circle cx="9" cy="10" r="1.6" />
+        <path d="m7 17 3.8-4 2.7 2.8 1.9-2 2.6 3.2" />
+      </>
+    );
+  }
+
+  if (name === "id-card") {
+    return (
+      <>
+        <rect x="4" y="6" width="16" height="12" rx="3" />
+        <circle cx="9" cy="12" r="2" />
+        <path d="M13 10h4" />
+        <path d="M13 14h3" />
+      </>
+    );
+  }
+
   if (name === "search") {
     return (
       <>

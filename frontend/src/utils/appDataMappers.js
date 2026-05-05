@@ -34,6 +34,41 @@ export function formatRole(role = "passager") {
   return "Etudiant passager";
 }
 
+function normalizeVehiclePhotos(value) {
+  if (Array.isArray(value)) {
+    return value.filter((item) => typeof item === "string" && item.trim());
+  }
+
+  if (typeof value === "string" && value.trim()) {
+    try {
+      const parsedValue = JSON.parse(value);
+
+      if (Array.isArray(parsedValue)) {
+        return normalizeVehiclePhotos(parsedValue);
+      }
+    } catch {
+      return [value];
+    }
+  }
+
+  return [];
+}
+
+function formatVehicleLabel(profile = {}) {
+  const safeProfile = profile || {};
+  const vehicleName = [safeProfile.vehicle_make, safeProfile.vehicle_model]
+    .map((item) => `${item || ""}`.trim())
+    .filter(Boolean)
+    .join(" ");
+  const vehicleDetails = [safeProfile.vehicle_color, safeProfile.vehicle_plate]
+    .map((item) => `${item || ""}`.trim())
+    .filter(Boolean);
+
+  return [vehicleName, ...vehicleDetails].filter(Boolean).join(" - ") ||
+    safeProfile.vehicle_label ||
+    "";
+}
+
 export function formatRelativeDate(dateValue) {
   const date = toDate(dateValue);
 
@@ -130,6 +165,7 @@ export function formatReservationStatus(status = "en_attente") {
 
 export function buildCurrentUser(profile, stats = {}) {
   const fullName = profile?.full_name?.trim() || profile?.email || "CampusRide";
+  const vehicleLabel = formatVehicleLabel(profile);
 
   return {
     name: fullName,
@@ -143,7 +179,18 @@ export function buildCurrentUser(profile, stats = {}) {
     tripsCount: toNumber(stats.tripsCount, 0),
     reservationsCount: toNumber(stats.reservationsCount, 0),
     reviewCount: toNumber(stats.reviewCount, 0),
-    car: profile?.vehicle_label || "Vehicule a renseigner",
+    car: vehicleLabel || "Vehicule a renseigner",
+    bio: profile?.bio || "",
+    campus: profile?.campus || "",
+    vehicle: {
+      color: profile?.vehicle_color || "",
+      license: profile?.driver_license || "",
+      make: profile?.vehicle_make || "",
+      model: profile?.vehicle_model || "",
+      photos: normalizeVehiclePhotos(profile?.vehicle_photos),
+      plate: profile?.vehicle_plate || "",
+      seats: toNumber(profile?.vehicle_seats, 0) || "",
+    },
   };
 }
 
@@ -159,7 +206,7 @@ export function mapTrajetToCard(trajet, driverProfile = {}) {
     time: formatTimeWindow(trajet.departure_at, trajet.duration_minutes),
     driver: driverProfile.full_name || "Conducteur CampusRide",
     driverInitials: getInitials(driverProfile.full_name || driverProfile.email),
-    car: driverProfile.vehicle_label || "Vehicule a confirmer",
+    car: formatVehicleLabel(driverProfile) || "Vehicule a confirmer",
     seats: toNumber(trajet.places_disponibles, 0),
     totalSeats: toNumber(trajet.places_total, 0),
     duration: formatDuration(trajet.duration_minutes),

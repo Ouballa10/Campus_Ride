@@ -5,24 +5,34 @@ import logo from "../assets/images/logo.png";
 export default function AppHeader({
   title,
   subtitle,
+  leftSlot,
   leftIcon,
   onLeftClick,
+  rightSlot,
   rightLabel,
   rightIcon,
   onRightClick,
 }) {
   return (
     <header className="app-header">
-      <button className="icon-button" type="button" onClick={onLeftClick}>
-        <Icon name={leftIcon} size={18} />
-      </button>
+      {leftSlot ? (
+        leftSlot
+      ) : leftIcon ? (
+        <button className="icon-button" type="button" onClick={onLeftClick}>
+          <Icon name={leftIcon} size={18} />
+        </button>
+      ) : (
+        <span className="app-header__spacer" aria-hidden="true" />
+      )}
 
       <div className="app-header__copy">
         <h2>{title}</h2>
         {subtitle ? <p>{subtitle}</p> : null}
       </div>
 
-      {rightLabel || rightIcon ? (
+      {rightSlot ? (
+        rightSlot
+      ) : rightLabel || rightIcon ? (
         <button className="text-link" type="button" onClick={onRightClick}>
           {rightLabel ? <span>{rightLabel}</span> : null}
           {rightIcon ? <Icon name={rightIcon} size={16} /> : null}

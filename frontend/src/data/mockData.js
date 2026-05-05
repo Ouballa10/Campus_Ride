@@ -11,6 +11,17 @@ export const currentUser = {
   reservationsCount: 7,
   reviewCount: 33,
   car: "Toyota Yaris - Gris - 4045 AB",
+  bio: "Ponctuel, conduite calme et point de rendez-vous confirme avant depart.",
+  campus: "UPM Marrakech",
+  vehicle: {
+    color: "Gris",
+    license: "P-2024-8841",
+    make: "Toyota",
+    model: "Yaris",
+    photos: [],
+    plate: "4045 AB",
+    seats: 4,
+  },
 };
 
 export const previewStats = [

@@ -28,13 +28,13 @@ async function updateProfile(userId, payload) {
   return data;
 }
 
-async function uploadProfilePhoto(file, userId) {
+async function uploadProfileAsset(file, userId, folderName, fallbackName) {
   const client = requireSupabase();
   const fileExtension = file.name.includes(".")
     ? file.name.split(".").pop()
     : "jpg";
   const safeName = sanitizeFileName(file.name.replace(/\.[^.]+$/, ""));
-  const filePath = `${userId}/${safeName || "avatar"}-${Date.now()}.${fileExtension}`;
+  const filePath = `${userId}/${folderName}/${safeName || fallbackName}-${Date.now()}.${fileExtension}`;
 
   const { error } = await client.storage
     .from("profile-photos")
@@ -54,7 +54,16 @@ async function uploadProfilePhoto(file, userId) {
   return data.publicUrl;
 }
 
+async function uploadProfilePhoto(file, userId) {
+  return uploadProfileAsset(file, userId, "avatar", "avatar");
+}
+
+async function uploadVehiclePhoto(file, userId) {
+  return uploadProfileAsset(file, userId, "vehicle", "vehicle");
+}
+
 export const profileService = {
   updateProfile,
   uploadProfilePhoto,
+  uploadVehiclePhoto,
 };
