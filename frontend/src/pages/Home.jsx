@@ -2,9 +2,10 @@ import React from "react";
 import logo from "../assets/images/logo.png";
 import { RideArtwork } from "../components/Artwork";
 import AppHeader from "../components/AppHeader";
+import AppMenu from "../components/AppMenu";
 import { Icon } from "../components/Icons";
-import ModeSwitch from "../components/ModeSwitch";
 import TrajetCard from "../components/TrajetCard";
+import { getStatusPillClass } from "../utils/statusUi";
 
 export default function Home({
   mode,
@@ -36,15 +37,26 @@ export default function Home({
     <div className="screen screen--home">
       <AppHeader
         title="Accueil"
-        subtitle={`${user.name} - mode ${isDriverMode ? "driver" : "passager"}`}
-        leftIcon="menu"
-        onLeftClick={() => navigate("profile")}
+        subtitle={`${user.name} - ${isDriverMode ? "driver" : "passager"}`}
+        leftSlot={(
+          <AppMenu
+            mode={mode}
+            navigate={navigate}
+            user={user}
+            onModeChange={onModeChange}
+          />
+        )}
       />
-
-      <ModeSwitch mode={mode} onChange={onModeChange} />
 
       <section className="home-hero-card">
         <div className="home-hero-card__copy">
+          <div className="home-mode-banner">
+            <span className="home-mode-banner__icon">
+              <Icon name={isDriverMode ? "car" : "user"} size={16} />
+            </span>
+            <span>{isDriverMode ? "Mode driver actif" : "Mode passager actif"}</span>
+          </div>
+
           <div className="home-brand-row">
             <img alt="CampusRide logo" className="home-brand-row__logo" src={logo} />
             <div>
@@ -183,7 +195,9 @@ export default function Home({
                     <h4>{trip.route}</h4>
                     <p>{trip.date} - {trip.time}</p>
                   </div>
-                  <span className="pill">{trip.status}</span>
+                  <span className={getStatusPillClass(trip.status)}>
+                    {trip.status}
+                  </span>
                 </div>
                 <div className="trip-card__meta">
                   <span className="meta-chip">

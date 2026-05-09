@@ -1,6 +1,41 @@
 import React, { useState } from "react";
 import AppHeader from "../components/AppHeader";
 import { Icon } from "../components/Icons";
+import { getStatusPillClass, isReservationHistory } from "../utils/statusUi";
+
+function ReservationGroup({ children, count, label, title, tone }) {
+  return (
+    <section className={`reservation-group reservation-group--${tone}`}>
+      <div className="reservation-group__header">
+        <div>
+          <span>{label}</span>
+          <strong>{title}</strong>
+        </div>
+        <b>{count}</b>
+      </div>
+      <div className="passenger-list">{children}</div>
+    </section>
+  );
+}
+
+function PassengerRow({ action, reservation }) {
+  return (
+    <div className="passenger-row" key={reservation.id}>
+      <div className="avatar-badge">{reservation.passengerInitials}</div>
+      <div className="passenger-row__copy">
+        <strong>{reservation.passenger}</strong>
+        <span>{reservation.phone || "Telephone non renseigne"}</span>
+        {reservation.message ? <p>{reservation.message}</p> : null}
+      </div>
+      <div className="passenger-row__actions">
+        <span className={getStatusPillClass(reservation.status)}>
+          {reservation.status}
+        </span>
+        {action}
+      </div>
+    </div>
+  );
+}
 
 export default function MyTrajets({
   navigate,
@@ -14,8 +49,11 @@ export default function MyTrajets({
   const passengerReservations = publishedTrips.flatMap(
     (trip) => trip.passengerReservations || [],
   );
-  const activePassengers = passengerReservations.filter(
-    (reservation) => reservation.status !== "Annulee",
+  const confirmedPassengers = passengerReservations.filter(
+    (reservation) => reservation.status === "Confirmee",
+  ).length;
+  const pendingRequests = passengerReservations.filter(
+    (reservation) => reservation.status === "En attente",
   ).length;
 
   async function handleConfirmReservation(reservationId) {
@@ -54,12 +92,12 @@ export default function MyTrajets({
           <span className="eyebrow">Conducteur</span>
           <h3>Suivi de tes annonces campus</h3>
           <p>
-            Retrouve tes departs actifs, les demandes passagers et l'etat des
-            places restantes.
+            Pilote tes departs, confirme les demandes passagers et garde une
+            lecture nette des places restantes.
           </p>
         </div>
 
-        <div className="summary-strip summary-strip--soft">
+        <div className="summary-strip summary-strip--soft summary-strip--driver">
           <div>
             <strong>{publishedTrips.length}</strong>
             <span>annonces</span>
@@ -69,8 +107,12 @@ export default function MyTrajets({
             <span>actifs</span>
           </div>
           <div>
-            <strong>{activePassengers}</strong>
-            <span>passagers</span>
+            <strong>{confirmedPassengers}</strong>
+            <span>confirmes</span>
+          </div>
+          <div>
+            <strong>{pendingRequests}</strong>
+            <span>demandes</span>
           </div>
         </div>
       </section>
@@ -91,8 +133,14 @@ export default function MyTrajets({
       <div className="stack-list stack-list--records">
         {publishedTrips.map((trip) => {
           const reservations = trip.passengerReservations || [];
+          const confirmedReservations = reservations.filter(
+            (reservation) => reservation.status === "Confirmee",
+          );
           const pendingReservations = reservations.filter(
             (reservation) => reservation.status === "En attente",
+          );
+          const historyReservations = reservations.filter((reservation) =>
+            isReservationHistory(reservation.status),
           );
 
           return (
@@ -102,7 +150,9 @@ export default function MyTrajets({
                   <h4>{trip.route}</h4>
                   <p>{trip.date} - {trip.time}</p>
                 </div>
-                <span className="pill">{trip.status}</span>
+                <span className={getStatusPillClass(trip.status)}>
+                  {trip.status}
+                </span>
               </div>
 
               <div className="trip-card__meta">
@@ -120,42 +170,79 @@ export default function MyTrajets({
                 </span>
               </div>
 
-              <p className="card-note">{trip.passengers}</p>
-
-              {pendingReservations.length ? (
-                <div className="message-box message-box--soft">
-                  <strong>{pendingReservations.length} demande(s) a confirmer</strong>
-                  <p>Les demandes en attente peuvent etre confirmees ici.</p>
-                </div>
-              ) : null}
+              <p className="card-note">
+                {confirmedReservations.length} passager(s) confirmes
+              </p>
 
               {reservations.length ? (
-                <div className="passenger-list">
-                  {reservations.map((reservation) => (
-                    <div className="passenger-row" key={reservation.id}>
-                      <div className="avatar-badge">{reservation.passengerInitials}</div>
-                      <div className="passenger-row__copy">
-                        <strong>{reservation.passenger}</strong>
-                        <span>{reservation.phone || "Telephone non renseigne"}</span>
-                        {reservation.message ? <p>{reservation.message}</p> : null}
-                      </div>
-                      <div className="passenger-row__actions">
-                        <span className="pill">{reservation.status}</span>
-                        {reservation.status === "En attente" ? (
-                          <button
-                            className="mini-button mini-button--ghost"
-                            disabled={busyReservationId === reservation.id}
-                            type="button"
-                            onClick={() => handleConfirmReservation(reservation.id)}
-                          >
-                            {busyReservationId === reservation.id
-                              ? "Confirmation..."
-                              : "Confirmer"}
-                          </button>
-                        ) : null}
-                      </div>
-                    </div>
-                  ))}
+                <div className="reservation-board">
+                  <ReservationGroup
+                    count={confirmedReservations.length}
+                    label="Confirmes"
+                    title="Passagers confirmes"
+                    tone="confirmed"
+                  >
+                    {confirmedReservations.length ? (
+                      confirmedReservations.map((reservation) => (
+                        <PassengerRow
+                          key={reservation.id}
+                          reservation={reservation}
+                        />
+                      ))
+                    ) : (
+                      <p className="reservation-empty">
+                        Aucun passager confirme pour ce depart.
+                      </p>
+                    )}
+                  </ReservationGroup>
+
+                  <ReservationGroup
+                    count={pendingReservations.length}
+                    label="En attente"
+                    title="Demandes a confirmer"
+                    tone="pending"
+                  >
+                    {pendingReservations.length ? (
+                      pendingReservations.map((reservation) => (
+                        <PassengerRow
+                          action={
+                            <button
+                              className="mini-button mini-button--ghost"
+                              disabled={busyReservationId === reservation.id}
+                              type="button"
+                              onClick={() => handleConfirmReservation(reservation.id)}
+                            >
+                              {busyReservationId === reservation.id
+                                ? "Confirmation..."
+                                : "Confirmer"}
+                            </button>
+                          }
+                          key={reservation.id}
+                          reservation={reservation}
+                        />
+                      ))
+                    ) : (
+                      <p className="reservation-empty">
+                        Aucune demande en attente.
+                      </p>
+                    )}
+                  </ReservationGroup>
+
+                  {historyReservations.length ? (
+                    <ReservationGroup
+                      count={historyReservations.length}
+                      label="Historique"
+                      title="Reservations archivees"
+                      tone="history"
+                    >
+                      {historyReservations.map((reservation) => (
+                        <PassengerRow
+                          key={reservation.id}
+                          reservation={reservation}
+                        />
+                      ))}
+                    </ReservationGroup>
+                  ) : null}
                 </div>
               ) : (
                 <div className="message-box message-box--soft">

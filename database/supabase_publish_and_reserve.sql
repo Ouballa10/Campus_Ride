@@ -24,9 +24,31 @@ create table if not exists public.profiles (
   role public.app_role not null default 'passager',
   photo_profil text,
   note_moyenne numeric(3, 2) not null default 0,
+  campus text,
+  bio text,
   vehicle_label text,
+  vehicle_make text,
+  vehicle_model text,
+  vehicle_color text,
+  vehicle_plate text,
+  vehicle_seats integer,
+  driver_license text,
+  vehicle_photos jsonb not null default '[]'::jsonb,
+  updated_at timestamptz,
   created_at timestamptz not null default timezone('utc', now())
 );
+
+alter table public.profiles
+add column if not exists campus text,
+add column if not exists bio text,
+add column if not exists vehicle_make text,
+add column if not exists vehicle_model text,
+add column if not exists vehicle_color text,
+add column if not exists vehicle_plate text,
+add column if not exists vehicle_seats integer,
+add column if not exists driver_license text,
+add column if not exists vehicle_photos jsonb not null default '[]'::jsonb,
+add column if not exists updated_at timestamptz;
 
 create table if not exists public.trajets (
   id uuid primary key default gen_random_uuid(),

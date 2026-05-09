@@ -10,7 +10,17 @@ CREATE TABLE IF NOT EXISTS users (
   mot_de_passe VARCHAR(255) NOT NULL,
   role ENUM('conducteur', 'passager', 'admin') DEFAULT 'passager',
   photo_profil VARCHAR(255),
-  note_moyenne DECIMAL(3,2) DEFAULT 0
+  note_moyenne DECIMAL(3,2) DEFAULT 0,
+  campus VARCHAR(150),
+  bio TEXT,
+  vehicle_label VARCHAR(255),
+  vehicle_make VARCHAR(100),
+  vehicle_model VARCHAR(100),
+  vehicle_color VARCHAR(80),
+  vehicle_plate VARCHAR(80),
+  vehicle_seats INT,
+  driver_license VARCHAR(120),
+  vehicle_photos JSON
 );
 
 CREATE TABLE IF NOT EXISTS trajets (
