@@ -38,6 +38,28 @@ function iconPaths(name) {
     );
   }
 
+  if (name === "sun") {
+    return (
+      <>
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2" />
+        <path d="M12 20v2" />
+        <path d="m4.9 4.9 1.4 1.4" />
+        <path d="m17.7 17.7 1.4 1.4" />
+        <path d="M2 12h2" />
+        <path d="M20 12h2" />
+        <path d="m4.9 19.1 1.4-1.4" />
+        <path d="m17.7 6.3 1.4-1.4" />
+      </>
+    );
+  }
+
+  if (name === "moon") {
+    return (
+      <path d="M20 14.2A7.7 7.7 0 0 1 9.8 4a8 8 0 1 0 10.2 10.2Z" />
+    );
+  }
+
   if (name === "image") {
     return (
       <>

@@ -89,7 +89,9 @@ export default function Profile({
   mode = "passenger",
   navigate,
   onModeChange,
+  onThemeChange,
   user,
+  theme = "light",
   profileLinks = [],
 }) {
   const fileInputRef = useRef(null);
@@ -424,6 +426,8 @@ export default function Profile({
             navigate={navigate}
             user={displayUser}
             onModeChange={onModeChange}
+            onThemeChange={onThemeChange}
+            theme={theme}
           />
         )}
         onLeftClick={() => navigate("home")}
