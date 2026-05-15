@@ -1,128 +1,83 @@
-import React, { useState } from "react";
-import { SplashHeroArtwork } from "../components/Artwork";
+import React from "react";
 import { Icon } from "../components/Icons";
+import logo from "../assets/images/logo.png";
 
 const splashHighlights = [
   {
     icon: "send",
     title: "Rapide",
-    copy: "Trouvez votre trajet en quelques clics.",
+    copy: "Reservez un trajet en quelques clics.",
   },
   {
     icon: "shield",
     title: "Securise",
-    copy: "Vos trajets sont verifies et rassurants.",
+    copy: "Des trajets fiables pour votre campus.",
   },
   {
     icon: "location",
     title: "Partout",
-    copy: "Disponible sur tous les campus.",
+    copy: "Disponible la ou vos etudes vous menent.",
   },
 ];
 
 export default function Splash({ navigate }) {
-  const [useFallbackArtwork, setUseFallbackArtwork] = useState(false);
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const slides = [
-    {
-      src: "/images/splash-photo.png",
-      alt: "CampusRide splash",
-      imageClassName: "splash-hero__image--slide-one",
-    },
-    {
-      src: "/images/splash-page-2.png",
-      alt: "CampusRide search splash",
-      imageClassName: "splash-hero__image--slide-two",
-    },
-  ];
-
-  function handleNext() {
-    if (currentSlide < slides.length - 1) {
-      setCurrentSlide((previous) => previous + 1);
-      return;
-    }
-
-    navigate("login");
-  }
-
-  function handleDotClick(index) {
-    if (index < slides.length) {
-      setCurrentSlide(index);
-      return;
-    }
-
-    navigate("login");
-  }
-
   return (
     <div className="screen screen--splash">
-      <div className="splash-screen splash-screen--full-image">
-        <div className="splash-body splash-body--full-image">
-          <div
-            className="splash-hero splash-hero--full-image"
-            style={{ "--splash-bg-image": `url(${slides[currentSlide].src})` }}
-          >
-            {useFallbackArtwork ? (
-              <SplashHeroArtwork />
-            ) : (
-              <img
-                alt={slides[currentSlide].alt}
-                className={`splash-hero__image ${slides[currentSlide].imageClassName}`.trim()}
-                src={slides[currentSlide].src}
-                onError={() => setUseFallbackArtwork(true)}
-              />
-            )}
+      <div className="splash-showcase">
+        <div className="splash-showcase__panel">
+          <div className="splash-showcase__ornament splash-showcase__ornament--left" aria-hidden="true" />
+          <div className="splash-showcase__ornament splash-showcase__ornament--right" aria-hidden="true" />
+
+          <header className="splash-showcase__header">
+            <img src={logo} alt="CampusRide logo" className="splash-showcase__logo" />
+            <h1>CampusRide simplifie vos trajets universitaires</h1>
+            <p>
+              Accedez rapidement a vos deplacements campus, trouvez un conducteur
+              fiable et voyagez en toute serenite.
+            </p>
+          </header>
+
+          <div className="splash-showcase__media">
+            <img
+              alt="CampusRide splash"
+              className="splash-showcase__image"
+              src="/images/splash-photo.png"
+            />
           </div>
-        </div>
 
-        <div className="splash-footer splash-footer--overlay">
-          {currentSlide === 0 ? (
-            <div className="splash-highlights" aria-label="Points forts CampusRide">
-              {splashHighlights.map((item) => (
-                <article className="splash-highlight-card" key={item.title}>
-                  <span className="splash-highlight-card__icon">
-                    <Icon name={item.icon} size={24} />
-                  </span>
-                  <strong>{item.title}</strong>
-                  <p>{item.copy}</p>
-                </article>
-              ))}
-            </div>
-          ) : (
+          <div className="splash-highlights" aria-label="Points forts CampusRide">
+            {splashHighlights.map((item) => (
+              <article className="splash-highlight-card" key={item.title}>
+                <span className="splash-highlight-card__icon">
+                  <Icon name={item.icon} size={24} />
+                </span>
+                <strong>{item.title}</strong>
+                <p>{item.copy}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="splash-showcase__footer">
             <button
               type="button"
-              className="splash-next-chip"
-              onClick={handleNext}
+              className="splash-showcase__button"
+              onClick={() => navigate("login")}
             >
-              <span className="splash-next-chip__label">Suivant</span>
-              <span className="splash-next-chip__icon" aria-hidden="true">
-                &rarr;
-              </span>
+              <span>Suivant</span>
+              <Icon name="arrow-right" size={18} />
             </button>
-          )}
 
-          <div className="splash-dots" aria-label="Navigation des pages">
-            <button
-              type="button"
-              className={`splash-dots__item ${currentSlide === 0 ? "splash-dots__item--active" : ""}`.trim()}
-              onClick={() => handleDotClick(0)}
-              aria-label="Aller a la premiere page"
-              aria-pressed={currentSlide === 0}
-            />
-            <button
-              type="button"
-              className={`splash-dots__item ${currentSlide === 1 ? "splash-dots__item--active" : ""}`.trim()}
-              onClick={() => handleDotClick(1)}
-              aria-label="Aller a la deuxieme page"
-              aria-pressed={currentSlide === 1}
-            />
-            <button
-              type="button"
-              className="splash-dots__item"
-              onClick={() => handleDotClick(2)}
-              aria-label="Aller a la page de connexion"
-            />
+            <div className="splash-dots splash-dots--showcase" aria-label="Navigation des pages">
+              <span className="splash-dots__item splash-dots__item--soft" aria-hidden="true" />
+              <button
+                type="button"
+                className="splash-dots__item splash-dots__item--active"
+                onClick={() => navigate("login")}
+                aria-label="Aller a la page de connexion"
+                aria-pressed="true"
+              />
+              <span className="splash-dots__item splash-dots__item--soft" aria-hidden="true" />
+            </div>
           </div>
         </div>
       </div>
