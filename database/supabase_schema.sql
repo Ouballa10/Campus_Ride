@@ -20,6 +20,9 @@ begin
 end
 $$;
 
+alter type public.reservation_status add value if not exists 'refusee';
+alter type public.reservation_status add value if not exists 'terminee';
+
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   full_name text not null default '',
@@ -45,6 +48,8 @@ create table if not exists public.profiles (
 alter table public.profiles
 add column if not exists campus text,
 add column if not exists bio text,
+add column if not exists photo_profil text,
+add column if not exists vehicle_label text,
 add column if not exists vehicle_make text,
 add column if not exists vehicle_model text,
 add column if not exists vehicle_color text,
@@ -66,9 +71,14 @@ create table if not exists public.trajets (
   prix_par_place numeric(10, 2) not null check (prix_par_place >= 0),
   description text,
   pickup_note text,
+  statut text not null default 'actif',
   conducteur_id uuid not null references public.profiles (id) on delete cascade,
   created_at timestamptz not null default timezone('utc', now())
 );
+
+alter table public.trajets
+add column if not exists statut text not null default 'actif',
+add column if not exists updated_at timestamptz;
 
 create table if not exists public.reservations (
   id uuid primary key default gen_random_uuid(),
@@ -76,12 +86,49 @@ create table if not exists public.reservations (
   passager_id uuid not null references public.profiles (id) on delete cascade,
   date_reservation timestamptz not null default timezone('utc', now()),
   message_passager text,
+  payment_status text not null default 'a_regler',
+  ride_status text,
+  updated_at timestamptz,
   statut public.reservation_status not null default 'en_attente',
   unique (trajet_id, passager_id)
 );
 
 alter table public.reservations
+add column if not exists payment_status text not null default 'a_regler',
+add column if not exists ride_status text,
+add column if not exists updated_at timestamptz;
+
+alter table public.reservations
 alter column statut set default 'en_attente';
+
+alter table public.profiles replica identity full;
+alter table public.trajets replica identity full;
+alter table public.reservations replica identity full;
+
+do $$
+begin
+  begin
+    alter publication supabase_realtime add table public.profiles;
+  exception
+    when duplicate_object then null;
+    when undefined_object then null;
+  end;
+
+  begin
+    alter publication supabase_realtime add table public.trajets;
+  exception
+    when duplicate_object then null;
+    when undefined_object then null;
+  end;
+
+  begin
+    alter publication supabase_realtime add table public.reservations;
+  exception
+    when duplicate_object then null;
+    when undefined_object then null;
+  end;
+end
+$$;
 
 create table if not exists public.evaluations (
   id uuid primary key default gen_random_uuid(),

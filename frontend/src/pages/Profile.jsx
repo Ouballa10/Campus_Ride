@@ -107,6 +107,7 @@ export default function Profile({
   const [selectedVehiclePhotos, setSelectedVehiclePhotos] = useState([]);
   const [feedback, setFeedback] = useState({ message: "", tone: "" });
   const [isSaving, setIsSaving] = useState(false);
+  const [uploadStep, setUploadStep] = useState("");
 
   const displayUser = user || {
     bio: "",
@@ -194,6 +195,19 @@ export default function Profile({
 
   function handlePickPhoto() {
     fileInputRef.current?.click();
+  }
+
+  function removeProfilePhoto() {
+    if (photoPreview) {
+      URL.revokeObjectURL(photoPreview);
+    }
+
+    setSelectedPhoto(null);
+    setPhotoPreview("");
+    setForm((currentForm) => ({
+      ...currentForm,
+      photoProfil: "",
+    }));
   }
 
   function handlePickVehiclePhotos() {
@@ -312,17 +326,26 @@ export default function Profile({
 
     try {
       setIsSaving(true);
+      setUploadStep("Preparation des images...");
       setFeedback({ message: "", tone: "" });
 
       let photoProfil = form.photoProfil;
 
       if (selectedPhoto) {
+        setUploadStep("Compression et upload de l'avatar...");
+        if (profile?.photo_profil) {
+          await profileService.deleteProfileAsset(profile.photo_profil, "avatars");
+        }
         photoProfil = await profileService.uploadProfilePhoto(
           selectedPhoto,
           session.user.id,
         );
+      } else if (!form.photoProfil && profile?.photo_profil) {
+        setUploadStep("Suppression de l'ancien avatar...");
+        await profileService.deleteProfileAsset(profile.photo_profil, "avatars");
       }
 
+      setUploadStep("Upload des photos vehicule...");
       const uploadedVehiclePhotos = selectedVehiclePhotos.length
         ? await Promise.all(
             selectedVehiclePhotos.map((item) =>
@@ -343,7 +366,8 @@ export default function Profile({
         bio: form.bio.trim() || null,
         campus: form.campus.trim() || null,
         driver_license: form.driverLicense.trim() || null,
-        full_name: form.fullName.trim(),
+        email: form.email || profile?.email || session.user.email || null,
+        full_name: form.fullName.trim() || "CampusRide",
         phone: form.phone.trim(),
         photo_profil: photoProfil || null,
         role: getRoleFromMode(mode),
@@ -357,6 +381,7 @@ export default function Profile({
         vehicle_seats: form.vehicleSeats ? Number(form.vehicleSeats) : null,
       });
 
+      setUploadStep("Synchronisation du profil...");
       await refreshProfile();
 
       selectedVehiclePhotos.forEach((item) => {
@@ -383,6 +408,7 @@ export default function Profile({
       });
     } finally {
       setIsSaving(false);
+      setUploadStep("");
     }
   }
 
@@ -453,6 +479,15 @@ export default function Profile({
               <h3>{form.fullName || displayUser.name}</h3>
               <p>{roleLabel}</p>
               <Stars value={displayUser.rating} />
+              {avatarSource ? (
+                <button
+                  className="text-link profile-photo-remove"
+                  type="button"
+                  onClick={removeProfilePhoto}
+                >
+                  Supprimer la photo
+                </button>
+              ) : null}
             </div>
           </div>
 
@@ -771,6 +806,12 @@ export default function Profile({
           {feedback.message ? (
             <p className={`profile-editor-status profile-editor-status--${feedback.tone}`}>
               {feedback.message}
+            </p>
+          ) : null}
+
+          {uploadStep ? (
+            <p className="profile-editor-status profile-editor-status--loading">
+              {uploadStep}
             </p>
           ) : null}
 

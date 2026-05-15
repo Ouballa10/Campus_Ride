@@ -19,6 +19,7 @@ import Reservation from "./pages/Reservation";
 import SearchTrajet from "./pages/SearchTrajet";
 import Splash from "./pages/Splash";
 import { reservationService } from "./services/reservationService";
+import { supabase } from "./services/supabaseClient";
 import { trajetService } from "./services/trajetService";
 import {
   buildCurrentUser,
@@ -394,6 +395,39 @@ function App() {
     };
   }, [canUseSupabaseData, profile, refreshKey, sessionUserId]);
 
+  useEffect(() => {
+    if (!canUseSupabaseData || !supabase) {
+      return undefined;
+    }
+
+    const refreshAppData = () => {
+      setRefreshKey((currentKey) => currentKey + 1);
+    };
+
+    const channel = supabase
+      .channel(`campusride-live-${sessionUserId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "reservations" },
+        refreshAppData,
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "trajets" },
+        refreshAppData,
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "profiles" },
+        refreshAppData,
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [canUseSupabaseData, sessionUserId]);
+
   const currentUser = applyModeToUser(appData.currentUser, activeMode);
   const discoverableTrips = appData.tripOptions.filter(
     (trip) => !isTripOwnedByCurrentUser(trip, currentUser, sessionUserId),
@@ -589,6 +623,63 @@ function App() {
     }));
   }
 
+  async function handleRejectPassengerReservation(reservationId) {
+    if (canUseSupabaseData) {
+      await reservationService.updateReservationStatus({
+        conducteurId: sessionUserId,
+        reservationId,
+        statut: "refusee",
+      });
+      setRefreshKey((currentKey) => currentKey + 1);
+      return;
+    }
+
+    setAppData((currentData) => ({
+      ...currentData,
+      publishedTrips: currentData.publishedTrips.map((trip) => {
+        const passengerReservations = (trip.passengerReservations || []).map((reservation) =>
+          reservation.id === reservationId
+            ? { ...reservation, status: "Refusee" }
+            : reservation,
+        );
+
+        return applyPassengerReservationsToPublishedTrip(trip, passengerReservations);
+      }),
+    }));
+  }
+
+  async function handleCloseTripReservations(tripId) {
+    if (canUseSupabaseData) {
+      await trajetService.closeTrajet(tripId, sessionUserId);
+      setRefreshKey((currentKey) => currentKey + 1);
+      return;
+    }
+
+    setAppData((currentData) => ({
+      ...currentData,
+      publishedTrips: currentData.publishedTrips.map((trip) =>
+        trip.id === tripId ? { ...trip, seats: "0/0", status: "Ferme" } : trip,
+      ),
+      tripOptions: currentData.tripOptions.map((trip) =>
+        trip.id === tripId ? { ...trip, seats: 0 } : trip,
+      ),
+    }));
+  }
+
+  async function handleDeleteTrip(tripId) {
+    if (canUseSupabaseData) {
+      await trajetService.deleteTrajet(tripId, sessionUserId);
+      setRefreshKey((currentKey) => currentKey + 1);
+      return;
+    }
+
+    setAppData((currentData) => ({
+      ...currentData,
+      publishedTrips: currentData.publishedTrips.filter((trip) => trip.id !== tripId),
+      tripOptions: currentData.tripOptions.filter((trip) => trip.id !== tripId),
+    }));
+  }
+
   const isAuthRoute = authRoutes.includes(route);
   const isSplashRoute = route === "splash";
   const showNav = !isAuthRoute;
@@ -654,7 +745,10 @@ function App() {
     screen = (
       <MyTrajets
         navigate={navigate}
+        onCloseTrip={handleCloseTripReservations}
         onConfirmReservation={handleConfirmPassengerReservation}
+        onDeleteTrip={handleDeleteTrip}
+        onRejectReservation={handleRejectPassengerReservation}
         publishedTrips={appData.publishedTrips}
         user={currentUser}
       />

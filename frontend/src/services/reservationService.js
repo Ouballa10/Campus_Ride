@@ -236,7 +236,7 @@ async function updateReservationStatus({
 }) {
   const client = requireSupabase();
 
-  if (!["confirmee", "en_attente"].includes(statut)) {
+  if (!["confirmee", "en_attente", "refusee", "annulee", "terminee"].includes(statut)) {
     throw new Error("Statut de reservation non autorise.");
   }
 
@@ -269,6 +269,20 @@ async function updateReservationStatus({
 
   if (error) {
     throw formatSupabaseError(error, "Impossible de confirmer la reservation.");
+  }
+
+  const wasActiveReservation = !["refusee", "annulee"].includes(reservation.statut);
+
+  if (["refusee", "annulee"].includes(statut) && wasActiveReservation) {
+    await client
+      .from("trajets")
+      .update({
+        places_disponibles: Math.min(
+          Number(trajet.places_total),
+          Number(trajet.places_disponibles) + 1,
+        ),
+      })
+      .eq("id", trajet.id);
   }
 
   return data;

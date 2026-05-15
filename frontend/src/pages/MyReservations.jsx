@@ -1,7 +1,33 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import AppHeader from "../components/AppHeader";
 import { Icon } from "../components/Icons";
-import { getStatusPillClass, isReservationHistory } from "../utils/statusUi";
+import {
+  getStatusIcon,
+  getStatusPillClass,
+  isReservationHistory,
+} from "../utils/statusUi";
+
+function ReservationSkeleton() {
+  return (
+    <div className="reservation-skeleton" aria-hidden="true">
+      <span />
+      <span />
+      <span />
+    </div>
+  );
+}
+
+function EmptyState({ copy, icon = "bookmark", title }) {
+  return (
+    <div className="empty-state-card">
+      <span className="empty-state-card__icon">
+        <Icon name={icon} size={22} />
+      </span>
+      <strong>{title}</strong>
+      <p>{copy}</p>
+    </div>
+  );
+}
 
 function ReservationStatusSection({ children, count, title, tone }) {
   return (
@@ -15,30 +41,85 @@ function ReservationStatusSection({ children, count, title, tone }) {
   );
 }
 
-function ReservationCard({ busyId, navigate, onCancelReservation, reservation }) {
-  const isCancellable = !["Annulee", "Terminee"].includes(reservation.status);
-  const cancelLabel =
-    reservation.status === "Annulee" || reservation.status === "Terminee"
-      ? reservation.status
-      : busyId === reservation.id
-        ? "Annulation..."
-        : "Annuler";
+function Timeline({ status }) {
+  const steps = [
+    { label: "Demande", active: true },
+    { label: "Validation", active: ["Confirmee", "Terminee"].includes(status) },
+    { label: "Trajet", active: status === "Terminee" },
+  ];
+
+  if (["Annulee", "Refusee"].includes(status)) {
+    steps[1] = { label: status, active: true, blocked: true };
+  }
 
   return (
-    <article className="list-card list-card--reservation" key={reservation.id}>
-      <div className="list-card__row">
-        <div>
-          <h4>{reservation.route}</h4>
-          <p>{reservation.date} - {reservation.time}</p>
+    <div className="ride-timeline">
+      {steps.map((step) => (
+        <div
+          className={[
+            "ride-timeline__step",
+            step.active ? "ride-timeline__step--active" : "",
+            step.blocked ? "ride-timeline__step--blocked" : "",
+          ].filter(Boolean).join(" ")}
+          key={step.label}
+        >
+          <span />
+          <small>{step.label}</small>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ReservationCard({ busyId, navigate, onCancelReservation, reservation }) {
+  const isCancellable = ["En attente", "Confirmee"].includes(reservation.status);
+  const driverHref = reservation.driverPhone ? `tel:${reservation.driverPhone}` : undefined;
+  const cancelLabel = busyId === reservation.id ? "Annulation..." : "Cancel reservation";
+
+  return (
+    <article className="reservation-pro-card">
+      <div className="reservation-pro-card__top">
+        <div className="route-stack">
+          <span>{reservation.date} - {reservation.time}</span>
+          <h4>{reservation.depart}</h4>
+          <Icon name="arrow-right" size={16} />
+          <h4>{reservation.destination}</h4>
         </div>
         <span className={getStatusPillClass(reservation.status)}>
+          <Icon name={getStatusIcon(reservation.status)} size={13} />
           {reservation.status}
         </span>
       </div>
 
-      <div className="card-note">
-        <strong>{reservation.driver}</strong>
-        <span>{reservation.pickup}</span>
+      <Timeline status={reservation.status} />
+
+      <div className="reservation-driver-card">
+        <div className="avatar-badge">
+          {reservation.driverAvatar ? (
+            <img alt={reservation.driver} src={reservation.driverAvatar} />
+          ) : (
+            reservation.driverInitials
+          )}
+        </div>
+        <div>
+          <strong>{reservation.driver}</strong>
+          <span>{reservation.pickup}</span>
+        </div>
+      </div>
+
+      <div className="reservation-facts">
+        <span>
+          <Icon name="ticket" size={14} />
+          {reservation.price} DH
+        </span>
+        <span>
+          <Icon name="seat" size={14} />
+          {reservation.seats} seats
+        </span>
+        <span>
+          <Icon name="location" size={14} />
+          Meeting point
+        </span>
       </div>
 
       {reservation.message ? (
@@ -48,30 +129,34 @@ function ReservationCard({ busyId, navigate, onCancelReservation, reservation })
         </div>
       ) : null}
 
-      <div className="trip-card__bottom">
-        <span className="meta-chip">
-          <Icon name="ticket" size={14} />
-          {reservation.price} DH
-        </span>
-
-        <div className="button-row">
-          <button
-            className="mini-button mini-button--ghost"
-            type="button"
-            onClick={() => navigate("search")}
-          >
-            Rechercher
-          </button>
-
-          <button
-            className="mini-button mini-button--ghost"
-            disabled={!isCancellable || busyId === reservation.id}
-            type="button"
-            onClick={() => onCancelReservation(reservation.id)}
-          >
-            {cancelLabel}
-          </button>
-        </div>
+      <div className="reservation-card-actions">
+        <button className="mini-button mini-button--ghost" type="button" onClick={() => navigate("reservation")}>
+          <Icon name="edit" size={15} />
+          View details
+        </button>
+        <button className="mini-button mini-button--ghost" type="button" onClick={() => navigate("search")}>
+          <Icon name="route" size={15} />
+          View route/map
+        </button>
+        <a
+          className={`mini-button mini-button--ghost ${!driverHref ? "mini-button--disabled" : ""}`}
+          href={driverHref}
+          onClick={(event) => {
+            if (!driverHref) event.preventDefault();
+          }}
+        >
+          <Icon name="phone" size={15} />
+          Contact driver
+        </a>
+        <button
+          className="mini-button mini-button--danger"
+          disabled={!isCancellable || busyId === reservation.id}
+          type="button"
+          onClick={() => onCancelReservation(reservation.id)}
+        >
+          <Icon name="x" size={15} />
+          {isCancellable ? cancelLabel : reservation.status}
+        </button>
       </div>
     </article>
   );
@@ -84,15 +169,13 @@ export default function MyReservations({
 }) {
   const [busyId, setBusyId] = useState("");
   const [feedback, setFeedback] = useState({ message: "", tone: "" });
-  const confirmedReservations = reservations.filter(
-    (reservation) => reservation.status === "Confirmee",
-  );
-  const pendingReservations = reservations.filter(
-    (reservation) => reservation.status === "En attente",
-  );
-  const historyReservations = reservations.filter((reservation) =>
-    isReservationHistory(reservation.status),
-  );
+  const [isRefreshing] = useState(false);
+
+  const groupedReservations = useMemo(() => ({
+    confirmed: reservations.filter((reservation) => reservation.status === "Confirmee"),
+    history: reservations.filter((reservation) => isReservationHistory(reservation.status)),
+    pending: reservations.filter((reservation) => reservation.status === "En attente"),
+  }), [reservations]);
 
   async function handleCancelReservation(reservationId) {
     try {
@@ -117,18 +200,17 @@ export default function MyReservations({
     <div className="screen screen--records">
       <AppHeader
         title="Mes reservations"
-        subtitle="Suivi des trajets confirmes et en attente"
+        subtitle="Demandes, trajets confirmes et historique"
         leftIcon="arrow-left"
         onLeftClick={() => navigate("profile")}
       />
 
-      <section className="records-hero">
+      <section className="records-hero records-hero--passenger">
         <div>
           <span className="eyebrow">Passager</span>
-          <h3>Organise tes trajets reserves</h3>
+          <h3>Tableau de bord reservations</h3>
           <p>
-            Suis les conducteurs selectionnes, les points de rendez-vous et le
-            statut de chaque reservation.
+            Suis le statut de chaque demande, contacte le conducteur et garde ton point de rendez-vous sous la main.
           </p>
         </div>
 
@@ -138,11 +220,11 @@ export default function MyReservations({
             <span>au total</span>
           </div>
           <div>
-            <strong>{confirmedReservations.length}</strong>
+            <strong>{groupedReservations.confirmed.length}</strong>
             <span>confirmees</span>
           </div>
           <div>
-            <strong>{pendingReservations.length}</strong>
+            <strong>{groupedReservations.pending.length}</strong>
             <span>en attente</span>
           </div>
         </div>
@@ -154,70 +236,75 @@ export default function MyReservations({
         </p>
       ) : null}
 
+      {isRefreshing ? (
+        <div className="stack-list stack-list--records">
+          <ReservationSkeleton />
+          <ReservationSkeleton />
+        </div>
+      ) : null}
+
       {!reservations.length ? (
-        <div className="message-box">
-          <strong>Aucune reservation pour le moment</strong>
-          <p>Quand tu reserves un trajet, il apparaitra ici avec son statut.</p>
-        </div>
-      ) : null}
-
-      {reservations.length ? (
+        <EmptyState
+          copy="Quand tu reserves un trajet, il apparait ici avec son conducteur, son statut et les actions utiles."
+          title="Aucune reservation pour le moment"
+        />
+      ) : (
         <div className="reservation-page-board">
-          {pendingReservations.length ? (
-            <ReservationStatusSection
-              count={pendingReservations.length}
-              title="Demandes en attente"
-              tone="pending"
-            >
-              {pendingReservations.map((reservation) => (
-                <ReservationCard
-                  busyId={busyId}
-                  key={reservation.id}
-                  navigate={navigate}
-                  onCancelReservation={handleCancelReservation}
-                  reservation={reservation}
-                />
-              ))}
-            </ReservationStatusSection>
-          ) : null}
+          <ReservationStatusSection
+            count={groupedReservations.pending.length}
+            title="Pending requests"
+            tone="pending"
+          >
+            {groupedReservations.pending.length ? groupedReservations.pending.map((reservation) => (
+              <ReservationCard
+                busyId={busyId}
+                key={reservation.id}
+                navigate={navigate}
+                reservation={reservation}
+                onCancelReservation={handleCancelReservation}
+              />
+            )) : (
+              <EmptyState copy="Aucune demande en attente." icon="clock" title="Tout est clair" />
+            )}
+          </ReservationStatusSection>
 
-          {confirmedReservations.length ? (
-            <ReservationStatusSection
-              count={confirmedReservations.length}
-              title="Trajets confirmes"
-              tone="confirmed"
-            >
-              {confirmedReservations.map((reservation) => (
-                <ReservationCard
-                  busyId={busyId}
-                  key={reservation.id}
-                  navigate={navigate}
-                  onCancelReservation={handleCancelReservation}
-                  reservation={reservation}
-                />
-              ))}
-            </ReservationStatusSection>
-          ) : null}
+          <ReservationStatusSection
+            count={groupedReservations.confirmed.length}
+            title="Confirmed trips"
+            tone="confirmed"
+          >
+            {groupedReservations.confirmed.length ? groupedReservations.confirmed.map((reservation) => (
+              <ReservationCard
+                busyId={busyId}
+                key={reservation.id}
+                navigate={navigate}
+                reservation={reservation}
+                onCancelReservation={handleCancelReservation}
+              />
+            )) : (
+              <EmptyState copy="Les trajets valides par un conducteur apparaitront ici." icon="check-badge" title="Aucun trajet confirme" />
+            )}
+          </ReservationStatusSection>
 
-          {historyReservations.length ? (
-            <ReservationStatusSection
-              count={historyReservations.length}
-              title="Historique"
-              tone="history"
-            >
-              {historyReservations.map((reservation) => (
-                <ReservationCard
-                  busyId={busyId}
-                  key={reservation.id}
-                  navigate={navigate}
-                  onCancelReservation={handleCancelReservation}
-                  reservation={reservation}
-                />
-              ))}
-            </ReservationStatusSection>
-          ) : null}
+          <ReservationStatusSection
+            count={groupedReservations.history.length}
+            title="Canceled / refused / completed"
+            tone="history"
+          >
+            {groupedReservations.history.length ? groupedReservations.history.map((reservation) => (
+              <ReservationCard
+                busyId={busyId}
+                key={reservation.id}
+                navigate={navigate}
+                reservation={reservation}
+                onCancelReservation={handleCancelReservation}
+              />
+            )) : (
+              <EmptyState copy="Aucun trajet archive pour le moment." icon="shield" title="Historique vide" />
+            )}
+          </ReservationStatusSection>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

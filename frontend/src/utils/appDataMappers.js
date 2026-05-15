@@ -160,7 +160,41 @@ export function formatReservationStatus(status = "en_attente") {
     return "Annulee";
   }
 
+  if (normalizedStatus === "refusee") {
+    return "Refusee";
+  }
+
+  if (normalizedStatus === "terminee") {
+    return "Terminee";
+  }
+
   return "En attente";
+}
+
+function formatTripStatus(trajet, availablePlaces, departureDate) {
+  const rawStatus = `${trajet?.statut || trajet?.status || ""}`.trim().toLowerCase();
+
+  if (rawStatus === "annule" || rawStatus === "annulee") {
+    return "Annulee";
+  }
+
+  if (rawStatus === "ferme" || rawStatus === "closed") {
+    return "Ferme";
+  }
+
+  if (rawStatus === "termine" || rawStatus === "terminee") {
+    return "Terminee";
+  }
+
+  if (departureDate && departureDate < new Date()) {
+    return "Passe";
+  }
+
+  if (availablePlaces <= 0) {
+    return "Complet";
+  }
+
+  return "Actif";
 }
 
 export function buildCurrentUser(profile, stats = {}) {
@@ -195,6 +229,8 @@ export function buildCurrentUser(profile, stats = {}) {
 }
 
 export function mapTrajetToCard(trajet, driverProfile = {}) {
+  const driverName = driverProfile.full_name || "Conducteur CampusRide";
+
   return {
     id: trajet.id,
     depart: trajet.depart,
@@ -204,8 +240,10 @@ export function mapTrajetToCard(trajet, driverProfile = {}) {
     departureAt: trajet.departure_at,
     durationMinutes: toNumber(trajet.duration_minutes, 0),
     time: formatTimeWindow(trajet.departure_at, trajet.duration_minutes),
-    driver: driverProfile.full_name || "Conducteur CampusRide",
-    driverInitials: getInitials(driverProfile.full_name || driverProfile.email),
+    driver: driverName,
+    driverInitials: getInitials(driverName || driverProfile.email),
+    driverAvatar: driverProfile.photo_profil || "",
+    driverPhone: driverProfile.phone || "",
     car: formatVehicleLabel(driverProfile) || "Vehicule a confirmer",
     seats: toNumber(trajet.places_disponibles, 0),
     totalSeats: toNumber(trajet.places_total, 0),
@@ -245,23 +283,29 @@ export function mapPublishedTrajet(trajet, reservations = null) {
       ].filter(Boolean).join(" - ")
     : "";
   const departureDate = toDate(trajet.departure_at);
-
-  let status = "Actif";
-
-  if (availablePlaces <= 0) {
-    status = "Complet";
-  } else if (departureDate && departureDate < new Date()) {
-    status = "Passe";
-  }
+  const status = formatTripStatus(trajet, availablePlaces, departureDate);
+  const payingReservations = passengerReservations.filter(
+    (reservation) => !["Annulee", "Refusee"].includes(reservation.status),
+  );
 
   return {
     id: trajet.id,
+    depart: trajet.depart,
+    destination: trajet.destination,
+    departureAt: trajet.departure_at,
+    durationMinutes: toNumber(trajet.duration_minutes, 0),
+    pickup: trajet.pickup_note || "Point de rendez-vous a confirmer",
+    description: trajet.description || "",
     route: `${trajet.depart} - ${trajet.destination}`,
     date: formatRelativeDate(trajet.departure_at),
     time: formatClock(trajet.departure_at),
     price: toNumber(trajet.prix_par_place, 0),
+    availableSeats: availablePlaces,
+    totalSeats: totalPlaces,
     seats: `${availablePlaces}/${totalPlaces}`,
     status,
+    earningsEstimate: payingReservations.length * toNumber(trajet.prix_par_place, 0),
+    reservationsCount: payingReservations.length,
     passengers: passengerSummary || (
       confirmedPassengers > 0
         ? `${confirmedPassengers} demande(s)`
@@ -272,19 +316,35 @@ export function mapPublishedTrajet(trajet, reservations = null) {
 }
 
 export function mapReservationRecord(reservation, trajet, driverProfile = {}) {
+  const driverName = driverProfile.full_name || "Conducteur CampusRide";
+
   return {
     id: reservation.id,
     trajetId: reservation.trajet_id || "",
+    depart: trajet?.depart || "Depart a confirmer",
+    destination: trajet?.destination || "Destination a confirmer",
+    departureAt: trajet?.departure_at || "",
     route: trajet
       ? `${trajet.depart} - ${trajet.destination}`
       : "Trajet CampusRide",
     date: formatRelativeDate(trajet?.departure_at),
     time: formatClock(trajet?.departure_at),
-    driver: driverProfile.full_name || "Conducteur CampusRide",
+    driver: driverName,
+    driverInitials: getInitials(driverName || driverProfile.email),
+    driverAvatar: driverProfile.photo_profil || "",
+    driverPhone: driverProfile.phone || "",
     pickup: trajet?.pickup_note || "Point de rendez-vous a confirmer",
     message: reservation.message_passager || "",
     status: formatReservationStatus(reservation.statut),
     price: toNumber(trajet?.prix_par_place, 0),
+    seats: `${toNumber(trajet?.places_disponibles, 0)}/${toNumber(trajet?.places_total, 0)}`,
+    totalSeats: toNumber(trajet?.places_total, 0),
+    paymentStatus: reservation.payment_status || "A regler",
+    rideStatus: reservation.ride_status || formatTripStatus(
+      trajet || {},
+      toNumber(trajet?.places_disponibles, 0),
+      toDate(trajet?.departure_at),
+    ),
   };
 }
 
@@ -297,9 +357,13 @@ export function mapDriverReservationRecord(reservation, passengerProfile = {}) {
     passengerId: reservation.passager_id || "",
     passenger: passengerName,
     passengerInitials: getInitials(passengerName),
+    passengerAvatar: passengerProfile.photo_profil || "",
     phone: passengerProfile.phone || "",
+    campus: passengerProfile.campus || "",
     message: reservation.message_passager || "",
     status: formatReservationStatus(reservation.statut),
+    paymentStatus: reservation.payment_status || "A regler",
+    rideStatus: reservation.ride_status || "",
     createdAt: reservation.date_reservation || "",
   };
 }

@@ -1,7 +1,70 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import AppHeader from "../components/AppHeader";
 import { Icon } from "../components/Icons";
-import { getStatusPillClass, isReservationHistory } from "../utils/statusUi";
+import {
+  getStatusIcon,
+  getStatusPillClass,
+  isReservationHistory,
+} from "../utils/statusUi";
+
+function DriverStat({ icon, label, value }) {
+  return (
+    <div className="driver-stat-card">
+      <span>
+        <Icon name={icon} size={18} />
+      </span>
+      <strong>{value}</strong>
+      <small>{label}</small>
+    </div>
+  );
+}
+
+function PassengerAvatar({ passenger }) {
+  return (
+    <div className="avatar-badge">
+      {passenger.passengerAvatar ? (
+        <img alt={passenger.passenger} src={passenger.passengerAvatar} />
+      ) : (
+        passenger.passengerInitials
+      )}
+    </div>
+  );
+}
+
+function PassengerRow({
+  action,
+  onContact,
+  onViewProfile,
+  reservation,
+  secondaryAction,
+}) {
+  return (
+    <div className="passenger-row passenger-row--pro" key={reservation.id}>
+      <PassengerAvatar passenger={reservation} />
+      <div className="passenger-row__copy">
+        <strong>{reservation.passenger}</strong>
+        <span>{reservation.phone || reservation.campus || "Contact non renseigne"}</span>
+        {reservation.message ? <p>{reservation.message}</p> : null}
+      </div>
+      <div className="passenger-row__actions">
+        <span className={getStatusPillClass(reservation.status)}>
+          <Icon name={getStatusIcon(reservation.status)} size={13} />
+          {reservation.status}
+        </span>
+        {action}
+        {secondaryAction}
+        <button className="mini-button mini-button--ghost" type="button" onClick={onContact}>
+          <Icon name="phone" size={14} />
+          Contact
+        </button>
+        <button className="mini-button mini-button--ghost" type="button" onClick={onViewProfile}>
+          <Icon name="user" size={14} />
+          Profile
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function ReservationGroup({ children, count, label, title, tone }) {
   return (
@@ -18,60 +81,78 @@ function ReservationGroup({ children, count, label, title, tone }) {
   );
 }
 
-function PassengerRow({ action, reservation }) {
+function EmptyPanel({ text, title }) {
   return (
-    <div className="passenger-row" key={reservation.id}>
-      <div className="avatar-badge">{reservation.passengerInitials}</div>
-      <div className="passenger-row__copy">
-        <strong>{reservation.passenger}</strong>
-        <span>{reservation.phone || "Telephone non renseigne"}</span>
-        {reservation.message ? <p>{reservation.message}</p> : null}
-      </div>
-      <div className="passenger-row__actions">
-        <span className={getStatusPillClass(reservation.status)}>
-          {reservation.status}
-        </span>
-        {action}
-      </div>
+    <div className="reservation-empty reservation-empty--pro">
+      <strong>{title}</strong>
+      <span>{text}</span>
     </div>
   );
 }
 
 export default function MyTrajets({
   navigate,
+  onCloseTrip,
   onConfirmReservation,
+  onDeleteTrip,
+  onRejectReservation,
   publishedTrips,
   user,
 }) {
-  const [busyReservationId, setBusyReservationId] = useState("");
+  const [busyAction, setBusyAction] = useState("");
   const [feedback, setFeedback] = useState({ message: "", tone: "" });
-  const activeTrips = publishedTrips.filter((trip) => trip.status === "Actif").length;
-  const passengerReservations = publishedTrips.flatMap(
-    (trip) => trip.passengerReservations || [],
-  );
-  const confirmedPassengers = passengerReservations.filter(
-    (reservation) => reservation.status === "Confirmee",
-  ).length;
-  const pendingRequests = passengerReservations.filter(
-    (reservation) => reservation.status === "En attente",
-  ).length;
 
-  async function handleConfirmReservation(reservationId) {
+  const stats = useMemo(() => {
+    const passengerReservations = publishedTrips.flatMap(
+      (trip) => trip.passengerReservations || [],
+    );
+    const activeTrips = publishedTrips.filter((trip) => trip.status === "Actif").length;
+    const completedTrips = publishedTrips.filter((trip) =>
+      ["Passe", "Terminee"].includes(trip.status),
+    ).length;
+    const canceledTrips = publishedTrips.filter((trip) =>
+      ["Annulee", "Ferme"].includes(trip.status),
+    ).length;
+    const confirmedPassengers = passengerReservations.filter(
+      (reservation) => reservation.status === "Confirmee",
+    ).length;
+    const pendingRequests = passengerReservations.filter(
+      (reservation) => reservation.status === "En attente",
+    ).length;
+    const earnings = publishedTrips.reduce(
+      (total, trip) => total + Number(trip.earningsEstimate || 0),
+      0,
+    );
+
+    return {
+      activeTrips,
+      canceledTrips,
+      completedTrips,
+      confirmedPassengers,
+      earnings,
+      pendingRequests,
+    };
+  }, [publishedTrips]);
+
+  async function runAction(actionKey, action, successMessage) {
     try {
-      setBusyReservationId(reservationId);
+      setBusyAction(actionKey);
       setFeedback({ message: "", tone: "" });
-      await onConfirmReservation(reservationId);
-      setFeedback({
-        message: "Demande confirmee et visible dans l'espace passager.",
-        tone: "success",
-      });
+      await action();
+      setFeedback({ message: successMessage, tone: "success" });
     } catch (error) {
       setFeedback({
-        message: error.message || "Confirmation impossible pour le moment.",
+        message: error.message || "Action impossible pour le moment.",
         tone: "error",
       });
     } finally {
-      setBusyReservationId("");
+      setBusyAction("");
+    }
+  }
+
+  function contactPassenger(reservation) {
+    if (reservation.phone) {
+      window.location.href = `tel:${reservation.phone}`;
     }
   }
 
@@ -87,33 +168,22 @@ export default function MyTrajets({
         onRightClick={() => navigate("publish")}
       />
 
-      <section className="records-hero">
+      <section className="records-hero records-hero--driver">
         <div>
           <span className="eyebrow">Conducteur</span>
-          <h3>Suivi de tes annonces campus</h3>
+          <h3>Driver dashboard</h3>
           <p>
-            Pilote tes departs, confirme les demandes passagers et garde une
-            lecture nette des places restantes.
+            Garde une vue nette sur tes departs, demandes passagers, places restantes et revenus estimes.
           </p>
         </div>
 
-        <div className="summary-strip summary-strip--soft summary-strip--driver">
-          <div>
-            <strong>{publishedTrips.length}</strong>
-            <span>annonces</span>
-          </div>
-          <div>
-            <strong>{activeTrips}</strong>
-            <span>actifs</span>
-          </div>
-          <div>
-            <strong>{confirmedPassengers}</strong>
-            <span>confirmes</span>
-          </div>
-          <div>
-            <strong>{pendingRequests}</strong>
-            <span>demandes</span>
-          </div>
+        <div className="driver-stats-grid">
+          <DriverStat icon="route" label="active rides" value={stats.activeTrips} />
+          <DriverStat icon="check-badge" label="completed" value={stats.completedTrips} />
+          <DriverStat icon="clock" label="pending requests" value={stats.pendingRequests} />
+          <DriverStat icon="user" label="confirmed" value={stats.confirmedPassengers} />
+          <DriverStat icon="shield" label="canceled/closed" value={stats.canceledTrips} />
+          <DriverStat icon="ticket" label="estimated earnings" value={`${stats.earnings} DH`} />
         </div>
       </section>
 
@@ -124,13 +194,20 @@ export default function MyTrajets({
       ) : null}
 
       {!publishedTrips.length ? (
-        <div className="message-box">
-          <strong>Aucun trajet publie pour le moment</strong>
-          <p>Ton premier trajet apparaitra ici des que tu publies une annonce.</p>
+        <div className="empty-state-card">
+          <span className="empty-state-card__icon">
+            <Icon name="route" size={22} />
+          </span>
+          <strong>Aucun trajet publie</strong>
+          <p>Publie ton premier depart pour recevoir des demandes passagers.</p>
+          <button className="mini-button" type="button" onClick={() => navigate("publish")}>
+            <Icon name="plus" size={15} />
+            Publier un trajet
+          </button>
         </div>
       ) : null}
 
-      <div className="stack-list stack-list--records">
+      <div className="stack-list stack-list--records driver-trip-grid">
         {publishedTrips.map((trip) => {
           const reservations = trip.passengerReservations || [];
           const confirmedReservations = reservations.filter(
@@ -144,112 +221,162 @@ export default function MyTrajets({
           );
 
           return (
-            <article className="list-card list-card--trip" key={trip.id}>
-              <div className="list-card__row">
-                <div>
-                  <h4>{trip.route}</h4>
-                  <p>{trip.date} - {trip.time}</p>
+            <article className="driver-trip-card" key={trip.id}>
+              <div className="driver-trip-card__header">
+                <div className="route-stack">
+                  <span>{trip.date} - {trip.time}</span>
+                  <h4>{trip.depart || trip.route}</h4>
+                  <Icon name="arrow-right" size={16} />
+                  <h4>{trip.destination || ""}</h4>
                 </div>
                 <span className={getStatusPillClass(trip.status)}>
+                  <Icon name={getStatusIcon(trip.status)} size={13} />
                   {trip.status}
                 </span>
               </div>
 
-              <div className="trip-card__meta">
-                <span className="meta-chip">
+              <div className="driver-trip-metrics">
+                <span>
                   <Icon name="seat" size={14} />
-                  {trip.seats} places
+                  {trip.seats} seats
                 </span>
-                <span className="meta-chip">
-                  <Icon name="ticket" size={14} />
-                  {trip.price} DH
-                </span>
-                <span className="meta-chip">
+                <span>
                   <Icon name="user" size={14} />
-                  {reservations.length} reservation(s)
+                  {trip.reservationsCount || reservations.length} reservations
+                </span>
+                <span>
+                  <Icon name="ticket" size={14} />
+                  {trip.earningsEstimate || 0} DH estimated
                 </span>
               </div>
 
-              <p className="card-note">
-                {confirmedReservations.length} passager(s) confirmes
-              </p>
+              <div className="confirmed-avatar-strip">
+                {confirmedReservations.slice(0, 5).map((reservation) => (
+                  <PassengerAvatar key={reservation.id} passenger={reservation} />
+                ))}
+                {!confirmedReservations.length ? (
+                  <span>Aucun passager confirme</span>
+                ) : (
+                  <span>{confirmedReservations.length} confirmed passengers</span>
+                )}
+              </div>
 
-              {reservations.length ? (
-                <div className="reservation-board">
+              <div className="driver-trip-actions">
+                <button className="mini-button mini-button--ghost" type="button" onClick={() => navigate("publish")}>
+                  <Icon name="edit" size={15} />
+                  Edit
+                </button>
+                <button
+                  className="mini-button mini-button--ghost"
+                  disabled={busyAction === `close-${trip.id}` || ["Ferme", "Passe", "Terminee"].includes(trip.status)}
+                  type="button"
+                  onClick={() => runAction(
+                    `close-${trip.id}`,
+                    () => onCloseTrip(trip.id),
+                    "Reservations fermees pour ce trajet.",
+                  )}
+                >
+                  <Icon name="shield" size={15} />
+                  Close reservations
+                </button>
+                <button
+                  className="mini-button mini-button--danger"
+                  disabled={busyAction === `delete-${trip.id}`}
+                  type="button"
+                  onClick={() => runAction(
+                    `delete-${trip.id}`,
+                    () => onDeleteTrip(trip.id),
+                    "Trajet supprime.",
+                  )}
+                >
+                  <Icon name="x" size={15} />
+                  Delete
+                </button>
+              </div>
+
+              <div className="reservation-board">
+                <ReservationGroup
+                  count={pendingReservations.length}
+                  label="Demandes"
+                  title="Pending passenger requests"
+                  tone="pending"
+                >
+                  {pendingReservations.length ? pendingReservations.map((reservation) => (
+                    <PassengerRow
+                      action={(
+                        <button
+                          className="mini-button"
+                          disabled={busyAction === `accept-${reservation.id}`}
+                          type="button"
+                          onClick={() => runAction(
+                            `accept-${reservation.id}`,
+                            () => onConfirmReservation(reservation.id),
+                            "Demande confirmee.",
+                          )}
+                        >
+                          Accept
+                        </button>
+                      )}
+                      key={reservation.id}
+                      reservation={reservation}
+                      secondaryAction={(
+                        <button
+                          className="mini-button mini-button--danger"
+                          disabled={busyAction === `reject-${reservation.id}`}
+                          type="button"
+                          onClick={() => runAction(
+                            `reject-${reservation.id}`,
+                            () => onRejectReservation(reservation.id),
+                            "Demande refusee.",
+                          )}
+                        >
+                          Reject
+                        </button>
+                      )}
+                      onContact={() => contactPassenger(reservation)}
+                      onViewProfile={() => navigate("profile")}
+                    />
+                  )) : (
+                    <EmptyPanel text="Les nouvelles demandes apparaitront ici." title="Aucune demande en attente" />
+                  )}
+                </ReservationGroup>
+
+                <ReservationGroup
+                  count={confirmedReservations.length}
+                  label="Confirmes"
+                  title="Confirmed passengers"
+                  tone="confirmed"
+                >
+                  {confirmedReservations.length ? confirmedReservations.map((reservation) => (
+                    <PassengerRow
+                      key={reservation.id}
+                      reservation={reservation}
+                      onContact={() => contactPassenger(reservation)}
+                      onViewProfile={() => navigate("profile")}
+                    />
+                  )) : (
+                    <EmptyPanel text="Aucun passager confirme sur ce depart." title="Liste vide" />
+                  )}
+                </ReservationGroup>
+
+                {historyReservations.length ? (
                   <ReservationGroup
-                    count={confirmedReservations.length}
-                    label="Confirmes"
-                    title="Passagers confirmes"
-                    tone="confirmed"
+                    count={historyReservations.length}
+                    label="Archive"
+                    title="Canceled / refused / completed"
+                    tone="history"
                   >
-                    {confirmedReservations.length ? (
-                      confirmedReservations.map((reservation) => (
-                        <PassengerRow
-                          key={reservation.id}
-                          reservation={reservation}
-                        />
-                      ))
-                    ) : (
-                      <p className="reservation-empty">
-                        Aucun passager confirme pour ce depart.
-                      </p>
-                    )}
+                    {historyReservations.map((reservation) => (
+                      <PassengerRow
+                        key={reservation.id}
+                        reservation={reservation}
+                        onContact={() => contactPassenger(reservation)}
+                        onViewProfile={() => navigate("profile")}
+                      />
+                    ))}
                   </ReservationGroup>
-
-                  <ReservationGroup
-                    count={pendingReservations.length}
-                    label="En attente"
-                    title="Demandes a confirmer"
-                    tone="pending"
-                  >
-                    {pendingReservations.length ? (
-                      pendingReservations.map((reservation) => (
-                        <PassengerRow
-                          action={
-                            <button
-                              className="mini-button mini-button--ghost"
-                              disabled={busyReservationId === reservation.id}
-                              type="button"
-                              onClick={() => handleConfirmReservation(reservation.id)}
-                            >
-                              {busyReservationId === reservation.id
-                                ? "Confirmation..."
-                                : "Confirmer"}
-                            </button>
-                          }
-                          key={reservation.id}
-                          reservation={reservation}
-                        />
-                      ))
-                    ) : (
-                      <p className="reservation-empty">
-                        Aucune demande en attente.
-                      </p>
-                    )}
-                  </ReservationGroup>
-
-                  {historyReservations.length ? (
-                    <ReservationGroup
-                      count={historyReservations.length}
-                      label="Historique"
-                      title="Reservations archivees"
-                      tone="history"
-                    >
-                      {historyReservations.map((reservation) => (
-                        <PassengerRow
-                          key={reservation.id}
-                          reservation={reservation}
-                        />
-                      ))}
-                    </ReservationGroup>
-                  ) : null}
-                </div>
-              ) : (
-                <div className="message-box message-box--soft">
-                  <strong>Aucun passager pour ce trajet</strong>
-                  <p>Des qu'une demande arrive, elle apparait ici.</p>
-                </div>
-              )}
+                ) : null}
+              </div>
             </article>
           );
         })}

@@ -187,8 +187,45 @@ async function createTrajet(payload, conducteurId) {
   return data;
 }
 
+async function closeTrajet(trajetId, conducteurId) {
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from("trajets")
+    .update({
+      places_disponibles: 0,
+      statut: "ferme",
+    })
+    .eq("id", trajetId)
+    .eq("conducteur_id", conducteurId)
+    .select("*")
+    .single();
+
+  if (error) {
+    throw formatSupabaseError(error, "Impossible de fermer les reservations.");
+  }
+
+  return data;
+}
+
+async function deleteTrajet(trajetId, conducteurId) {
+  const client = requireSupabase();
+  const { error } = await client
+    .from("trajets")
+    .delete()
+    .eq("id", trajetId)
+    .eq("conducteur_id", conducteurId);
+
+  if (error) {
+    throw formatSupabaseError(error, "Impossible de supprimer ce trajet.");
+  }
+
+  return true;
+}
+
 export const trajetService = {
+  closeTrajet,
   createTrajet,
+  deleteTrajet,
   listAvailableTrajets,
   listPublishedTrajets,
 };
