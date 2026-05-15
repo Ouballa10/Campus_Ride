@@ -5,15 +5,15 @@ const navItemsByMode = {
   passenger: [
     { route: "home", label: "Accueil", icon: "home" },
     { route: "search", label: "Recherche", icon: "search", featured: true },
-    { route: "my-reservations", label: "Reservations", icon: "bookmark" },
-    { route: "notifications", label: "Alerts", icon: "bell" },
+    { route: "my-reservations", label: "Resas", icon: "bookmark" },
+    { route: "notifications", label: "Notifs", icon: "bell" },
     { route: "profile", label: "Profil", icon: "user" },
   ],
   driver: [
     { route: "home", label: "Accueil", icon: "home" },
     { route: "publish", label: "Publier", icon: "plus", featured: true },
     { route: "my-trips", label: "Trajets", icon: "route" },
-    { route: "notifications", label: "Alerts", icon: "bell" },
+    { route: "notifications", label: "Notifs", icon: "bell" },
     { route: "profile", label: "Profil", icon: "user" },
   ],
 };

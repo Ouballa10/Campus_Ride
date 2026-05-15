@@ -6129,3 +6129,86 @@ body {
   background: #ffffff;
   color: var(--brand-blue);
 }
+
+/* Final bottom navigation lock: 5 tabs, no wrapping */
+.bottom-nav {
+  width: calc(100% - 16px) !important;
+  max-width: 430px !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 4px !important;
+  align-items: stretch !important;
+  margin: 10px auto 0 !important;
+  padding: 8px !important;
+  border: 1px solid var(--brand-line) !important;
+  border-radius: 24px !important;
+  background: rgba(255, 255, 255, 0.97) !important;
+  box-shadow: 0 -8px 28px rgba(11, 31, 71, 0.12) !important;
+}
+
+.bottom-nav__button {
+  min-width: 0 !important;
+  min-height: 58px !important;
+  display: grid !important;
+  grid-template-rows: 28px auto !important;
+  align-items: center !important;
+  justify-items: center !important;
+  gap: 3px !important;
+  padding: 6px 2px !important;
+  border-radius: 18px !important;
+  background: transparent !important;
+  color: #667792 !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  line-height: 1.05 !important;
+  overflow: hidden !important;
+}
+
+.bottom-nav__button > span:last-child {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.bottom-nav__icon,
+.bottom-nav__button--featured .bottom-nav__icon {
+  width: 28px !important;
+  height: 28px !important;
+  margin: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  color: currentColor !important;
+}
+
+.bottom-nav__button--active {
+  background: rgba(11, 99, 246, 0.1) !important;
+  color: var(--brand-blue) !important;
+}
+
+.bottom-nav__button--featured.bottom-nav__button--active .bottom-nav__icon,
+.bottom-nav__button--featured .bottom-nav__icon {
+  background: linear-gradient(135deg, var(--brand-blue), var(--brand-blue-2)) !important;
+  color: #ffffff !important;
+}
+
+@media (max-width: 360px) {
+  .bottom-nav {
+    width: calc(100% - 8px) !important;
+    gap: 2px !important;
+    padding: 6px !important;
+  }
+
+  .bottom-nav__button {
+    min-height: 54px !important;
+    font-size: 0.62rem !important;
+  }
+
+  .bottom-nav__icon,
+  .bottom-nav__button--featured .bottom-nav__icon {
+    width: 25px !important;
+    height: 25px !important;
+  }
+}
