@@ -29,7 +29,7 @@ export function AuthProvider({ children }) {
         setSession(nextSession);
 
         if (nextSession?.user?.id) {
-          const nextProfile = await authService.getCurrentProfile(nextSession.user.id);
+          const nextProfile = await authService.ensureCurrentProfile(nextSession.user);
 
           if (isActive) {
             setProfile(nextProfile);
@@ -62,7 +62,7 @@ export function AuthProvider({ children }) {
       setSession(nextSession);
 
       if (nextSession?.user?.id) {
-        const nextProfile = await authService.getCurrentProfile(nextSession.user.id);
+        const nextProfile = await authService.ensureCurrentProfile(nextSession.user);
 
         if (isActive) {
           setProfile(nextProfile);
@@ -83,7 +83,7 @@ export function AuthProvider({ children }) {
       return null;
     }
 
-    const nextProfile = await authService.getCurrentProfile(session.user.id);
+    const nextProfile = await authService.ensureCurrentProfile(session.user);
     setProfile(nextProfile);
     return nextProfile;
   }
@@ -93,7 +93,7 @@ export function AuthProvider({ children }) {
     setSession(data.session);
 
     if (data.session?.user?.id) {
-      const nextProfile = await authService.getCurrentProfile(data.session.user.id);
+      const nextProfile = await authService.ensureCurrentProfile(data.session.user);
       setProfile(nextProfile);
       return { ...data, profile: nextProfile };
     }
@@ -110,7 +110,7 @@ export function AuthProvider({ children }) {
 
     if (data.session?.user?.id) {
       setSession(data.session);
-      const nextProfile = await authService.getCurrentProfile(data.session.user.id);
+      const nextProfile = await authService.ensureCurrentProfile(data.session.user, payload);
       setProfile(nextProfile);
       return { ...data, profile: nextProfile };
     }

@@ -224,6 +224,13 @@ to authenticated
 using (auth.uid() = id)
 with check (auth.uid() = id);
 
+drop policy if exists "Users insert their own profile" on public.profiles;
+create policy "Users insert their own profile"
+on public.profiles
+for insert
+to authenticated
+with check (auth.uid() = id);
+
 drop policy if exists "Trajets are readable" on public.trajets;
 create policy "Trajets are readable"
 on public.trajets

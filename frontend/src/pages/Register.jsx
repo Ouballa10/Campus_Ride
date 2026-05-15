@@ -56,10 +56,10 @@ export default function Register({ navigate }) {
       setSuccess("");
 
       const response = await signUp({
-        email: form.email,
-        fullName: form.fullName,
+        email: form.email.trim(),
+        fullName: form.fullName.trim(),
         password: form.password,
-        phone: form.phone,
+        phone: form.phone.trim(),
         role: form.mode === "driver" ? "conducteur" : "passager",
       });
 
@@ -90,7 +90,7 @@ export default function Register({ navigate }) {
       setSuccess("");
       await signInWithGoogle();
     } catch (submissionError) {
-      setError(submissionError.message);
+      setError(`${submissionError.message} Si Google ne s'ouvre pas, verifie que Google Provider et Redirect URL sont actives dans Supabase.`);
       setIsGoogleSubmitting(false);
     }
   }

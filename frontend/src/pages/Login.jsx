@@ -39,7 +39,7 @@ export default function Login({ navigate }) {
       setIsSubmitting(true);
       setError("");
       await signIn({
-        email: form.email,
+        email: form.email.trim(),
         password: form.password,
       });
       navigate("home");
@@ -61,7 +61,7 @@ export default function Login({ navigate }) {
       setError("");
       await signInWithGoogle();
     } catch (submissionError) {
-      setError(submissionError.message);
+      setError(`${submissionError.message} Si Google ne s'ouvre pas, verifie que Google Provider et Redirect URL sont actives dans Supabase.`);
       setIsGoogleSubmitting(false);
     }
   }

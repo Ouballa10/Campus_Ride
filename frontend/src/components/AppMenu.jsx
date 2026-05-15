@@ -64,11 +64,10 @@ export default function AppMenu({
       if (result?.error) {
         console.warn("Session cleared locally after sign out error:", result.error);
       }
-
-      setIsOpen(false);
-      navigate("splash");
     } finally {
       setIsLoggingOut(false);
+      setIsOpen(false);
+      navigate("splash");
     }
   }
 
