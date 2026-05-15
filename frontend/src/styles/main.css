@@ -5748,3 +5748,128 @@ body {
     height: 118px;
   }
 }
+
+/* Mobile layout fixes after blue redesign */
+.home-hero-card {
+  isolation: isolate;
+}
+
+.home-brand-row {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.home-brand-row > div {
+  min-width: 0;
+}
+
+.home-brand-row h2,
+.home-hero-card__lead,
+.home-hero-card__body {
+  max-width: 100%;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+
+.home-ride-visual {
+  z-index: 0;
+}
+
+.passenger-row,
+.passenger-row--pro {
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "avatar copy"
+    "actions actions";
+}
+
+.passenger-row__actions {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.passenger-row__actions .status-pill {
+  flex: 1 1 100%;
+  width: 100%;
+  min-width: 0;
+}
+
+.passenger-row__actions .mini-button {
+  flex: 1 1 calc(50% - 8px);
+  min-width: 128px;
+  max-width: none;
+  white-space: normal;
+}
+
+@media (min-width: 700px) {
+  .passenger-row,
+  .passenger-row--pro {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "avatar copy"
+      "actions actions";
+  }
+
+  .passenger-row__actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 760px) {
+  .home-hero-card {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+
+  .home-brand-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .home-brand-row__logo--large {
+    width: 96px;
+    height: 96px;
+  }
+
+  .home-brand-row h2 {
+    font-size: 2rem;
+    line-height: 1.04;
+  }
+
+  .home-hero-card__lead,
+  .home-hero-card__body {
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .home-ride-visual {
+    min-height: 108px;
+  }
+}
+
+@media (max-width: 360px) {
+  .home-brand-row__logo--large {
+    width: 76px;
+    height: 76px;
+    border-radius: 18px;
+  }
+
+  .home-brand-row h2 {
+    font-size: 1.58rem;
+  }
+
+  .home-hero-card__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .home-ride-visual {
+    display: none;
+  }
+
+  .passenger-row__actions .mini-button {
+    flex-basis: 100%;
+  }
+}
