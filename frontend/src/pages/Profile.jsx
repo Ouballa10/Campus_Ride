@@ -172,8 +172,8 @@ export default function Profile({
     Boolean(profile?.role) && profile.role !== getRoleFromMode(mode);
   const visibleProfileLinks = profileLinks.filter((link) =>
     isDriverMode
-      ? ["trips", "publish", "search"].includes(link.id)
-      : ["reservations", "search", "trips"].includes(link.id),
+      ? ["trips", "publish", "search", "notifications"].includes(link.id)
+      : ["reservations", "search", "trips", "notifications"].includes(link.id),
   );
   const formDirty =
     JSON.stringify(form) !== JSON.stringify(buildProfileForm(profile, user, mode)) ||

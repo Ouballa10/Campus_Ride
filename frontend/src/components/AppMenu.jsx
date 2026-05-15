@@ -30,6 +30,7 @@ export default function AppMenu({
             label: "Mes reservations",
             icon: "bookmark",
           },
+      { route: "notifications", label: "Notifications", icon: "bell" },
       { route: "profile", label: "Parametres du compte", icon: "settings" },
     ],
     [isDriverMode],

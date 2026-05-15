@@ -3,60 +3,84 @@ import { Icon } from "../components/Icons";
 import logo from "../assets/images/logo.png";
 
 const splashHighlights = [
-  { icon: "search", label: "Trouver" },
-  { icon: "shield", label: "Verifier" },
-  { icon: "send", label: "Reserver" },
+  {
+    icon: "send",
+    title: "Rapide",
+    copy: "Reservez un trajet en quelques clics.",
+  },
+  {
+    icon: "shield",
+    title: "Securise",
+    copy: "Des trajets fiables pour votre campus.",
+  },
+  {
+    icon: "location",
+    title: "Partout",
+    copy: "Disponible la ou vos etudes vous menent.",
+  },
 ];
 
 export default function Splash({ navigate }) {
   return (
-    <div className="screen screen--splash screen--splash-clean">
-      <section className="splash-clean">
-        <div className="splash-clean__brand">
-          <img src={logo} alt="CampusRide logo" />
-          <span>CampusRide</span>
-        </div>
+    <div className="screen screen--splash">
+      <div className="splash-showcase">
+        <div className="splash-showcase__panel">
+          <div className="splash-showcase__ornament splash-showcase__ornament--left" aria-hidden="true" />
+          <div className="splash-showcase__ornament splash-showcase__ornament--right" aria-hidden="true" />
 
-        <div className="splash-clean__visual" aria-hidden="true">
-          <div className="splash-clean__map">
-            <span className="splash-clean__pin splash-clean__pin--start">
-              <Icon name="location" size={18} />
-            </span>
-            <span className="splash-clean__pin splash-clean__pin--end">
-              <Icon name="check-badge" size={18} />
-            </span>
-            <span className="splash-clean__route" />
-            <span className="splash-clean__car">
-              <Icon name="car" size={44} />
-            </span>
+          <header className="splash-showcase__header">
+            <img src={logo} alt="CampusRide logo" className="splash-showcase__logo" />
+            <h1>CampusRide simplifie vos trajets universitaires</h1>
+            <p>
+              Accedez rapidement a vos deplacements campus, trouvez un conducteur
+              fiable et voyagez en toute serenite.
+            </p>
+          </header>
+
+          <div className="splash-showcase__media">
+            <img
+              alt="CampusRide splash"
+              className="splash-showcase__image"
+              src="/images/splash-photo.png"
+            />
+          </div>
+
+          <div className="splash-highlights" aria-label="Points forts CampusRide">
+            {splashHighlights.map((item) => (
+              <article className="splash-highlight-card" key={item.title}>
+                <span className="splash-highlight-card__icon">
+                  <Icon name={item.icon} size={24} />
+                </span>
+                <strong>{item.title}</strong>
+                <p>{item.copy}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="splash-showcase__footer">
+            <button
+              type="button"
+              className="splash-showcase__button"
+              onClick={() => navigate("login")}
+            >
+              <span>Suivant</span>
+              <Icon name="arrow-right" size={18} />
+            </button>
+
+            <div className="splash-dots splash-dots--showcase" aria-label="Navigation des pages">
+              <span className="splash-dots__item splash-dots__item--soft" aria-hidden="true" />
+              <button
+                type="button"
+                className="splash-dots__item splash-dots__item--active"
+                onClick={() => navigate("login")}
+                aria-label="Aller a la page de connexion"
+                aria-pressed="true"
+              />
+              <span className="splash-dots__item splash-dots__item--soft" aria-hidden="true" />
+            </div>
           </div>
         </div>
-
-        <div className="splash-clean__copy">
-          <h1>Ton trajet campus, bien organise.</h1>
-          <p>
-            Reserve ou publie un trajet avec une interface simple, claire et faite pour mobile.
-          </p>
-        </div>
-
-        <div className="splash-clean__highlights">
-          {splashHighlights.map((item) => (
-            <span key={item.label}>
-              <Icon name={item.icon} size={16} />
-              {item.label}
-            </span>
-          ))}
-        </div>
-
-        <button
-          type="button"
-          className="splash-clean__button"
-          onClick={() => navigate("login")}
-        >
-          Commencer
-          <Icon name="arrow-right" size={18} />
-        </button>
-      </section>
+      </div>
     </div>
   );
 }

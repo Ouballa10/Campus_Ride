@@ -128,6 +128,7 @@ export const profileLinks = [
   },
   { id: "publish", label: "Publier un trajet", icon: "plus", route: "publish" },
   { id: "search", label: "Rechercher un trajet", icon: "search", route: "search" },
+  { id: "notifications", label: "Notifications", icon: "bell", route: "notifications" },
 ];
 
 export const publishedTrips = [

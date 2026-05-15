@@ -7,15 +7,27 @@ import {
   isReservationHistory,
 } from "../utils/statusUi";
 
-function DriverStat({ icon, label, value }) {
+const dashboardViews = [
+  { id: "overview", label: "Overview", icon: "home" },
+  { id: "active", label: "Active rides", icon: "route" },
+  { id: "requests", label: "Requests", icon: "clock" },
+  { id: "confirmed", label: "Confirmed", icon: "user" },
+  { id: "closed", label: "Closed", icon: "shield" },
+];
+
+function DriverStat({ active, icon, label, onClick, value }) {
   return (
-    <div className="driver-stat-card">
+    <button
+      className={`driver-stat-card ${active ? "driver-stat-card--active" : ""}`}
+      type="button"
+      onClick={onClick}
+    >
       <span>
         <Icon name={icon} size={18} />
       </span>
       <strong>{value}</strong>
       <small>{label}</small>
-    </div>
+    </button>
   );
 }
 
@@ -101,6 +113,8 @@ export default function MyTrajets({
 }) {
   const [busyAction, setBusyAction] = useState("");
   const [feedback, setFeedback] = useState({ message: "", tone: "" });
+  const [activeView, setActiveView] = useState("overview");
+  const [selectedPassengerContext, setSelectedPassengerContext] = useState(null);
 
   const stats = useMemo(() => {
     const passengerReservations = publishedTrips.flatMap(
@@ -134,6 +148,33 @@ export default function MyTrajets({
     };
   }, [publishedTrips]);
 
+  const filteredTrips = useMemo(() => {
+    if (activeView === "active") {
+      return publishedTrips.filter((trip) => ["Actif", "Nouveau", "Complet"].includes(trip.status));
+    }
+
+    if (activeView === "requests") {
+      return publishedTrips.filter((trip) =>
+        (trip.passengerReservations || []).some((reservation) => reservation.status === "En attente"),
+      );
+    }
+
+    if (activeView === "confirmed") {
+      return publishedTrips.filter((trip) =>
+        (trip.passengerReservations || []).some((reservation) => reservation.status === "Confirmee"),
+      );
+    }
+
+    if (activeView === "closed") {
+      return publishedTrips.filter((trip) =>
+        ["Passe", "Terminee", "Annulee", "Ferme"].includes(trip.status) ||
+        (trip.passengerReservations || []).some((reservation) => isReservationHistory(reservation.status)),
+      );
+    }
+
+    return publishedTrips;
+  }, [activeView, publishedTrips]);
+
   async function runAction(actionKey, action, successMessage) {
     try {
       setBusyAction(actionKey);
@@ -153,7 +194,21 @@ export default function MyTrajets({
   function contactPassenger(reservation) {
     if (reservation.phone) {
       window.location.href = `tel:${reservation.phone}`;
+      return;
     }
+
+    setFeedback({
+      message: "Ce passager n'a pas encore renseigne son numero.",
+      tone: "error",
+    });
+  }
+
+  function openPassengerProfile(trip, reservation) {
+    setSelectedPassengerContext({ reservation, trip });
+  }
+
+  function closePassengerProfile() {
+    setSelectedPassengerContext(null);
   }
 
   return (
@@ -178,14 +233,28 @@ export default function MyTrajets({
         </div>
 
         <div className="driver-stats-grid">
-          <DriverStat icon="route" label="active rides" value={stats.activeTrips} />
-          <DriverStat icon="check-badge" label="completed" value={stats.completedTrips} />
-          <DriverStat icon="clock" label="pending requests" value={stats.pendingRequests} />
-          <DriverStat icon="user" label="confirmed" value={stats.confirmedPassengers} />
-          <DriverStat icon="shield" label="canceled/closed" value={stats.canceledTrips} />
-          <DriverStat icon="ticket" label="estimated earnings" value={`${stats.earnings} DH`} />
+          <DriverStat active={activeView === "active"} icon="route" label="active rides" value={stats.activeTrips} onClick={() => setActiveView("active")} />
+          <DriverStat active={activeView === "closed"} icon="check-badge" label="completed" value={stats.completedTrips} onClick={() => setActiveView("closed")} />
+          <DriverStat active={activeView === "requests"} icon="clock" label="pending requests" value={stats.pendingRequests} onClick={() => setActiveView("requests")} />
+          <DriverStat active={activeView === "confirmed"} icon="user" label="confirmed" value={stats.confirmedPassengers} onClick={() => setActiveView("confirmed")} />
+          <DriverStat active={activeView === "closed"} icon="shield" label="canceled/closed" value={stats.canceledTrips} onClick={() => setActiveView("closed")} />
+          <DriverStat active={activeView === "overview"} icon="ticket" label="estimated earnings" value={`${stats.earnings} DH`} onClick={() => setActiveView("overview")} />
         </div>
       </section>
+
+      <div className="dashboard-view-tabs" aria-label="Filtrer le dashboard conducteur">
+        {dashboardViews.map((view) => (
+          <button
+            className={activeView === view.id ? "dashboard-view-tabs__button dashboard-view-tabs__button--active" : "dashboard-view-tabs__button"}
+            key={view.id}
+            type="button"
+            onClick={() => setActiveView(view.id)}
+          >
+            <Icon name={view.icon} size={15} />
+            <span>{view.label}</span>
+          </button>
+        ))}
+      </div>
 
       {feedback.message ? (
         <p className={`profile-editor-status profile-editor-status--${feedback.tone}`}>
@@ -207,8 +276,18 @@ export default function MyTrajets({
         </div>
       ) : null}
 
+      {publishedTrips.length && !filteredTrips.length ? (
+        <div className="empty-state-card">
+          <span className="empty-state-card__icon">
+            <Icon name="search" size={22} />
+          </span>
+          <strong>Aucun resultat dans cette vue</strong>
+          <p>Choisis un autre onglet pour voir tes trajets, demandes ou passagers confirmes.</p>
+        </div>
+      ) : null}
+
       <div className="stack-list stack-list--records driver-trip-grid">
-        {publishedTrips.map((trip) => {
+        {filteredTrips.map((trip) => {
           const reservations = trip.passengerReservations || [];
           const confirmedReservations = reservations.filter(
             (reservation) => reservation.status === "Confirmee",
@@ -295,6 +374,7 @@ export default function MyTrajets({
               </div>
 
               <div className="reservation-board">
+                {(activeView === "overview" || activeView === "requests") ? (
                 <ReservationGroup
                   count={pendingReservations.length}
                   label="Demandes"
@@ -334,13 +414,15 @@ export default function MyTrajets({
                         </button>
                       )}
                       onContact={() => contactPassenger(reservation)}
-                      onViewProfile={() => navigate("profile")}
+                      onViewProfile={() => openPassengerProfile(trip, reservation)}
                     />
                   )) : (
                     <EmptyPanel text="Les nouvelles demandes apparaitront ici." title="Aucune demande en attente" />
                   )}
                 </ReservationGroup>
+                ) : null}
 
+                {(activeView === "overview" || activeView === "confirmed") ? (
                 <ReservationGroup
                   count={confirmedReservations.length}
                   label="Confirmes"
@@ -352,14 +434,15 @@ export default function MyTrajets({
                       key={reservation.id}
                       reservation={reservation}
                       onContact={() => contactPassenger(reservation)}
-                      onViewProfile={() => navigate("profile")}
+                      onViewProfile={() => openPassengerProfile(trip, reservation)}
                     />
                   )) : (
                     <EmptyPanel text="Aucun passager confirme sur ce depart." title="Liste vide" />
                   )}
                 </ReservationGroup>
+                ) : null}
 
-                {historyReservations.length ? (
+                {(activeView === "closed" || activeView === "overview") && historyReservations.length ? (
                   <ReservationGroup
                     count={historyReservations.length}
                     label="Archive"
@@ -371,7 +454,7 @@ export default function MyTrajets({
                         key={reservation.id}
                         reservation={reservation}
                         onContact={() => contactPassenger(reservation)}
-                        onViewProfile={() => navigate("profile")}
+                        onViewProfile={() => openPassengerProfile(trip, reservation)}
                       />
                     ))}
                   </ReservationGroup>
@@ -381,6 +464,92 @@ export default function MyTrajets({
           );
         })}
       </div>
+
+      {selectedPassengerContext ? (
+        <div className="passenger-profile-modal" role="dialog" aria-modal="true">
+          <button
+            aria-label="Fermer le profil passager"
+            className="passenger-profile-modal__backdrop"
+            type="button"
+            onClick={closePassengerProfile}
+          />
+          <section className="passenger-profile-card">
+            <div className="passenger-profile-card__header">
+              <PassengerAvatar passenger={selectedPassengerContext.reservation} />
+              <div>
+                <span className="eyebrow">Profil passager</span>
+                <h3>{selectedPassengerContext.reservation.passenger}</h3>
+                <p>{selectedPassengerContext.reservation.campus || selectedPassengerContext.reservation.phone || "Informations limitees"}</p>
+              </div>
+              <button className="icon-button" type="button" onClick={closePassengerProfile}>
+                <Icon name="x" size={18} />
+              </button>
+            </div>
+
+            <div className="passenger-profile-card__route">
+              <span>{selectedPassengerContext.trip.route}</span>
+              <strong>{selectedPassengerContext.trip.date} - {selectedPassengerContext.trip.time}</strong>
+            </div>
+
+            <div className="passenger-profile-card__facts">
+              <span className={getStatusPillClass(selectedPassengerContext.reservation.status)}>
+                <Icon name={getStatusIcon(selectedPassengerContext.reservation.status)} size={13} />
+                {selectedPassengerContext.reservation.status}
+              </span>
+              <span>
+                <Icon name="phone" size={14} />
+                {selectedPassengerContext.reservation.phone || "Telephone non renseigne"}
+              </span>
+            </div>
+
+            {selectedPassengerContext.reservation.message ? (
+              <div className="message-box message-box--soft">
+                <strong>Message passager</strong>
+                <p>{selectedPassengerContext.reservation.message}</p>
+              </div>
+            ) : null}
+
+            <div className="passenger-profile-card__actions">
+              {selectedPassengerContext.reservation.status === "En attente" ? (
+                <>
+                  <button
+                    className="mini-button"
+                    disabled={busyAction === `accept-${selectedPassengerContext.reservation.id}`}
+                    type="button"
+                    onClick={() => runAction(
+                      `accept-${selectedPassengerContext.reservation.id}`,
+                      () => onConfirmReservation(selectedPassengerContext.reservation.id),
+                      "Demande confirmee.",
+                    )}
+                  >
+                    Accept
+                  </button>
+                  <button
+                    className="mini-button mini-button--danger"
+                    disabled={busyAction === `reject-${selectedPassengerContext.reservation.id}`}
+                    type="button"
+                    onClick={() => runAction(
+                      `reject-${selectedPassengerContext.reservation.id}`,
+                      () => onRejectReservation(selectedPassengerContext.reservation.id),
+                      "Demande refusee.",
+                    )}
+                  >
+                    Reject
+                  </button>
+                </>
+              ) : null}
+              <button
+                className="mini-button mini-button--ghost"
+                type="button"
+                onClick={() => contactPassenger(selectedPassengerContext.reservation)}
+              >
+                <Icon name="phone" size={14} />
+                Contact
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
     </div>
   );
 }

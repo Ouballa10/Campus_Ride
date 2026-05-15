@@ -12,6 +12,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import MyReservations from "./pages/MyReservations";
 import MyTrajets from "./pages/MyTrajets";
+import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
 import PublishTrajet from "./pages/PublishTrajet";
 import Register from "./pages/Register";
@@ -40,6 +41,7 @@ const appRoutes = [
   { route: "profile", label: "Profil" },
   { route: "my-trips", label: "Mes trajets" },
   { route: "my-reservations", label: "Reservations" },
+  { route: "notifications", label: "Notifications" },
 ];
 
 const allRoutes = [...authRoutes, ...appRoutes.map((screen) => screen.route)];
@@ -751,6 +753,15 @@ function App() {
         onRejectReservation={handleRejectPassengerReservation}
         publishedTrips={appData.publishedTrips}
         user={currentUser}
+      />
+    );
+  } else if (route === "notifications") {
+    screen = (
+      <Notifications
+        mode={activeMode}
+        navigate={navigate}
+        publishedTrips={appData.publishedTrips}
+        reservations={appData.reservations}
       />
     );
   } else {

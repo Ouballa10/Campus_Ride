@@ -29,6 +29,15 @@ function iconPaths(name) {
     );
   }
 
+  if (name === "bell") {
+    return (
+      <>
+        <path d="M18 10a6 6 0 0 0-12 0c0 7-2.5 7.5-2.5 7.5h17S18 17 18 10Z" />
+        <path d="M9.5 20a2.8 2.8 0 0 0 5 0" />
+      </>
+    );
+  }
+
   if (name === "image") {
     return (
       <>
