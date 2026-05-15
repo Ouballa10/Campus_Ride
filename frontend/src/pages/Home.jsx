@@ -1,6 +1,5 @@
 import React from "react";
 import logo from "../assets/images/logo.png";
-import { RideArtwork } from "../components/Artwork";
 import AppHeader from "../components/AppHeader";
 import AppMenu from "../components/AppMenu";
 import { Icon } from "../components/Icons";
@@ -50,29 +49,32 @@ export default function Home({
 
       <section className="home-hero-card">
         <div className="home-hero-card__copy">
-          <div className="home-mode-banner">
-            <span className="home-mode-banner__icon">
-              <Icon name={isDriverMode ? "car" : "user"} size={16} />
-            </span>
-            <span>{isDriverMode ? "Mode driver actif" : "Mode passager actif"}</span>
-          </div>
-
           <div className="home-brand-row">
-            <img alt="CampusRide logo" className="home-brand-row__logo" src={logo} />
+            <img alt="CampusRide logo" className="home-brand-row__logo home-brand-row__logo--large" src={logo} />
             <div>
-              <span className="eyebrow">CampusRide</span>
+              <span className="home-mode-banner">
+                <span className="home-mode-banner__icon">
+                  <Icon name={isDriverMode ? "car" : "user"} size={16} />
+                </span>
+                {isDriverMode ? "Mode driver actif" : "Mode passager actif"}
+              </span>
               <h2>
                 {isDriverMode
-                  ? "Espace driver pour publier et suivre tes passagers"
-                  : "Reserve un trajet campus simple, rapide et confirme"}
+                  ? "Espace driver"
+                  : "CampusRide"}
               </h2>
+              <p className="home-hero-card__lead">
+                {isDriverMode
+                  ? "Publie, confirme et suis tes passagers sans stress."
+                  : "Trouve un trajet campus propre, rapide et confirme."}
+              </p>
             </div>
           </div>
 
-          <p>
+          <p className="home-hero-card__body">
             {isDriverMode
-              ? "Gere tes annonces, les places restantes et les passagers confirmes depuis le meme tableau de bord."
-              : "Compare les conducteurs disponibles, confirme ta place et garde ton trajet dans tes reservations."}
+              ? "Tes annonces, places restantes, demandes et revenus restent dans le meme dashboard."
+              : "Compare les conducteurs, reserve ta place et garde le point de rendez-vous a portee de main."}
           </p>
 
           <div className="home-hero-card__stats">
@@ -91,7 +93,15 @@ export default function Home({
           </div>
         </div>
 
-        <RideArtwork />
+        <div className="home-ride-visual" aria-hidden="true">
+          <div className="home-ride-visual__road" />
+          <div className="home-ride-visual__car">
+            <Icon name="car" size={38} />
+          </div>
+          <div className="home-ride-visual__pin">
+            <Icon name="location" size={18} />
+          </div>
+        </div>
       </section>
 
       <button
