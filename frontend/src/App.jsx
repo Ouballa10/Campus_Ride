@@ -166,6 +166,26 @@ function buildPublishedTripFromCard(trip) {
   };
 }
 
+function normalizeTheme(theme) {
+  return theme === "dark" ? "dark" : "light";
+}
+
+function readInitialTheme() {
+  if (typeof window === "undefined") {
+    return "light";
+  }
+
+  const savedTheme = window.localStorage.getItem("campusride-theme");
+
+  if (savedTheme) {
+    return normalizeTheme(savedTheme);
+  }
+
+  return window.matchMedia?.("(prefers-color-scheme: dark)")?.matches
+    ? "dark"
+    : "light";
+}
+
 function buildPassengerSummary(passengerReservations = [], seatsLeft = 0) {
   const confirmedCount = passengerReservations.filter(
     (reservation) => reservation.status === "Confirmee",
@@ -262,6 +282,7 @@ function App() {
   const [dataError, setDataError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedTripId, setSelectedTripId] = useState("");
+  const [theme, setTheme] = useState(readInitialTheme);
 
   const sessionUserId = session?.user?.id || "";
   const demoMode = !isConfigured;
@@ -600,6 +621,23 @@ function App() {
     });
   }
 
+  function handleThemeChange(nextTheme) {
+    const normalizedTheme = normalizeTheme(nextTheme);
+    setTheme(normalizedTheme);
+
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("campusride-theme", normalizedTheme);
+    }
+  }
+
+  useEffect(() => {
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
+
   async function handleConfirmPassengerReservation(reservationId) {
     if (canUseSupabaseData) {
       await reservationService.updateReservationStatus({
@@ -699,9 +737,11 @@ function App() {
         mode={activeMode}
         navigate={navigate}
         onModeChange={handleModeChange}
+        onThemeChange={handleThemeChange}
         onTripSelect={openTripReservation}
         publishedTrips={appData.publishedTrips}
         reservations={appData.reservations}
+        theme={theme}
         tripOptions={discoverableTrips}
         user={currentUser}
       />
@@ -739,7 +779,9 @@ function App() {
         mode={activeMode}
         navigate={navigate}
         onModeChange={handleModeChange}
+        onThemeChange={handleThemeChange}
         profileLinks={profileLinks}
+        theme={theme}
         user={currentUser}
       />
     );
@@ -775,7 +817,7 @@ function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell app-theme--${theme}`}>
       <section className="site-stage site-stage--single">
         <div className="stage-orb stage-orb--one" />
         <div className="stage-orb stage-orb--two" />
