@@ -1,0 +1,430 @@
+/* CAMPUSRIDE 2026 PREMIUM - Override Layer */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* Force premium font everywhere */
+:root { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important; -webkit-font-smoothing: antialiased; }
+
+/* LIGHT MODE PREMIUM OVERRIDES */
+:root {
+  --cr-primary: #2563EB;
+  --cr-primary-light: #3B82F6;
+  --cr-accent: #10B981;
+  --cr-dark: #0F172A;
+  --cr-card: #FFFFFF;
+  --cr-bg: #F8FAFC;
+  --cr-border: rgba(15, 23, 42, 0.08);
+  --cr-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+  --cr-glow: 0 8px 32px rgba(37, 99, 235, 0.15);
+}
+
+/* Body */
+body { background: linear-gradient(180deg, #F0F4FF 0%, #F8FAFC 100%) !important; }
+
+/* App Shell */
+.app-shell { font-family: 'Inter', -apple-system, sans-serif !important; }
+
+/* Phone Shell - clean and modern */
+.phone-shell { background: #FFFFFF !important; border: 1px solid var(--cr-border) !important; box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12) !important; }
+
+/* ALL BUTTONS - Bold, visible, professional */
+.primary-button {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+  padding: 14px 24px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.25) !important;
+  transition: all 0.2s ease !important;
+  letter-spacing: -0.01em !important;
+}
+.primary-button:hover:not(:disabled) { transform: translateY(-2px) !important; box-shadow: 0 8px 28px rgba(37, 99, 235, 0.35) !important; }
+.primary-button:active:not(:disabled) { transform: scale(0.97) !important; }
+.primary-button--auth { background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%) !important; }
+
+.mini-button {
+  background: linear-gradient(135deg, #2563EB, #3B82F6) !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+  padding: 8px 14px !important;
+  border-radius: 8px !important;
+  font-size: 0.78rem !important;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2) !important;
+}
+.mini-button--ghost {
+  background: #F1F5F9 !important;
+  color: #2563EB !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: none !important;
+}
+.mini-button--ghost:hover { background: #EFF6FF !important; border-color: #BFDBFE !important; }
+.mini-button--danger {
+  background: #FEF2F2 !important;
+  color: #DC2626 !important;
+  border: 1px solid #FECACA !important;
+  box-shadow: none !important;
+}
+
+.splash-showcase__button {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+  padding: 14px 28px !important;
+  border-radius: 14px !important;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3) !important;
+}
+
+/* CARDS - Clean, elevated, professional */
+.trip-card, .list-card, .detail-card, .option-card, .reservation-pro-card, .driver-trip-card, .empty-state-card {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06) !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.trip-card:hover, .option-card--interactive:hover, .driver-trip-card:hover, .reservation-pro-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.12) !important;
+  border-color: #BFDBFE !important;
+}
+
+.home-hero-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #EFF6FF 50%, #ECFDF5 100%) !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 20px !important;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08) !important;
+}
+
+.auth-card {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 20px !important;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.1) !important;
+}
+
+.records-hero, .profile-editor-hero {
+  background: linear-gradient(135deg, #FFFFFF 0%, #EFF6FF 60%, #ECFDF5 100%) !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06) !important;
+}
+
+/* ACTION CARDS */
+.action-card {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04) !important;
+  transition: all 0.25s ease !important;
+}
+.action-card:hover { transform: translateY(-3px) !important; box-shadow: 0 12px 32px rgba(37, 99, 235, 0.12) !important; border-color: #BFDBFE !important; }
+.action-card__icon { border-radius: 12px !important; }
+.action-card--green .action-card__icon { background: linear-gradient(135deg, #10B981, #059669) !important; }
+.action-card--orange .action-card__icon { background: linear-gradient(135deg, #F59E0B, #D97706) !important; }
+
+/* INPUTS - Clean and modern */
+.auth-field input, .publish-field__control, .publish-field textarea, .reservation-note-card textarea, .profile-editor-field__control {
+  background: #F8FAFC !important;
+  border: 1.5px solid #E2E8F0 !important;
+  border-radius: 12px !important;
+  transition: all 0.2s ease !important;
+}
+.auth-field input:focus, .publish-field__control:focus-within, .publish-field textarea:focus, .reservation-note-card textarea:focus, .profile-editor-field__control:focus-within {
+  border-color: #2563EB !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important;
+  background: #FFFFFF !important;
+}
+
+/* AVATAR - Gradient badge */
+.avatar-badge {
+  background: linear-gradient(135deg, #2563EB, #7C3AED) !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
+}
+
+/* PILLS & CHIPS */
+.pill--price {
+  background: linear-gradient(135deg, #10B981, #059669) !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 6px 12px !important;
+}
+.meta-chip {
+  background: #F1F5F9 !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 8px !important;
+  color: #475569 !important;
+  font-weight: 600 !important;
+}
+.chip {
+  background: #EFF6FF !important;
+  border: 1px solid #BFDBFE !important;
+  color: #2563EB !important;
+  font-weight: 600 !important;
+  border-radius: 20px !important;
+}
+
+/* BOTTOM NAV - Uber-style */
+.bottom-nav {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border-top: 1px solid #E2E8F0 !important;
+  border-radius: 0 !important;
+  box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.08) !important;
+  padding: 8px 0 12px !important;
+}
+.bottom-nav__button { color: #94A3B8 !important; font-weight: 600 !important; font-size: 0.7rem !important; }
+.bottom-nav__button--active { color: #2563EB !important; }
+.bottom-nav__button--featured .bottom-nav__icon {
+  background: linear-gradient(135deg, #2563EB, #7C3AED) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3) !important;
+  width: 44px !important; height: 44px !important;
+  border-radius: 14px !important;
+}
+
+/* MODE SWITCH - Premium dark pill */
+.mode-switch {
+  background: #0F172A !important;
+  border-radius: 16px !important;
+  padding: 4px !important;
+  border: none !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15) !important;
+}
+.mode-switch__button { color: rgba(255,255,255,0.5) !important; border-radius: 12px !important; }
+.mode-switch__button--active {
+  background: linear-gradient(135deg, #2563EB, #3B82F6) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3) !important;
+}
+.mode-switch--driver .mode-switch__button--active {
+  background: linear-gradient(135deg, #10B981, #059669) !important;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3) !important;
+}
+
+/* ICON BUTTON */
+.icon-button {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+  color: #1E293B !important;
+}
+.icon-button:hover { background: #F1F5F9 !important; border-color: #CBD5E1 !important; }
+
+/* HEADER */
+.app-header__copy h2 { color: #0F172A !important; font-weight: 700 !important; font-size: 1.1rem !important; }
+.app-header__copy p { color: #64748B !important; }
+
+/* SECTION HEADINGS */
+.section-heading h3 { color: #0F172A !important; font-weight: 700 !important; }
+.section-heading p { color: #64748B !important; }
+.eyebrow { color: #2563EB !important; font-weight: 700 !important; }
+
+/* STATUS PILLS */
+.status-pill { border-radius: 20px !important; font-weight: 600 !important; padding: 6px 12px !important; }
+.status-pill--live, .status-pill--confirmed { background: #ECFDF5 !important; color: #059669 !important; border-color: #A7F3D0 !important; }
+.status-pill--pending, .status-pill--new { background: #EFF6FF !important; color: #2563EB !important; border-color: #BFDBFE !important; }
+.status-pill--full, .status-pill--cancelled { background: #FEF2F2 !important; color: #DC2626 !important; border-color: #FECACA !important; }
+
+/* SEARCH PILL */
+.search-pill {
+  background: #FFFFFF !important;
+  border: 1.5px solid #E2E8F0 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06) !important;
+  padding: 14px 18px !important;
+  font-size: 0.88rem !important;
+}
+.search-pill:hover { border-color: #BFDBFE !important; box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1) !important; }
+
+/* NOTIFICATION ITEMS */
+.notification-item {
+  border-radius: 14px !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+}
+.notification-item--success { border-left: 3px solid #10B981 !important; }
+.notification-item--pending { border-left: 3px solid #2563EB !important; }
+.notification-item--danger { border-left: 3px solid #DC2626 !important; }
+.notification-item__icon { border-radius: 12px !important; }
+
+/* PROFILE */
+.profile-photo-frame {
+  border-radius: 20px !important;
+  background: linear-gradient(135deg, #2563EB, #7C3AED) !important;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.2) !important;
+}
+.profile-photo-action {
+  background: linear-gradient(135deg, #2563EB, #1D4ED8) !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+}
+.profile-editor-badge {
+  background: #EFF6FF !important;
+  color: #2563EB !important;
+  font-weight: 700 !important;
+}
+
+/* PUBLISH PREVIEW - Dark premium */
+.publish-preview {
+  background: linear-gradient(145deg, #0F172A 0%, #1E293B 100%) !important;
+  color: #F1F5F9 !important;
+  border: 1px solid rgba(255,255,255,0.06) !important;
+}
+.publish-preview h3, .publish-preview strong, .publish-preview .eyebrow { color: #FFFFFF !important; }
+.publish-preview span { color: rgba(241,245,249,0.7) !important; }
+.publish-preview__status { background: #10B981 !important; color: #FFFFFF !important; }
+.publish-submit { background: linear-gradient(135deg, #2563EB, #7C3AED) !important; }
+
+/* MENU PANEL */
+.app-menu__panel {
+  background: #FFFFFF !important;
+  border-radius: 20px !important;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.2) !important;
+  border: 1px solid #E2E8F0 !important;
+}
+.app-menu__backdrop { background: rgba(15, 23, 42, 0.4) !important; backdrop-filter: blur(8px) !important; }
+.app-menu__link {
+  border-radius: 12px !important;
+  border: 1px solid #F1F5F9 !important;
+}
+.app-menu__link:hover { background: #F8FAFC !important; border-color: #E2E8F0 !important; }
+.app-menu__logout {
+  background: linear-gradient(135deg, #0F172A, #2563EB) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.2) !important;
+}
+
+/* STARS */
+.stars__item--filled { color: #F59E0B !important; }
+.stars__item { color: #E2E8F0 !important; }
+
+/* DASHBOARD TABS */
+.dashboard-view-tabs { background: #F1F5F9 !important; border-radius: 12px !important; padding: 4px !important; }
+.dashboard-view-tabs__button { border-radius: 8px !important; font-weight: 600 !important; }
+.dashboard-view-tabs__button--active { background: linear-gradient(135deg, #2563EB, #3B82F6) !important; color: #FFFFFF !important; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important; }
+
+/* CAMPUS MAP */
+.campus-map { border-radius: 16px !important; border: 1px solid #E2E8F0 !important; overflow: hidden !important; }
+.campus-map__badge { background: #ECFDF5 !important; color: #059669 !important; border-radius: 20px !important; }
+
+/* SUMMARY STRIP */
+.summary-strip > div, .summary-strip--soft > div, .home-hero-card__stats > div, .profile-editor-stats > div {
+  background: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 12px !important;
+}
+
+/* TEXT LINKS */
+.text-link { color: #2563EB !important; font-weight: 600 !important; }
+.text-link:hover { color: #1D4ED8 !important; }
+
+/* OAUTH BUTTON */
+.oauth-button {
+  border: 1.5px solid #E2E8F0 !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+}
+.oauth-button:hover { border-color: #CBD5E1 !important; background: #F8FAFC !important; }
+
+/* MESSAGE BOX */
+.message-box { border-radius: 12px !important; border: 1px solid #E2E8F0 !important; background: #F8FAFC !important; }
+.message-box--soft { background: #EFF6FF !important; border-color: #BFDBFE !important; }
+
+/* RIDE TIMELINE */
+.ride-timeline__step--active span { background: linear-gradient(135deg, #2563EB, #10B981) !important; }
+.ride-timeline__step--blocked span { background: linear-gradient(135deg, #DC2626, #F59E0B) !important; }
+
+/* RESERVATION GROUPS */
+.reservation-group { border-radius: 14px !important; border: 1px solid #E2E8F0 !important; }
+.reservation-group--confirmed { border-left: 3px solid #10B981 !important; }
+.reservation-group--pending { border-left: 3px solid #2563EB !important; }
+.reservation-group--history { border-left: 3px solid #94A3B8 !important; }
+
+/* DRIVER STATS */
+.driver-stat-card { border-radius: 12px !important; border: 1px solid #E2E8F0 !important; background: #FFFFFF !important; }
+.driver-stat-card--active { background: #EFF6FF !important; border-color: #BFDBFE !important; }
+.driver-stat-card span { background: #EFF6FF !important; color: #2563EB !important; border-radius: 10px !important; }
+
+/* PASSENGER PROFILE MODAL */
+.passenger-profile-card {
+  border-radius: 20px !important;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.2) !important;
+}
+.passenger-profile-modal__backdrop { background: rgba(15, 23, 42, 0.5) !important; backdrop-filter: blur(8px) !important; }
+
+/* THEME TOGGLE */
+.theme-toggle { background: #F1F5F9 !important; border: 1px solid #E2E8F0 !important; border-radius: 12px !important; }
+.theme-toggle__option--active { background: linear-gradient(135deg, #2563EB, #3B82F6) !important; color: #FFF !important; border-radius: 10px !important; }
+
+/* HOME RIDE VISUAL */
+.home-ride-visual { border-radius: 16px !important; }
+.home-ride-visual__car, .home-ride-visual__pin { border-radius: 12px !important; }
+
+/* LOGO styling */
+.home-brand-row__logo, .home-brand-row__logo--large, .auth-brand__logo, .splash-showcase__logo, .app-menu__brand img {
+  border-radius: 16px !important;
+  border: 1px solid #E2E8F0 !important;
+  background: #FFFFFF !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06) !important;
+}
+
+/* GLOBAL TRANSITIONS */
+.trip-card, .action-card, .menu-card, .option-card, .notification-item, .driver-stat-card, .mini-button, .primary-button, .icon-button, .auth-field input, .search-pill {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Active press */
+.primary-button:active:not(:disabled), .mini-button:active:not(:disabled), .action-card:active, .trip-card:active {
+  transform: scale(0.97) !important;
+}
+
+/* Smooth entrance */
+.screen { animation: fadeUp 0.3s ease both !important; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Fix text overflow */
+.trip-card__top h4, .list-card__row h4, .route-stack h4, .menu-card__label, .app-menu__brand strong {
+  overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important;
+}
+
+/* Splash panel glow */
+.splash-showcase__panel { box-shadow: 0 20px 60px rgba(37, 99, 235, 0.1), inset 0 0 0 1px rgba(37, 99, 235, 0.06) !important; }
+
+/* ═══ DARK MODE ═══ */
+.app-theme--dark .phone-shell { background: linear-gradient(180deg, #0F172A, #020617) !important; border-color: rgba(99, 102, 241, 0.1) !important; }
+.app-theme--dark .trip-card, .app-theme--dark .list-card, .app-theme--dark .detail-card, .app-theme--dark .action-card, .app-theme--dark .reservation-pro-card, .app-theme--dark .driver-trip-card, .app-theme--dark .empty-state-card, .app-theme--dark .notification-item, .app-theme--dark .records-hero, .app-theme--dark .home-hero-card, .app-theme--dark .auth-card, .app-theme--dark .profile-editor-hero, .app-theme--dark .profile-editor-card, .app-theme--dark .publish-card, .app-theme--dark .option-card, .app-theme--dark .message-box, .app-theme--dark .reservation-group, .app-theme--dark .campus-map {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border-color: rgba(99, 102, 241, 0.12) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+.app-theme--dark .trip-card:hover, .app-theme--dark .action-card:hover { border-color: rgba(99, 102, 241, 0.3) !important; box-shadow: 0 8px 32px rgba(99, 102, 241, 0.1) !important; }
+.app-theme--dark .icon-button { background: rgba(30, 41, 59, 0.8) !important; border-color: rgba(99, 102, 241, 0.12) !important; color: #E2E8F0 !important; }
+.app-theme--dark .auth-field input, .app-theme--dark .profile-editor-field__control, .app-theme--dark .publish-field__control { background: rgba(15, 23, 42, 0.6) !important; border-color: rgba(99, 102, 241, 0.12) !important; color: #F1F5F9 !important; }
+.app-theme--dark .auth-field input:focus, .app-theme--dark .profile-editor-field__control:focus-within { border-color: #6366F1 !important; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15) !important; }
+.app-theme--dark .bottom-nav { background: rgba(15, 23, 42, 0.95) !important; border-color: rgba(99, 102, 241, 0.08) !important; }
+.app-theme--dark .bottom-nav__button--active { color: #818CF8 !important; }
+.app-theme--dark .mini-button--ghost { background: rgba(99, 102, 241, 0.1) !important; color: #A5B4FC !important; border-color: rgba(99, 102, 241, 0.2) !important; }
+.app-theme--dark .search-pill { background: rgba(15, 23, 42, 0.6) !important; border-color: rgba(99, 102, 241, 0.1) !important; }
+.app-theme--dark .meta-chip { background: rgba(99, 102, 241, 0.1) !important; color: #A5B4FC !important; border-color: rgba(99, 102, 241, 0.15) !important; }
+.app-theme--dark .chip { background: rgba(99, 102, 241, 0.12) !important; color: #A5B4FC !important; border-color: rgba(99, 102, 241, 0.2) !important; }
+.app-theme--dark .summary-strip > div, .app-theme--dark .home-hero-card__stats > div, .app-theme--dark .profile-editor-stats > div { background: rgba(15, 23, 42, 0.6) !important; border-color: rgba(99, 102, 241, 0.1) !important; }
+.app-theme--dark .mode-switch { background: rgba(2, 6, 23, 0.9) !important; }
+.app-theme--dark .mode-switch__button--active { background: linear-gradient(135deg, #6366F1, #4F46E5) !important; }
+.app-theme--dark .app-menu__panel { background: #0F172A !important; border-color: rgba(99, 102, 241, 0.1) !important; }
+.app-theme--dark .dashboard-view-tabs { background: rgba(15, 23, 42, 0.6) !important; }
+.app-theme--dark .dashboard-view-tabs__button--active { background: linear-gradient(135deg, #6366F1, #4F46E5) !important; }
+.app-theme--dark .driver-stat-card { background: rgba(15, 23, 42, 0.6) !important; border-color: rgba(99, 102, 241, 0.1) !important; }
+.app-theme--dark .driver-stat-card--active { background: rgba(99, 102, 241, 0.12) !important; border-color: rgba(99, 102, 241, 0.3) !important; }
+.app-theme--dark .avatar-badge { background: linear-gradient(135deg, #6366F1, #8B5CF6) !important; }
+.app-theme--dark .notification-item--success { border-left-color: #10B981 !important; }
+.app-theme--dark .notification-item--pending { border-left-color: #6366F1 !important; }
+.app-theme--dark .notification-item--danger { border-left-color: #EF4444 !important; }
+.app-theme--dark .splash-showcase__panel, .app-theme--dark .splash-showcase { background: linear-gradient(180deg, #0F172A, #020617) !important; }
+.app-theme--dark .passenger-row { background: rgba(15, 23, 42, 0.5) !important; border: 1px solid rgba(99, 102, 241, 0.08) !important; }
+.app-theme--dark .theme-toggle { background: rgba(15, 23, 42, 0.8) !important; border-color: rgba(99, 102, 241, 0.1) !important; }
