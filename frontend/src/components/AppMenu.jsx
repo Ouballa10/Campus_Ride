@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import logo from "../assets/images/logo.png";
 import { useAuth } from "../context/AuthContext";
 import { Icon } from "./Icons";
@@ -88,7 +89,7 @@ export default function AppMenu({
         <Icon name="menu" size={18} />
       </button>
 
-      {isOpen ? (
+      {isOpen ? createPortal(
         <div className="app-menu-layer">
           <button
             aria-label="Fermer le menu"
@@ -180,7 +181,8 @@ export default function AppMenu({
               <strong>UPM Marrakech</strong>
             </div>
           </aside>
-        </div>
+        </div>,
+        document.body
       ) : null}
     </div>
   );
