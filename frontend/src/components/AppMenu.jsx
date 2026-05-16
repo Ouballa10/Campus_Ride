@@ -8,6 +8,8 @@ export default function AppMenu({
   mode = "passenger",
   navigate,
   onModeChange = () => {},
+  onThemeChange = () => {},
+  theme = "light",
   user,
 }) {
   const { signOut } = useAuth();
@@ -16,6 +18,7 @@ export default function AppMenu({
   const isDriverMode = mode === "driver";
   const displayName = user?.name || "CampusRide";
   const roleLabel = isDriverMode ? "Mode driver" : "Mode passager";
+  const isDarkTheme = theme === "dark";
 
   const menuLinks = useMemo(
     () => [
@@ -120,6 +123,27 @@ export default function AppMenu({
                 <strong>{isDriverMode ? "Publier" : "Reserver"}</strong>
               </div>
               <ModeSwitch mode={mode} onChange={onModeChange} />
+            </div>
+
+            <div className="app-menu__mode-card">
+              <div className="app-menu__section-title">
+                <span>Theme</span>
+                <strong>{isDarkTheme ? "Sombre" : "Clair"}</strong>
+              </div>
+              <button
+                className="theme-toggle"
+                type="button"
+                onClick={() => onThemeChange(isDarkTheme ? "light" : "dark")}
+              >
+                <span className={!isDarkTheme ? "theme-toggle__option theme-toggle__option--active" : "theme-toggle__option"}>
+                  <Icon name="sun" size={16} />
+                  Clair
+                </span>
+                <span className={isDarkTheme ? "theme-toggle__option theme-toggle__option--active" : "theme-toggle__option"}>
+                  <Icon name="moon" size={16} />
+                  Sombre
+                </span>
+              </button>
             </div>
 
             <nav className="app-menu__links" aria-label="Raccourcis">
