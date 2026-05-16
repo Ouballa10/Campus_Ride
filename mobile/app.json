@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "CampusRide",
+    "slug": "campusride",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/logo.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash-photo.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#1a1a2e"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.campusride.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/logo.png",
+        "backgroundColor": "#1a1a2e"
+      },
+      "package": "com.campusride.app",
+      "versionCode": 1
+    },
+    "plugins": ["expo-font"]
+  }
+}
