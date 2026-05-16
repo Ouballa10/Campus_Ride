@@ -7,11 +7,10 @@ export default function TrajetCard({ trip, ctaLabel = "Reserver", onClick }) {
   return (
     <article className="trip-card">
       <div className="trip-card__top">
-        <div>
+        <div style={{ minWidth: 0, flex: 1 }}>
           <h4>{trip.routeLabel || `${trip.depart} - ${trip.destination}`}</h4>
           <p>{trip.time}</p>
         </div>
-
         <span className="pill pill--price">{trip.price} DH</span>
       </div>
 
@@ -25,15 +24,15 @@ export default function TrajetCard({ trip, ctaLabel = "Reserver", onClick }) {
 
       <div className="trip-card__meta">
         <span className="meta-chip">
-          <Icon name="seat" size={14} />
+          <Icon name="seat" size={13} />
           {trip.seats} places
         </span>
         <span className="meta-chip">
-          <Icon name="clock" size={14} />
+          <Icon name="clock" size={13} />
           {trip.duration}
         </span>
         <span className="meta-chip">
-          <Icon name="shield" size={14} />
+          <Icon name="shield" size={13} />
           Campus
         </span>
       </div>

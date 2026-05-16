@@ -740,3 +740,9 @@
     font-size: 24px;
   }
 }
+
+
+.dh-hero__mode-text {
+  font-size: 12px;
+  font-weight: 600;
+}

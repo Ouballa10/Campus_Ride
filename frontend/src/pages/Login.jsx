@@ -73,13 +73,13 @@ export default function Login({ navigate }) {
         type="button"
         onClick={() => navigate("splash")}
       >
-        <Icon name="arrow-left" size={18} />
+        <Icon name="arrow-left" size={16} />
         <span>Retour</span>
       </button>
 
       <div className="auth-card">
         <div className="auth-brand">
-          <img className="auth-brand__logo" src={logo} alt="CampusRide logo" />
+          <img className="auth-brand__logo" src={logo} alt="CampusRide" />
           <div>
             <span className="eyebrow">CampusRide</span>
             <h2>Connexion</h2>
@@ -87,12 +87,12 @@ export default function Login({ navigate }) {
         </div>
 
         <div className="auth-copy">
-          <p>Reconnecte-toi rapidement pour gerer tes trajets et reservations.</p>
+          <p>Reconnectez-vous pour gerer vos trajets et reservations.</p>
         </div>
 
         {!isConfigured ? (
           <p className="auth-status auth-status--info">
-            Supabase n'est pas encore configure sur had l'environnement.
+            Supabase n'est pas encore configure sur cet environnement.
           </p>
         ) : null}
 
@@ -102,7 +102,7 @@ export default function Login({ navigate }) {
             <input
               autoComplete="email"
               name="email"
-              placeholder="etu@campusride.ma"
+              placeholder="votre@email.ma"
               required
               type="email"
               value={form.email}
@@ -153,7 +153,7 @@ export default function Login({ navigate }) {
           type="button"
           onClick={() => navigate("register")}
         >
-          Je n'ai pas de compte
+          Creer un compte
         </button>
       </div>
     </div>
