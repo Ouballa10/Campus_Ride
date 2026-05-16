@@ -6418,8 +6418,7 @@ body:has(.app-theme--dark) {
 .app-theme--dark .splash-showcase__header p,
 .app-theme--dark .splash-highlight-card p {
   color: #9bacca;
+}
 
 
 
-/* Import premium enhancement layer */
-@import url('./premium.css');
