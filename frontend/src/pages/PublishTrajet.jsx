@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from "react";
 import AppHeader from "../components/AppHeader";
 import { Icon } from "../components/Icons";
+import InteractiveMap from "../components/InteractiveMap";
+import "../components/InteractiveMap.css";
 
 const numberFields = ["seats", "price", "durationMinutes"];
 
@@ -39,6 +41,7 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
   const [form, setForm] = useState(buildInitialForm);
   const [feedback, setFeedback] = useState({ message: "", tone: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showMap, setShowMap] = useState(true);
 
   const totalPotential = useMemo(
     () => Number(form.price || 0) * Number(form.seats || 0),
@@ -72,6 +75,22 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
         [field]: nextValue,
       };
     });
+    clearFeedback();
+  }
+
+  function handleDepartSelect(name, coords) {
+    setForm((currentForm) => ({
+      ...currentForm,
+      depart: name || "",
+    }));
+    clearFeedback();
+  }
+
+  function handleDestinationSelect(name, coords) {
+    setForm((currentForm) => ({
+      ...currentForm,
+      destination: name || "",
+    }));
     clearFeedback();
   }
 
@@ -146,6 +165,34 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
 
       <form className="publish-flow" onSubmit={handleSubmit}>
         <div className="publish-compose">
+          {/* Interactive Map Section */}
+          <section className="publish-card publish-card--map">
+            <div className="publish-card__header">
+              <div>
+                <span className="eyebrow">Carte interactive</span>
+                <h3>Choisis sur la carte</h3>
+              </div>
+              <button
+                type="button"
+                className="map-toggle-btn"
+                onClick={() => setShowMap((v) => !v)}
+              >
+                <Icon name={showMap ? "x" : "route"} size={16} />
+                <span>{showMap ? "Masquer" : "Carte"}</span>
+              </button>
+            </div>
+
+            {showMap && (
+              <InteractiveMap
+                onDepartSelect={handleDepartSelect}
+                onDestinationSelect={handleDestinationSelect}
+                departValue={form.depart}
+                destinationValue={form.destination}
+              />
+            )}
+          </section>
+
+          {/* Route fields (manual input still works) */}
           <section className="publish-card publish-card--route">
             <div className="publish-card__header">
               <div>

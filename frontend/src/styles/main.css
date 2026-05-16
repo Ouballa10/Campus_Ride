@@ -2142,6 +2142,31 @@ a { color: var(--primary); text-decoration: none; }
   font-size: 1.1rem;
 }
 
+.publish-card--map {
+  overflow: visible;
+}
+
+.map-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--primary-subtle);
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.map-toggle-btn:active {
+  transform: scale(0.95);
+  background: var(--primary);
+  color: #ffffff;
+}
+
 .publish-live-badge {
   padding: 5px 10px;
   border-radius: var(--radius-full);
@@ -3422,7 +3447,9 @@ a { color: var(--primary); text-decoration: none; }
   padding: 20px 16px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 16px;
+  overflow-y: auto;
 }
 
 .auth-back {
@@ -3624,6 +3651,7 @@ a { color: var(--primary); text-decoration: none; }
   min-height: 100dvh;
   margin: 0;
   overflow: hidden;
+  overflow-y: auto;
 }
 
 .splash-showcase {
@@ -3642,11 +3670,12 @@ a { color: var(--primary); text-decoration: none; }
 .splash-showcase__panel {
   position: relative;
   width: min(100%, 390px);
-  height: calc(100dvh - 16px);
   min-height: calc(100dvh - 16px);
+  max-height: calc(100dvh - 16px);
   padding: 10px 14px 12px;
   border-radius: 30px;
   overflow: hidden;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -3658,6 +3687,8 @@ a { color: var(--primary); text-decoration: none; }
   box-shadow:
     inset 0 0 0 1px rgba(214, 229, 255, 0.95),
     0 18px 40px rgba(34, 87, 175, 0.12);
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .splash-showcase__ornament {
@@ -4685,5 +4716,413 @@ a:focus-visible {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* =========================
+   SPLASH & LOGIN RESPONSIVE FIXES
+   Handles small screens, short viewports, 
+   landscape orientation, and PWA safe areas
+   ========================= */
+
+/* --- SPLASH PAGE RESPONSIVE --- */
+
+/* Fix splash panel to flex properly on all heights */
+.splash-showcase__panel {
+  height: auto;
+  min-height: min(calc(100dvh - 16px), 100%);
+  max-height: calc(100dvh - 16px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+
+.splash-showcase__panel::-webkit-scrollbar {
+  display: none;
+}
+
+/* Short screens (phones with < 680px viewport height) */
+@media (max-height: 680px) {
+  .splash-showcase {
+    padding: 4px;
+    align-items: flex-start;
+  }
+
+  .splash-showcase__panel {
+    padding: 8px 12px 10px;
+    gap: 6px;
+    min-height: calc(100dvh - 8px);
+    max-height: calc(100dvh - 8px);
+    border-radius: 24px;
+  }
+
+  .splash-showcase__logo {
+    width: min(40vw, 130px);
+    margin-top: -4px;
+    margin-bottom: -24px;
+  }
+
+  .splash-showcase__header h1 {
+    font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+  }
+
+  .splash-showcase__header p {
+    font-size: 0.75rem;
+  }
+
+  .splash-showcase__image {
+    aspect-ratio: 1 / 0.45;
+    border-radius: 18px;
+  }
+
+  .splash-highlights {
+    gap: 6px;
+    padding: 0 2px;
+  }
+
+  .splash-highlight-card {
+    padding: 7px 5px;
+    border-radius: 10px;
+  }
+
+  .splash-highlight-card__icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+  }
+
+  .splash-highlight-card strong {
+    font-size: 0.7rem;
+  }
+
+  .splash-highlight-card p {
+    display: none;
+  }
+
+  .splash-showcase__button {
+    padding: 12px 16px;
+    font-size: 0.85rem;
+  }
+
+  .splash-dots--showcase {
+    padding: 4px 0 0;
+  }
+}
+
+/* Very short screens (landscape phones, foldables) */
+@media (max-height: 560px) {
+  .splash-showcase__panel {
+    gap: 4px;
+    padding: 6px 10px 8px;
+  }
+
+  .splash-showcase__logo {
+    width: min(30vw, 100px);
+    margin-bottom: -18px;
+  }
+
+  .splash-showcase__header h1 {
+    font-size: 1rem;
+    max-width: 16ch;
+  }
+
+  .splash-showcase__header p {
+    font-size: 0.72rem;
+    display: none;
+  }
+
+  .splash-showcase__media {
+    display: none;
+  }
+
+  .splash-highlights {
+    gap: 4px;
+  }
+
+  .splash-highlight-card {
+    padding: 6px 4px;
+  }
+
+  .splash-highlight-card p {
+    display: none;
+  }
+
+  .splash-showcase__footer {
+    gap: 6px;
+  }
+}
+
+/* Extra-small width screens (SE, Galaxy Fold) */
+@media (max-width: 340px) {
+  .splash-showcase {
+    padding: 4px;
+  }
+
+  .splash-showcase__panel {
+    padding: 8px 10px;
+    gap: 6px;
+    border-radius: 22px;
+  }
+
+  .splash-showcase__logo {
+    width: min(44vw, 120px);
+    margin-bottom: -20px;
+  }
+
+  .splash-showcase__header h1 {
+    font-size: 1.15rem;
+  }
+
+  .splash-highlights {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+
+  .splash-highlight-card {
+    padding: 6px 4px;
+    border-radius: 10px;
+  }
+
+  .splash-highlight-card strong {
+    font-size: 0.68rem;
+  }
+
+  .splash-highlight-card p {
+    display: none;
+  }
+
+  .splash-showcase__button {
+    padding: 11px 14px;
+    font-size: 0.82rem;
+  }
+}
+
+/* Landscape orientation */
+@media (orientation: landscape) and (max-height: 500px) {
+  .screen--splash {
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  .splash-showcase {
+    height: auto;
+    min-height: 100dvh;
+    padding: 4px;
+    align-items: flex-start;
+  }
+
+  .splash-showcase__panel {
+    min-height: auto;
+    max-height: none;
+    height: auto;
+    padding: 10px 14px 14px;
+  }
+
+  .splash-showcase__logo {
+    width: 80px;
+    margin-bottom: -14px;
+  }
+
+  .splash-showcase__media {
+    display: none;
+  }
+
+  .splash-showcase__header h1 {
+    font-size: 1.1rem;
+    max-width: 20ch;
+  }
+}
+
+/* --- LOGIN PAGE RESPONSIVE --- */
+
+/* Ensure login scrolls on small viewports */
+.screen--auth {
+  min-height: auto;
+  height: auto;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.phone-shell--auth .phone-shell__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100dvh;
+}
+
+/* Short screens for login */
+@media (max-height: 680px) {
+  .screen--auth {
+    padding: 12px 14px;
+    gap: 12px;
+    justify-content: flex-start;
+  }
+
+  .phone-shell--auth .phone-shell__body {
+    justify-content: flex-start;
+    padding-top: 12px;
+  }
+
+  .auth-card {
+    gap: 14px;
+    padding: 18px 16px;
+  }
+
+  .auth-brand__logo {
+    width: 42px;
+    height: 42px;
+  }
+
+  .auth-brand h2 {
+    font-size: 1.2rem;
+  }
+
+  .auth-copy p {
+    font-size: 0.78rem;
+  }
+
+  .auth-field input {
+    padding: 12px 14px;
+  }
+
+  .primary-button--auth {
+    padding: 13px 20px;
+  }
+
+  .oauth-button {
+    padding: 12px 16px;
+  }
+}
+
+/* Very short (landscape) */
+@media (max-height: 500px) {
+  .screen--auth {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .auth-card {
+    gap: 10px;
+    padding: 14px 12px;
+  }
+
+  .auth-copy {
+    display: none;
+  }
+
+  .auth-brand__logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  .auth-brand h2 {
+    font-size: 1.05rem;
+  }
+
+  .auth-form {
+    gap: 10px;
+  }
+
+  .auth-field input {
+    padding: 10px 12px;
+    font-size: 0.88rem;
+  }
+
+  .auth-divider {
+    margin: 2px 0;
+  }
+
+  .primary-button--auth {
+    padding: 11px 16px;
+    font-size: 0.88rem;
+  }
+
+  .oauth-button {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Extra small width for login */
+@media (max-width: 340px) {
+  .auth-card {
+    padding: 16px 14px;
+    gap: 14px;
+    border-radius: var(--radius-lg);
+  }
+
+  .auth-brand {
+    gap: 10px;
+  }
+
+  .auth-brand__logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .auth-brand h2 {
+    font-size: 1.15rem;
+  }
+
+  .auth-field > span {
+    font-size: 0.78rem;
+  }
+
+  .auth-field input {
+    padding: 12px 12px;
+    font-size: 0.85rem;
+  }
+
+  .primary-button--auth {
+    padding: 13px 16px;
+    font-size: 0.88rem;
+  }
+
+  .oauth-button {
+    padding: 12px 14px;
+    font-size: 0.85rem;
+    gap: 8px;
+  }
+
+  .text-link--center {
+    font-size: 0.8rem;
+  }
+}
+
+/* --- PWA STANDALONE MODE FIXES --- */
+@media (display-mode: standalone) {
+  .screen--splash {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  .splash-showcase {
+    padding-top: max(4px, env(safe-area-inset-top, 0px));
+  }
+
+  .screen--auth {
+    padding-top: max(16px, env(safe-area-inset-top, 0px));
+  }
+}
+
+/* --- TABLET+ SPLASH/LOGIN CENTERING --- */
+@media (min-width: 768px) {
+  .screen--splash {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .splash-showcase {
+    max-width: 430px;
+    margin: 0 auto;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+  }
+
+  .screen--auth {
+    justify-content: center;
+    max-width: 420px;
+    margin: 0 auto;
   }
 }
