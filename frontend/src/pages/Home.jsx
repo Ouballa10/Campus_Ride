@@ -10,9 +10,11 @@ export default function Home({
   mode,
   navigate,
   onModeChange,
+  onThemeChange,
   onTripSelect,
   publishedTrips = [],
   reservations = [],
+  theme,
   tripOptions,
   user,
 }) {
@@ -43,6 +45,8 @@ export default function Home({
             navigate={navigate}
             user={user}
             onModeChange={onModeChange}
+            onThemeChange={onThemeChange}
+            theme={theme}
           />
         )}
       />
