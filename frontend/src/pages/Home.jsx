@@ -1,10 +1,80 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../assets/images/logo.png";
-import AppHeader from "../components/AppHeader";
 import AppMenu from "../components/AppMenu";
 import { Icon } from "../components/Icons";
 import TrajetCard from "../components/TrajetCard";
 import { getStatusPillClass } from "../utils/statusUi";
+import "./Home.css";
+
+function AnimatedCounter({ value, label, icon, delay = 0 }) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(true), delay);
+    return () => clearTimeout(timer);
+  }, [delay]);
+
+  return (
+    <div className={`dh-stat-card ${visible ? "dh-stat-card--visible" : ""}`}>
+      <div className="dh-stat-card__icon">
+        <Icon name={icon} size={18} />
+      </div>
+      <div className="dh-stat-card__value">{value}</div>
+      <div className="dh-stat-card__label">{label}</div>
+    </div>
+  );
+}
+
+function DriverTripCard({ trip, index }) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(true), 100 + index * 80);
+    return () => clearTimeout(timer);
+  }, [index]);
+
+  return (
+    <article className={`dh-trip-card ${visible ? "dh-trip-card--visible" : ""}`}>
+      <div className="dh-trip-card__header">
+        <div className="dh-trip-card__route">
+          <div className="dh-trip-card__route-dots">
+            <span className="dh-dot dh-dot--origin" />
+            <span className="dh-dot-line" />
+            <span className="dh-dot dh-dot--dest" />
+          </div>
+          <div className="dh-trip-card__route-info">
+            <h4 className="dh-trip-card__title">{trip.route}</h4>
+            <p className="dh-trip-card__datetime">
+              <Icon name="calendar" size={13} />
+              {trip.date} &middot; {trip.time}
+            </p>
+          </div>
+        </div>
+        <span className={`dh-status-badge ${getStatusPillClass(trip.status)}`}>
+          {trip.status}
+        </span>
+      </div>
+
+      <div className="dh-trip-card__details">
+        <div className="dh-trip-card__chip">
+          <Icon name="seat" size={14} />
+          <span>{trip.seats} places</span>
+        </div>
+        <div className="dh-trip-card__chip">
+          <Icon name="ticket" size={14} />
+          <span>{trip.price} DH</span>
+        </div>
+      </div>
+
+      <div className="dh-trip-card__footer">
+        <div className="dh-trip-card__passengers">
+          <Icon name="user" size={13} />
+          <span>{trip.passengers}</span>
+        </div>
+      </div>
+    </article>
+  );
+}
 
 export default function Home({
   mode,
@@ -34,163 +104,251 @@ export default function Home({
     0,
   );
 
+  const [heroVisible, setHeroVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setHeroVisible(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const greeting = (() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Bonjour";
+    if (hour < 18) return "Bon apres-midi";
+    return "Bonsoir";
+  })();
+
   return (
-    <div className="screen screen--home">
-      <AppHeader
-        title="Accueil"
-        subtitle={`${user.name} - ${isDriverMode ? "driver" : "passager"}`}
-        leftSlot={(
-          <AppMenu
-            mode={mode}
-            navigate={navigate}
-            user={user}
-            onModeChange={onModeChange}
-            onThemeChange={onThemeChange}
-            theme={theme}
-          />
-        )}
-      />
+    <div className="dh-screen">
+      {/* Top Bar */}
+      <header className="dh-topbar">
+        <AppMenu
+          mode={mode}
+          navigate={navigate}
+          user={user}
+          onModeChange={onModeChange}
+          onThemeChange={onThemeChange}
+          theme={theme}
+        />
+        <div className="dh-topbar__center">
+          <img alt="CampusRide" className="dh-topbar__logo" src={logo} />
+        </div>
+        <button
+          className="dh-topbar__notif"
+          type="button"
+          onClick={() => navigate("notifications")}
+          aria-label="Notifications"
+        >
+          <Icon name="bell" size={20} />
+        </button>
+      </header>
 
-      <section className="home-hero-card">
-        <div className="home-hero-card__copy">
-          <div className="home-brand-row">
-            <img alt="CampusRide logo" className="home-brand-row__logo home-brand-row__logo--large" src={logo} />
-            <div>
-              <span className="home-mode-banner">
-                <span className="home-mode-banner__icon">
-                  <Icon name={isDriverMode ? "car" : "user"} size={16} />
-                </span>
-                {isDriverMode ? "Mode driver actif" : "Mode passager actif"}
-              </span>
-              <h2>
-                {isDriverMode
-                  ? "Espace driver"
-                  : "CampusRide"}
-              </h2>
-              <p className="home-hero-card__lead">
-                {isDriverMode
-                  ? "Publie, confirme et suis tes passagers sans stress."
-                  : "Trouve un trajet campus propre, rapide et confirme."}
-              </p>
-            </div>
-          </div>
-
-          <p className="home-hero-card__body">
+      {/* Hero Section */}
+      <section className={`dh-hero ${heroVisible ? "dh-hero--visible" : ""}`}>
+        <div className="dh-hero__greeting">
+          <h1 className="dh-hero__title">
+            {greeting}, <span className="dh-hero__name">{user.name?.split(" ")[0]}</span>
+          </h1>
+          <p className="dh-hero__subtitle">
             {isDriverMode
-              ? "Tes annonces, places restantes, demandes et revenus restent dans le meme dashboard."
-              : "Compare les conducteurs, reserve ta place et garde le point de rendez-vous a portee de main."}
+              ? "Gerez vos trajets et passagers"
+              : "Trouvez votre prochain trajet"}
           </p>
-
-          <div className="home-hero-card__stats">
-            <div>
-              <strong>{isDriverMode ? publishedTrips.length : tripOptions.length}</strong>
-              <span>{isDriverMode ? "annonces" : "trajets ouverts"}</span>
-            </div>
-            <div>
-              <strong>{isDriverMode ? activePublishedTrips : reservations.length}</strong>
-              <span>{isDriverMode ? "actifs" : "reservations"}</span>
-            </div>
-            <div>
-              <strong>{isDriverMode ? passengerCount : confirmedReservations}</strong>
-              <span>{isDriverMode ? "passagers" : "confirmees"}</span>
-            </div>
-          </div>
         </div>
 
-        <div className="home-ride-visual" aria-hidden="true">
-          <div className="home-ride-visual__road" />
-          <div className="home-ride-visual__car">
-            <Icon name="car" size={38} />
-          </div>
-          <div className="home-ride-visual__pin">
-            <Icon name="location" size={18} />
-          </div>
+        <div className="dh-hero__mode-pill">
+          <span className="dh-hero__mode-icon">
+            <Icon name={isDriverMode ? "car" : "user"} size={14} />
+          </span>
+          <span className="dh-hero__mode-text">
+            {isDriverMode ? "Driver" : "Passager"}
+          </span>
         </div>
       </section>
 
+      {/* Stats Grid */}
+      <section className="dh-stats">
+        {isDriverMode ? (
+          <>
+            <AnimatedCounter
+              value={publishedTrips.length}
+              label="Annonces"
+              icon="route"
+              delay={100}
+            />
+            <AnimatedCounter
+              value={activePublishedTrips}
+              label="Actifs"
+              icon="check-badge"
+              delay={200}
+            />
+            <AnimatedCounter
+              value={passengerCount}
+              label="Passagers"
+              icon="user"
+              delay={300}
+            />
+          </>
+        ) : (
+          <>
+            <AnimatedCounter
+              value={tripOptions.length}
+              label="Disponibles"
+              icon="route"
+              delay={100}
+            />
+            <AnimatedCounter
+              value={reservations.length}
+              label="Reservations"
+              icon="bookmark"
+              delay={200}
+            />
+            <AnimatedCounter
+              value={confirmedReservations}
+              label="Confirmees"
+              icon="check-badge"
+              delay={300}
+            />
+          </>
+        )}
+      </section>
+
+      {/* Quick Search / CTA */}
       <button
-        className="search-pill search-pill--hero"
+        className="dh-search-bar"
         type="button"
         onClick={() => navigate(isDriverMode ? "my-trips" : "search")}
       >
-        <Icon name={isDriverMode ? "route" : "search"} size={18} />
-        <span>
+        <span className="dh-search-bar__icon">
+          <Icon name={isDriverMode ? "route" : "search"} size={18} />
+        </span>
+        <span className="dh-search-bar__text">
           {isDriverMode
-            ? "Ouvrir mes annonces et les passagers confirmes..."
-            : "Rechercher un trajet par ville, campus ou horaire..."}
+            ? "Voir mes annonces et passagers..."
+            : "Rechercher un trajet..."}
+        </span>
+        <span className="dh-search-bar__arrow">
+          <Icon name="chevron-right" size={16} />
         </span>
       </button>
 
-      <div className="action-grid action-grid--home">
+      {/* Action Cards */}
+      <section className="dh-actions">
         <button
-          className="action-card action-card--green"
+          className="dh-action-card dh-action-card--primary"
           type="button"
           onClick={() => navigate(isDriverMode ? "publish" : "search")}
         >
-          <span className="action-card__icon">
+          <div className="dh-action-card__icon-wrap">
             <Icon name={isDriverMode ? "plus" : "search"} size={22} />
-          </span>
-          <strong>{isDriverMode ? "Publier" : "Rechercher"}</strong>
-          <span>
-            {isDriverMode
-              ? "Ajouter un trajet reservable par les passagers"
-              : "Comparer les conducteurs disponibles"}
+          </div>
+          <div className="dh-action-card__content">
+            <strong className="dh-action-card__title">
+              {isDriverMode ? "Publier un trajet" : "Rechercher"}
+            </strong>
+            <span className="dh-action-card__desc">
+              {isDriverMode
+                ? "Creer une nouvelle annonce"
+                : "Trouver un conducteur"}
+            </span>
+          </div>
+          <span className="dh-action-card__chevron">
+            <Icon name="chevron-right" size={16} />
           </span>
         </button>
 
         <button
-          className="action-card action-card--orange"
+          className="dh-action-card dh-action-card--secondary"
           type="button"
           onClick={() => navigate(isDriverMode ? "my-trips" : "my-reservations")}
         >
-          <span className="action-card__icon">
+          <div className="dh-action-card__icon-wrap">
             <Icon name={isDriverMode ? "route" : "bookmark"} size={22} />
-          </span>
-          <strong>{isDriverMode ? "Mes annonces" : "Mes reservations"}</strong>
-          <span>
-            {isDriverMode
-              ? "Voir les places, statuts et passagers"
-              : "Retrouver les trajets confirmes"}
+          </div>
+          <div className="dh-action-card__content">
+            <strong className="dh-action-card__title">
+              {isDriverMode ? "Mes annonces" : "Mes reservations"}
+            </strong>
+            <span className="dh-action-card__desc">
+              {isDriverMode
+                ? "Places, statuts et passagers"
+                : "Trajets confirmes"}
+            </span>
+          </div>
+          <span className="dh-action-card__chevron">
+            <Icon name="chevron-right" size={16} />
           </span>
         </button>
-      </div>
+      </section>
 
-      <div className="screen-panel">
-        <div className="section-heading">
+      {/* Trips Section */}
+      <section className="dh-section">
+        <div className="dh-section__header">
           <div>
-            <h3>{isDriverMode ? "Annonces driver" : "Trajets disponibles"}</h3>
-            <p>
+            <h2 className="dh-section__title">
+              {isDriverMode ? "Vos annonces" : "Trajets disponibles"}
+            </h2>
+            <p className="dh-section__subtitle">
               {isDriverMode
-                ? "Tes prochains departs et les reservations liees."
-                : "Des departs verifies autour du campus, tries pour aujourd'hui."}
+                ? "Prochains departs et reservations"
+                : "Departs verifies autour du campus"}
             </p>
           </div>
-
           <button
-            className="text-link"
+            className="dh-section__link"
             type="button"
             onClick={() => navigate(isDriverMode ? "my-trips" : "search")}
           >
-            Voir tout
+            Tout voir
+            <Icon name="chevron-right" size={14} />
           </button>
         </div>
 
-        {!isDriverMode && !featuredTrips.length ? (
-          <div className="message-box">
-            <strong>Aucun trajet disponible pour le moment</strong>
-            <p>Publie une annonce ou reviens plus tard pour voir de nouvelles offres.</p>
+        {/* Empty states */}
+        {!isDriverMode && !featuredTrips.length && (
+          <div className="dh-empty">
+            <div className="dh-empty__icon">
+              <Icon name="route" size={32} />
+            </div>
+            <strong className="dh-empty__title">Aucun trajet disponible</strong>
+            <p className="dh-empty__text">
+              Publie une annonce ou reviens plus tard pour de nouvelles offres.
+            </p>
           </div>
-        ) : null}
+        )}
 
-            {isDriverMode && !featuredPublishedTrips.length ? (
-          <div className="message-box">
-            <strong>Aucune annonce driver</strong>
-            <p>Publie ton premier trajet pour recevoir des demandes passagers.</p>
+        {isDriverMode && !featuredPublishedTrips.length && (
+          <div className="dh-empty">
+            <div className="dh-empty__icon">
+              <Icon name="car" size={32} />
+            </div>
+            <strong className="dh-empty__title">Aucune annonce</strong>
+            <p className="dh-empty__text">
+              Publiez votre premier trajet pour recevoir des demandes.
+            </p>
+            <button
+              className="dh-empty__cta"
+              type="button"
+              onClick={() => navigate("publish")}
+            >
+              <Icon name="plus" size={16} />
+              Publier maintenant
+            </button>
           </div>
-        ) : null}
+        )}
 
-        {!isDriverMode ? (
-          <div className="stack-list stack-list--featured">
+        {/* Driver trip cards */}
+        {isDriverMode && featuredPublishedTrips.length > 0 && (
+          <div className="dh-trip-list">
+            {featuredPublishedTrips.map((trip, index) => (
+              <DriverTripCard key={trip.id} trip={trip} index={index} />
+            ))}
+          </div>
+        )}
+
+        {/* Passenger trip cards */}
+        {!isDriverMode && featuredTrips.length > 0 && (
+          <div className="dh-trip-list">
             {featuredTrips.map((trip) => (
               <TrajetCard
                 ctaLabel="Voir le detail"
@@ -200,35 +358,8 @@ export default function Home({
               />
             ))}
           </div>
-        ) : (
-          <div className="stack-list stack-list--featured">
-            {featuredPublishedTrips.map((trip) => (
-              <article className="list-card list-card--trip" key={trip.id}>
-                <div className="list-card__row">
-                  <div>
-                    <h4>{trip.route}</h4>
-                    <p>{trip.date} - {trip.time}</p>
-                  </div>
-                  <span className={getStatusPillClass(trip.status)}>
-                    {trip.status}
-                  </span>
-                </div>
-                <div className="trip-card__meta">
-                  <span className="meta-chip">
-                    <Icon name="seat" size={14} />
-                    {trip.seats} places
-                  </span>
-                  <span className="meta-chip">
-                    <Icon name="ticket" size={14} />
-                    {trip.price} DH
-                  </span>
-                </div>
-                <p className="card-note">{trip.passengers}</p>
-              </article>
-            ))}
-          </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }
