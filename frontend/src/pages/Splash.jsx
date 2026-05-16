@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Icon } from "../components/Icons";
 import logo from "../assets/images/logo.png";
 
@@ -6,50 +6,57 @@ const splashHighlights = [
   {
     icon: "send",
     title: "Rapide",
-    copy: "Reservez un trajet en quelques clics.",
+    copy: "Reservez en quelques clics.",
   },
   {
     icon: "shield",
     title: "Securise",
-    copy: "Des trajets fiables pour votre campus.",
+    copy: "Trajets fiables et verifies.",
   },
   {
     icon: "location",
-    title: "Partout",
-    copy: "Disponible la ou vos etudes vous menent.",
+    title: "Campus",
+    copy: "Partout ou vous etudiez.",
   },
 ];
 
 export default function Splash({ navigate }) {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setReady(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="screen screen--splash">
       <div className="splash-showcase">
         <div className="splash-showcase__panel">
-          <div className="splash-showcase__ornament splash-showcase__ornament--left" aria-hidden="true" />
-          <div className="splash-showcase__ornament splash-showcase__ornament--right" aria-hidden="true" />
-
           <header className="splash-showcase__header">
             <img src={logo} alt="CampusRide logo" className="splash-showcase__logo" />
-            <h1>CampusRide simplifie vos trajets universitaires</h1>
+            <h1>Vos trajets campus simplifies</h1>
             <p>
-              Accedez rapidement a vos deplacements campus, trouvez un conducteur
-              fiable et voyagez en toute serenite.
+              Trouvez un conducteur fiable ou proposez vos places disponibles en toute serenite.
             </p>
           </header>
 
           <div className="splash-showcase__media">
             <img
-              alt="CampusRide splash"
+              alt="CampusRide"
               className="splash-showcase__image"
               src="/images/splash-photo.png"
             />
           </div>
 
-          <div className="splash-highlights" aria-label="Points forts CampusRide">
-            {splashHighlights.map((item) => (
-              <article className="splash-highlight-card" key={item.title}>
+          <div className="splash-highlights" aria-label="Points forts">
+            {splashHighlights.map((item, i) => (
+              <article
+                className="splash-highlight-card"
+                key={item.title}
+                style={{ animationDelay: `${0.3 + i * 0.1}s` }}
+              >
                 <span className="splash-highlight-card__icon">
-                  <Icon name={item.icon} size={24} />
+                  <Icon name={item.icon} size={20} />
                 </span>
                 <strong>{item.title}</strong>
                 <p>{item.copy}</p>
@@ -63,18 +70,17 @@ export default function Splash({ navigate }) {
               className="splash-showcase__button"
               onClick={() => navigate("login")}
             >
-              <span>Suivant</span>
+              <span>Commencer</span>
               <Icon name="arrow-right" size={18} />
             </button>
 
-            <div className="splash-dots splash-dots--showcase" aria-label="Navigation des pages">
+            <div className="splash-dots" aria-label="Navigation">
               <span className="splash-dots__item splash-dots__item--soft" aria-hidden="true" />
               <button
                 type="button"
                 className="splash-dots__item splash-dots__item--active"
                 onClick={() => navigate("login")}
-                aria-label="Aller a la page de connexion"
-                aria-pressed="true"
+                aria-label="Connexion"
               />
               <span className="splash-dots__item splash-dots__item--soft" aria-hidden="true" />
             </div>

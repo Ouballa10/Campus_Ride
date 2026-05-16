@@ -69,7 +69,7 @@ export default function Register({ navigate }) {
       }
 
       setSuccess(
-        "Compte cree. Verifie ton email pour confirmer ton inscription avant de te connecter.",
+        "Compte cree. Verifiez votre email pour confirmer votre inscription.",
       );
     } catch (submissionError) {
       setError(submissionError.message);
@@ -102,13 +102,13 @@ export default function Register({ navigate }) {
         type="button"
         onClick={() => navigate("splash")}
       >
-        <Icon name="arrow-left" size={18} />
+        <Icon name="arrow-left" size={16} />
         <span>Retour</span>
       </button>
 
       <div className="auth-card">
         <div className="auth-brand">
-          <img className="auth-brand__logo" src={logo} alt="CampusRide logo" />
+          <img className="auth-brand__logo" src={logo} alt="CampusRide" />
           <div>
             <span className="eyebrow">CampusRide</span>
             <h2>Creer un compte</h2>
@@ -116,7 +116,7 @@ export default function Register({ navigate }) {
         </div>
 
         <div className="auth-copy">
-          <p>Inscris-toi en quelques secondes puis switch entre passager et driver quand tu veux.</p>
+          <p>Inscrivez-vous en quelques secondes et commencez a voyager.</p>
         </div>
 
         <ModeSwitch
@@ -128,7 +128,7 @@ export default function Register({ navigate }) {
 
         {!isConfigured ? (
           <p className="auth-status auth-status--info">
-            Supabase n'est pas encore configure sur had l'environnement.
+            Supabase n'est pas encore configure sur cet environnement.
           </p>
         ) : null}
 
@@ -151,7 +151,7 @@ export default function Register({ navigate }) {
             <input
               autoComplete="email"
               name="email"
-              placeholder="etu@campusride.ma"
+              placeholder="votre@email.ma"
               required
               type="email"
               value={form.email}
@@ -177,7 +177,7 @@ export default function Register({ navigate }) {
             <input
               autoComplete="new-password"
               name="password"
-              placeholder="Choisis un mot de passe"
+              placeholder="Choisissez un mot de passe"
               required
               type="password"
               value={form.password}
@@ -190,7 +190,7 @@ export default function Register({ navigate }) {
             <input
               autoComplete="new-password"
               name="confirmPassword"
-              placeholder="Retape ton mot de passe"
+              placeholder="Retapez votre mot de passe"
               required
               type="password"
               value={form.confirmPassword}
