@@ -2502,6 +2502,19 @@ a { color: var(--primary); text-decoration: none; }
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
+/* Sticky CTA button for reservation page */
+.reservation-sticky-cta {
+  position: sticky;
+  bottom: 0;
+  padding: 12px 0 4px;
+  background: linear-gradient(to bottom, transparent 0%, var(--card-bg, #fff) 30%);
+  z-index: 10;
+}
+
+.reservation-sticky-cta .primary-button {
+  width: 100%;
+}
+
 
 
 /* =========================
@@ -5404,6 +5417,26 @@ a { color: var(--primary); text-decoration: none; }
 .screen--search,
 .screen--publish,
 .screen--reservation { /* inherits from .screen */ }
+
+.screen--reservation .screen-panel--primary {
+  position: relative;
+}
+
+.screen--reservation .detail-card--reservation {
+  padding: 14px 16px;
+  gap: 10px;
+}
+
+.screen--reservation .detail-card--reservation .trip-card__meta {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.screen--reservation .detail-card--reservation .reservation-route-grid {
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-soft, #eee);
+}
 
 /* Screen panel variants */
 .screen-panel--primary,
