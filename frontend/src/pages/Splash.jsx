@@ -1,84 +1,184 @@
-import React from "react";
+import React, { useState } from "react";
 import { Icon } from "../components/Icons";
 import logo from "../assets/images/logo.png";
 
-const splashHighlights = [
+const slides = [
   {
-    icon: "send",
-    title: "Rapide",
-    copy: "Reservez un trajet en quelques clics.",
+    id: 1,
+    title: "Bienvenue sur CampusRide",
+    subtitle: "Votre compagnon de trajet universitaire",
+    description:
+      "Partagez vos trajets entre etudiants et voyagez ensemble vers le campus en toute simplicite.",
+    icon: "car",
+    gradient: "splash-gradient--blue",
+    illustration: "car-road",
   },
   {
+    id: 2,
+    title: "Rapide, Fiable & Securise",
+    subtitle: "Une experience pensee pour vous",
+    description:
+      "Reservez en quelques secondes, suivez votre conducteur en temps reel et voyagez en toute confiance.",
     icon: "shield",
-    title: "Securise",
-    copy: "Des trajets fiables pour votre campus.",
+    gradient: "splash-gradient--purple",
+    illustration: "features",
+    features: [
+      { icon: "send", label: "Rapide", desc: "Reservation instantanee" },
+      { icon: "shield", label: "Securise", desc: "Trajets verifies" },
+      { icon: "location", label: "Partout", desc: "Tous les campus" },
+    ],
   },
   {
-    icon: "location",
-    title: "Partout",
-    copy: "Disponible la ou vos etudes vous menent.",
+    id: 3,
+    title: "Pret a Rouler?",
+    subtitle: "Rejoignez la communaute CampusRide",
+    description:
+      "Creez votre compte en un instant et commencez a partager vos trajets des aujourd'hui.",
+    icon: "route",
+    gradient: "splash-gradient--green",
+    illustration: "community",
   },
 ];
 
 export default function Splash({ navigate }) {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  function handleNext() {
+    if (currentSlide < slides.length - 1) {
+      setCurrentSlide(currentSlide + 1);
+    } else {
+      navigate("login");
+    }
+  }
+
+  function handleSkip() {
+    navigate("login");
+  }
+
+  function handleDotClick(index) {
+    setCurrentSlide(index);
+  }
+
+  const slide = slides[currentSlide];
+  const isLast = currentSlide === slides.length - 1;
+
   return (
     <div className="screen screen--splash">
-      <div className="splash-showcase">
-        <div className="splash-showcase__panel">
-          <div className="splash-showcase__ornament splash-showcase__ornament--left" aria-hidden="true" />
-          <div className="splash-showcase__ornament splash-showcase__ornament--right" aria-hidden="true" />
+      <div className={`splash-onboarding ${slide.gradient}`}>
+        {/* Background decorations */}
+        <div className="splash-onboarding__bg">
+          <div className="splash-bg-circle splash-bg-circle--1" />
+          <div className="splash-bg-circle splash-bg-circle--2" />
+          <div className="splash-bg-circle splash-bg-circle--3" />
+          <div className="splash-bg-particle splash-bg-particle--1" />
+          <div className="splash-bg-particle splash-bg-particle--2" />
+          <div className="splash-bg-particle splash-bg-particle--3" />
+          <div className="splash-bg-particle splash-bg-particle--4" />
+        </div>
 
-          <header className="splash-showcase__header">
-            <img src={logo} alt="CampusRide logo" className="splash-showcase__logo" />
-            <h1>CampusRide simplifie vos trajets universitaires</h1>
-            <p>
-              Accedez rapidement a vos deplacements campus, trouvez un conducteur
-              fiable et voyagez en toute serenite.
-            </p>
-          </header>
+        {/* Skip button */}
+        {!isLast && (
+          <button
+            type="button"
+            className="splash-onboarding__skip"
+            onClick={handleSkip}
+          >
+            Passer
+          </button>
+        )}
 
-          <div className="splash-showcase__media">
-            <img
-              alt="CampusRide splash"
-              className="splash-showcase__image"
-              src="/images/splash-photo.png"
-            />
-          </div>
+        {/* Logo */}
+        <div className="splash-onboarding__logo">
+          <img src={logo} alt="CampusRide" className="splash-onboarding__logo-img" />
+        </div>
 
-          <div className="splash-highlights" aria-label="Points forts CampusRide">
-            {splashHighlights.map((item) => (
-              <article className="splash-highlight-card" key={item.title}>
-                <span className="splash-highlight-card__icon">
-                  <Icon name={item.icon} size={24} />
-                </span>
-                <strong>{item.title}</strong>
-                <p>{item.copy}</p>
-              </article>
+        {/* Illustration area */}
+        <div className="splash-onboarding__illustration">
+          {slide.illustration === "car-road" && (
+            <div className="splash-illust splash-illust--car">
+              <div className="splash-illust__road">
+                <div className="splash-illust__road-line" />
+                <div className="splash-illust__road-line" />
+                <div className="splash-illust__road-line" />
+              </div>
+              <div className="splash-illust__car-wrapper">
+                <Icon name="car" size={64} />
+              </div>
+              <div className="splash-illust__pin splash-illust__pin--start">
+                <Icon name="location" size={28} />
+              </div>
+              <div className="splash-illust__pin splash-illust__pin--end">
+                <Icon name="location" size={28} />
+              </div>
+            </div>
+          )}
+
+          {slide.illustration === "features" && (
+            <div className="splash-illust splash-illust--features">
+              {slide.features.map((feat, i) => (
+                <div className="splash-feat-card" key={feat.label} style={{ animationDelay: `${i * 0.15}s` }}>
+                  <span className="splash-feat-card__icon">
+                    <Icon name={feat.icon} size={28} />
+                  </span>
+                  <strong className="splash-feat-card__label">{feat.label}</strong>
+                  <span className="splash-feat-card__desc">{feat.desc}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {slide.illustration === "community" && (
+            <div className="splash-illust splash-illust--community">
+              <div className="splash-community-ring">
+                <div className="splash-community-avatar splash-community-avatar--1">
+                  <Icon name="user" size={24} />
+                </div>
+                <div className="splash-community-avatar splash-community-avatar--2">
+                  <Icon name="user" size={24} />
+                </div>
+                <div className="splash-community-avatar splash-community-avatar--3">
+                  <Icon name="user" size={24} />
+                </div>
+                <div className="splash-community-avatar splash-community-avatar--4">
+                  <Icon name="user" size={24} />
+                </div>
+                <div className="splash-community-center">
+                  <Icon name="route" size={36} />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Text content */}
+        <div className="splash-onboarding__content">
+          <h1 className="splash-onboarding__title">{slide.title}</h1>
+          <p className="splash-onboarding__subtitle">{slide.subtitle}</p>
+          <p className="splash-onboarding__desc">{slide.description}</p>
+        </div>
+
+        {/* Footer: dots + button */}
+        <div className="splash-onboarding__footer">
+          <div className="splash-onboarding__dots">
+            {slides.map((s, i) => (
+              <button
+                key={s.id}
+                type="button"
+                className={`splash-dot ${i === currentSlide ? "splash-dot--active" : ""}`}
+                onClick={() => handleDotClick(i)}
+                aria-label={`Page ${i + 1}`}
+              />
             ))}
           </div>
 
-          <div className="splash-showcase__footer">
-            <button
-              type="button"
-              className="splash-showcase__button"
-              onClick={() => navigate("login")}
-            >
-              <span>Suivant</span>
-              <Icon name="arrow-right" size={18} />
-            </button>
-
-            <div className="splash-dots splash-dots--showcase" aria-label="Navigation des pages">
-              <span className="splash-dots__item splash-dots__item--soft" aria-hidden="true" />
-              <button
-                type="button"
-                className="splash-dots__item splash-dots__item--active"
-                onClick={() => navigate("login")}
-                aria-label="Aller a la page de connexion"
-                aria-pressed="true"
-              />
-              <span className="splash-dots__item splash-dots__item--soft" aria-hidden="true" />
-            </div>
-          </div>
+          <button
+            type="button"
+            className={`splash-onboarding__btn ${isLast ? "splash-onboarding__btn--cta" : ""}`}
+            onClick={handleNext}
+          >
+            <span>{isLast ? "Commencer" : "Suivant"}</span>
+            <Icon name="arrow-right" size={18} />
+          </button>
         </div>
       </div>
     </div>
