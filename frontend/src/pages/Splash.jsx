@@ -10,17 +10,15 @@ const slides = [
   },
   {
     id: 2,
-    title: "Rapide, Fiable & Securise",
-    subtitle: "Une experience pensee pour vous",
-    description:
-      "Reservez en quelques secondes, suivez votre conducteur en temps reel et voyagez en toute confiance.",
-    icon: "shield",
+    title: "Recherchez votre trajet",
+    titleHighlight: "en quelques clics",
+    subtitle: "Indiquez votre point de depart et votre destination, nous trouvons le meilleur trajet pour vous.",
     gradient: "splash-gradient--purple",
-    illustration: "features",
+    illustration: "search-bg",
     features: [
-      { icon: "send", label: "Rapide", desc: "Reservation instantanee" },
-      { icon: "shield", label: "Securise", desc: "Trajets verifies" },
-      { icon: "location", label: "Partout", desc: "Tous les campus" },
+      { icon: "send", label: "Rapidite", desc: "Trouvez votre trajet en quelques secondes." },
+      { icon: "shield", label: "Fiabilite", desc: "Des trajets verifies pour une securite maximale." },
+      { icon: "location", label: "Flexibilite", desc: "Disponible pour tous les campus, a tout moment." },
     ],
   },
   {
@@ -76,6 +74,58 @@ export default function Splash({ navigate }) {
               Facilitez vos deplacements universitaires<br />en toute securite.
             </p>
           </header>
+
+          {/* Footer: dots */}
+          <div className="splash-poster__footer">
+            <div className="splash-onboarding__dots">
+              {slides.map((s, i) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  className={`splash-dot ${i === currentSlide ? "splash-dot--active" : ""}`}
+                  onClick={(e) => { e.stopPropagation(); handleDotClick(i); }}
+                  aria-label={`Page ${i + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Slide 2: background image with features
+  if (slide.illustration === "search-bg") {
+    return (
+      <div className="screen screen--splash">
+        <div className="splash-poster splash-poster--2" onClick={handleNext} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}>
+          <header className="splash-poster__content">
+            <img src={logo} alt="CampusRide logo" className="splash-poster__logo" />
+
+            <span className="splash-poster__divider" aria-hidden="true" />
+
+            <h2 className="splash-poster__headline">
+              {slide.title}<br />
+              <span>{slide.titleHighlight}</span>
+            </h2>
+
+            <p className="splash-poster__copy">
+              {slide.subtitle}
+            </p>
+          </header>
+
+          {/* Features at bottom */}
+          <div className="splash-poster__features">
+            {slide.features.map((feat) => (
+              <div className="splash-poster__feat" key={feat.label}>
+                <span className="splash-poster__feat-icon">
+                  <Icon name={feat.icon} size={24} />
+                </span>
+                <strong>{feat.label}</strong>
+                <p>{feat.desc}</p>
+              </div>
+            ))}
+          </div>
 
           {/* Footer: dots */}
           <div className="splash-poster__footer">
