@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import MyReservations from "./pages/MyReservations";
 import MyTrajets from "./pages/MyTrajets";
 import Notifications from "./pages/Notifications";
+import NotificationDetail from "./pages/NotificationDetail";
 import Profile from "./pages/Profile";
 import PublishTrajet from "./pages/PublishTrajet";
 import Register from "./pages/Register";
@@ -42,6 +43,7 @@ const appRoutes = [
   { route: "my-trips", label: "Mes trajets" },
   { route: "my-reservations", label: "Reservations" },
   { route: "notifications", label: "Notifications" },
+  { route: "notification-detail", label: "Detail notification" },
 ];
 
 const allRoutes = [...authRoutes, ...appRoutes.map((screen) => screen.route)];
@@ -282,6 +284,7 @@ function App() {
   const [dataError, setDataError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedTripId, setSelectedTripId] = useState("");
+  const [selectedNotification, setSelectedNotification] = useState(null);
   const [theme, setTheme] = useState(readInitialTheme);
 
   const sessionUserId = session?.user?.id || "";
@@ -467,6 +470,11 @@ function App() {
   function openTripReservation(tripId) {
     setSelectedTripId(tripId);
     navigate("reservation");
+  }
+
+  function openNotificationDetail(notification) {
+    setSelectedNotification(notification);
+    navigate("notification-detail");
   }
 
   async function handlePublish(payload) {
@@ -802,8 +810,17 @@ function App() {
       <Notifications
         mode={activeMode}
         navigate={navigate}
+        onSelectNotification={openNotificationDetail}
         publishedTrips={appData.publishedTrips}
         reservations={appData.reservations}
+      />
+    );
+  } else if (route === "notification-detail") {
+    screen = (
+      <NotificationDetail
+        mode={activeMode}
+        navigate={navigate}
+        notification={selectedNotification}
       />
     );
   } else {
