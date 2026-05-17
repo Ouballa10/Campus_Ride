@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Icon } from "../components/Icons";
 import logo from "../assets/images/logo.png";
 
@@ -12,24 +12,25 @@ const slides = [
     id: 2,
     title: "Recherchez votre trajet",
     titleHighlight: "en quelques clics",
-    subtitle: "Indiquez votre point de depart et votre destination, nous trouvons le meilleur trajet pour vous.",
+    subtitle: "Indiquez votre point de départ et votre destination, nous trouvons le meilleur trajet pour vous.",
     gradient: "splash-gradient--purple",
     illustration: "search-bg",
     features: [
-      { icon: "send", label: "Rapidite", desc: "Trouvez votre trajet en quelques secondes." },
-      { icon: "shield", label: "Fiabilite", desc: "Des trajets verifies pour une securite maximale." },
-      { icon: "location", label: "Flexibilite", desc: "Disponible pour tous les campus, a tout moment." },
+      { icon: "send", label: "Rapidité", desc: "Trouvez votre trajet en quelques secondes." },
+      { icon: "shield", label: "Fiabilité", desc: "Des trajets vérifiés pour une sécurité maximale." },
+      { icon: "location", label: "Flexibilité", desc: "Disponible pour tous les campus, à tout moment." },
     ],
   },
   {
     id: 3,
-    title: "Pret a Rouler?",
-    subtitle: "Rejoignez la communaute CampusRide",
-    description:
-      "Creez votre compte en un instant et commencez a partager vos trajets des aujourd'hui.",
+    title: "Votre mobilité,",
+    titleHighlight: "simplifiée au quotidien",
+    subtitle: "Réservez, suivez et profitez d'un trajet sûr, confortable et adapté à votre emploi du temps.",
+    bottomText: "Prêt à bouger ?",
+    bottomHighlight: "CampusRide est là pour vous.",
     icon: "route",
     gradient: "splash-gradient--green",
-    illustration: "community",
+    illustration: "mobility-bg",
   },
 ];
 
@@ -55,69 +56,59 @@ export default function Splash({ navigate }) {
   const slide = slides[currentSlide];
   const isLast = currentSlide === slides.length - 1;
 
-  // First slide has background image layout
-  if (slide.illustration === "campus-scene") {
-    return (
-      <div className="screen screen--splash">
-        <div className="splash-poster" onClick={handleNext} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}>
-          <header className="splash-poster__content">
-            <img src={logo} alt="CampusRide logo" className="splash-poster__logo" />
+  // Auto-advance every 4 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (currentSlide < slides.length - 1) {
+        setCurrentSlide(currentSlide + 1);
+      } else {
+        navigate("login");
+      }
+    }, 4000);
 
-            <span className="splash-poster__divider" aria-hidden="true" />
+    return () => clearTimeout(timer);
+  }, [currentSlide]);
 
-            <h2 className="splash-poster__headline">
-              Votre trajet,<br />
-              <span>notre priorite</span>
-            </h2>
+  const posterClass = [
+    "splash-poster",
+    slide.illustration === "search-bg" ? "splash-poster--2" : "",
+    slide.illustration === "mobility-bg" ? "splash-poster--3" : "",
+    "splash-poster--animated",
+  ].filter(Boolean).join(" ");
 
-            <p className="splash-poster__copy">
-              Facilitez vos deplacements universitaires<br />en toute securite.
-            </p>
-          </header>
+  return (
+    <div className="screen screen--splash">
+      <div
+        key={slide.id}
+        className={posterClass}
+        onClick={handleNext}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}
+      >
+        {/* Shimmer light effect */}
+        <div className="splash-poster__shimmer" aria-hidden="true" />
 
-          {/* Footer: dots */}
-          <div className="splash-poster__footer">
-            <div className="splash-onboarding__dots">
-              {slides.map((s, i) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  className={`splash-dot ${i === currentSlide ? "splash-dot--active" : ""}`}
-                  onClick={(e) => { e.stopPropagation(); handleDotClick(i); }}
-                  aria-label={`Page ${i + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+        <header className="splash-poster__content">
+          <img src={logo} alt="CampusRide logo" className="splash-poster__logo splash-anim-logo" />
 
-  // Slide 2: background image with features
-  if (slide.illustration === "search-bg") {
-    return (
-      <div className="screen screen--splash">
-        <div className="splash-poster splash-poster--2" onClick={handleNext} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }}>
-          <header className="splash-poster__content">
-            <img src={logo} alt="CampusRide logo" className="splash-poster__logo" />
+          <span className="splash-poster__divider splash-anim-divider" aria-hidden="true" />
 
-            <span className="splash-poster__divider" aria-hidden="true" />
+          <h2 className="splash-poster__headline splash-anim-headline">
+            {slide.title || "Votre trajet,"}<br />
+            <span>{slide.titleHighlight || "notre priorité"}</span>
+          </h2>
 
-            <h2 className="splash-poster__headline">
-              {slide.title}<br />
-              <span>{slide.titleHighlight}</span>
-            </h2>
+          <p className="splash-poster__copy splash-anim-copy">
+            {slide.subtitle || "Facilitez vos déplacements universitaires en toute sécurité."}
+          </p>
+        </header>
 
-            <p className="splash-poster__copy">
-              {slide.subtitle}
-            </p>
-          </header>
-
-          {/* Features at bottom */}
-          <div className="splash-poster__features">
-            {slide.features.map((feat) => (
-              <div className="splash-poster__feat" key={feat.label}>
+        {/* Features (page 2 only) */}
+        {slide.features && (
+          <div className="splash-poster__features splash-anim-features">
+            {slide.features.map((feat, i) => (
+              <div className="splash-poster__feat splash-anim-feat" key={feat.label} style={{ animationDelay: `${0.8 + i * 0.12}s` }}>
                 <span className="splash-poster__feat-icon">
                   <Icon name={feat.icon} size={24} />
                 </span>
@@ -126,125 +117,39 @@ export default function Splash({ navigate }) {
               </div>
             ))}
           </div>
+        )}
 
-          {/* Footer: dots */}
-          <div className="splash-poster__footer">
-            <div className="splash-onboarding__dots">
-              {slides.map((s, i) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  className={`splash-dot ${i === currentSlide ? "splash-dot--active" : ""}`}
-                  onClick={(e) => { e.stopPropagation(); handleDotClick(i); }}
-                  aria-label={`Page ${i + 1}`}
-                />
-              ))}
-            </div>
+        {/* Bottom text (page 3 only) */}
+        {slide.bottomText && (
+          <div className="splash-poster__bottom-text splash-anim-bottom">
+            <p>{slide.bottomText}<br /><span>{slide.bottomHighlight}</span></p>
           </div>
-        </div>
-      </div>
-    );
-  }
+        )}
 
-  // Slides 2 and 3 use the original layout
-  return (
-    <div className="screen screen--splash">
-      <div className={`splash-onboarding ${slide.gradient}`}>
-        {/* Background decorations */}
-        <div className="splash-onboarding__bg">
-          <div className="splash-bg-circle splash-bg-circle--1" />
-          <div className="splash-bg-circle splash-bg-circle--2" />
-          <div className="splash-bg-circle splash-bg-circle--3" />
-          <div className="splash-bg-particle splash-bg-particle--1" />
-          <div className="splash-bg-particle splash-bg-particle--2" />
-          <div className="splash-bg-particle splash-bg-particle--3" />
-          <div className="splash-bg-particle splash-bg-particle--4" />
-        </div>
-
-        {/* Skip button */}
-        {!isLast && (
+        {/* Skip button (page 1 only) */}
+        {currentSlide === 0 && (
           <button
             type="button"
-            className="splash-onboarding__skip"
-            onClick={handleSkip}
+            className="splash-poster__skip"
+            onClick={(e) => { e.stopPropagation(); navigate("login"); }}
           >
             Passer
           </button>
         )}
 
-        {/* Logo */}
-        <div className="splash-onboarding__logo">
-          <img src={logo} alt="CampusRide" className="splash-onboarding__logo-img" />
-        </div>
-
-        {/* Illustration area */}
-        <div className="splash-onboarding__illustration">
-          {slide.illustration === "features" && (
-            <div className="splash-illust splash-illust--features">
-              {slide.features.map((feat, i) => (
-                <div className="splash-feat-card" key={feat.label} style={{ animationDelay: `${i * 0.15}s` }}>
-                  <span className="splash-feat-card__icon">
-                    <Icon name={feat.icon} size={28} />
-                  </span>
-                  <strong className="splash-feat-card__label">{feat.label}</strong>
-                  <span className="splash-feat-card__desc">{feat.desc}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {slide.illustration === "community" && (
-            <div className="splash-illust splash-illust--community">
-              <div className="splash-community-ring">
-                <div className="splash-community-avatar splash-community-avatar--1">
-                  <Icon name="user" size={24} />
-                </div>
-                <div className="splash-community-avatar splash-community-avatar--2">
-                  <Icon name="user" size={24} />
-                </div>
-                <div className="splash-community-avatar splash-community-avatar--3">
-                  <Icon name="user" size={24} />
-                </div>
-                <div className="splash-community-avatar splash-community-avatar--4">
-                  <Icon name="user" size={24} />
-                </div>
-                <div className="splash-community-center">
-                  <Icon name="route" size={36} />
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Text content */}
-        <div className="splash-onboarding__content">
-          <h1 className="splash-onboarding__title">{slide.title}</h1>
-          <p className="splash-onboarding__subtitle">{slide.subtitle}</p>
-          <p className="splash-onboarding__desc">{slide.description}</p>
-        </div>
-
-        {/* Footer: dots + button */}
-        <div className="splash-onboarding__footer">
+        {/* Footer: dots */}
+        <div className="splash-poster__footer">
           <div className="splash-onboarding__dots">
             {slides.map((s, i) => (
               <button
                 key={s.id}
                 type="button"
                 className={`splash-dot ${i === currentSlide ? "splash-dot--active" : ""}`}
-                onClick={() => handleDotClick(i)}
+                onClick={(e) => { e.stopPropagation(); handleDotClick(i); }}
                 aria-label={`Page ${i + 1}`}
               />
             ))}
           </div>
-
-          <button
-            type="button"
-            className={`splash-onboarding__btn ${isLast ? "splash-onboarding__btn--cta" : ""}`}
-            onClick={handleNext}
-          >
-            <span>{isLast ? "Commencer" : "Suivant"}</span>
-            <Icon name="arrow-right" size={18} />
-          </button>
         </div>
       </div>
     </div>

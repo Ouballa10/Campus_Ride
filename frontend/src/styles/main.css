@@ -6803,3 +6803,229 @@ a:focus-visible {
   font-size: 0.58rem;
   line-height: 1.3;
 }
+
+
+/* ===== Splash Poster Page 3 ===== */
+.splash-poster--3 {
+  background-image: url("/images/splash-bg-3.png");
+  background-position: center center;
+  background-size: cover;
+}
+
+.splash-poster--3 .splash-poster__logo {
+  margin-top: -60px;
+}
+
+.splash-poster--3 .splash-poster__divider {
+  margin-top: -100px;
+}
+
+.splash-poster--3 .splash-poster__headline {
+  margin-top: 4px;
+  font-size: clamp(1.1rem, 4vw, 1.6rem);
+}
+
+.splash-poster--3 .splash-poster__copy {
+  margin-top: 2px;
+  font-size: clamp(0.62rem, 1.8vw, 0.72rem);
+}
+
+.splash-poster__bottom-text {
+  position: absolute;
+  bottom: 50px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.splash-poster__bottom-text p {
+  margin: 0;
+  color: #122050;
+  font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.splash-poster__bottom-text span {
+  color: #246cff;
+  font-weight: 900;
+}
+
+
+/* ===== Splash Professional Animations ===== */
+
+/* Shimmer light sweep effect */
+.splash-poster__shimmer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.splash-poster__shimmer::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.25) 45%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.25) 55%,
+    transparent 60%
+  );
+  animation: splashShimmer 3s ease-in-out 1s infinite;
+}
+
+/* Background subtle zoom */
+.splash-poster--animated {
+  animation: splashBgZoom 8s ease-out both;
+}
+
+/* Logo: scale + fade in from top */
+.splash-anim-logo {
+  animation: splashLogoIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Divider: expand from center */
+.splash-anim-divider {
+  animation: splashDividerExpand 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+/* Headline: slide up + fade */
+.splash-anim-headline {
+  animation: splashSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+/* Copy text: slide up + fade with delay */
+.splash-anim-copy {
+  animation: splashSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
+}
+
+/* Features container */
+.splash-anim-features {
+  animation: splashSlideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+}
+
+/* Individual feature cards: staggered pop in */
+.splash-anim-feat {
+  animation: splashPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Bottom text: fade up */
+.splash-anim-bottom {
+  animation: splashSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+}
+
+/* Dots pulse on active */
+.splash-dot--active {
+  animation: splashDotPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes splashShimmer {
+  0% { transform: translateX(0) rotate(25deg); }
+  100% { transform: translateX(320%) rotate(25deg); }
+}
+
+@keyframes splashBgZoom {
+  0% { background-size: 105% auto; opacity: 0; }
+  30% { opacity: 1; }
+  100% { background-size: 100% auto; opacity: 1; }
+}
+
+@keyframes splashLogoIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) translateY(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes splashDividerExpand {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes splashSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes splashPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes splashDotPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.3); }
+  50% { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(37, 99, 235, 0); }
+}
+
+
+/* Override bg zoom for page 1 (cover) */
+.splash-poster--animated:not(.splash-poster--2):not(.splash-poster--3) {
+  animation: splashBgZoomCover 6s ease-out both;
+}
+
+@keyframes splashBgZoomCover {
+  0% { opacity: 0; transform: scale(1.04); }
+  40% { opacity: 1; }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Override bg zoom for page 3 (cover) */
+.splash-poster--3.splash-poster--animated {
+  animation: splashBgZoomCover 6s ease-out both;
+}
+
+
+/* ===== Splash Skip Button ===== */
+.splash-poster__skip {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(6px);
+  color: #3a5078;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  animation: splashSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
+}
+
+.splash-poster__skip:hover {
+  background: rgba(255, 255, 255, 0.85);
+  color: #2563eb;
+}
