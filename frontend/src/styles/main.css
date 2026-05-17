@@ -2292,6 +2292,37 @@ a { color: var(--primary); text-decoration: none; }
   min-width: 50px;
 }
 
+.publish-stepper__input {
+  width: 60px;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px 6px;
+  background: var(--surface-elevated);
+  -moz-appearance: textfield;
+}
+
+.publish-stepper__input::-webkit-outer-spin-button,
+.publish-stepper__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.publish-stepper__price-input {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.publish-stepper__unit {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
 /* Publish sidebar (preview) */
 .publish-sidebar {
   position: static;

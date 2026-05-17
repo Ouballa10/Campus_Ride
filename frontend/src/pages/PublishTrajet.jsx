@@ -295,7 +295,15 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
                   >
                     -
                   </button>
-                  <strong>{form.seats}</strong>
+                  <input
+                    type="number"
+                    name="seats"
+                    min="1"
+                    max="8"
+                    value={form.seats}
+                    onChange={updateField}
+                    className="publish-stepper__input"
+                  />
                   <button
                     aria-label="Augmenter les places"
                     type="button"
@@ -312,15 +320,26 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
                   <button
                     aria-label="Diminuer le prix"
                     type="button"
-                    onClick={() => adjustNumber("price", -2, 0, 200)}
+                    onClick={() => adjustNumber("price", -2, 0, 1000)}
                   >
                     -
                   </button>
-                  <strong>{form.price} DH</strong>
+                  <div className="publish-stepper__price-input">
+                    <input
+                      type="number"
+                      name="price"
+                      min="0"
+                      max="1000"
+                      value={form.price}
+                      onChange={updateField}
+                      className="publish-stepper__input"
+                    />
+                    <span className="publish-stepper__unit">DH</span>
+                  </div>
                   <button
                     aria-label="Augmenter le prix"
                     type="button"
-                    onClick={() => adjustNumber("price", 2, 0, 200)}
+                    onClick={() => adjustNumber("price", 2, 0, 1000)}
                   >
                     +
                   </button>
