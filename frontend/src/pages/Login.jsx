@@ -12,6 +12,7 @@ export default function Login({ navigate }) {
   const { isConfigured, signIn, signInWithGoogle } = useAuth();
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
 
@@ -61,100 +62,119 @@ export default function Login({ navigate }) {
       setError("");
       await signInWithGoogle();
     } catch (submissionError) {
-      setError(`${submissionError.message} Si Google ne s'ouvre pas, verifie que Google Provider et Redirect URL sont actives dans Supabase.`);
+      setError(`${submissionError.message} Si Google ne s'ouvre pas, vérifie que Google Provider et Redirect URL sont activés dans Supabase.`);
       setIsGoogleSubmitting(false);
     }
   }
 
   return (
     <div className="screen screen--auth">
-      <button
-        className="auth-back"
-        type="button"
-        onClick={() => navigate("splash")}
-      >
-        <Icon name="arrow-left" size={18} />
-        <span>Retour</span>
-      </button>
+      <div className="login-page">
+        {/* Background image */}
+        <div className="login-page__bg" aria-hidden="true" />
 
-      <div className="auth-card">
-        <div className="auth-brand">
-          <img className="auth-brand__logo" src={logo} alt="CampusRide logo" />
-          <div>
-            <span className="eyebrow">CampusRide</span>
-            <h2>Connexion</h2>
-          </div>
-        </div>
+        {/* Header: logo + welcome text */}
+        <header className="login-page__header">
+          <img src={logo} alt="CampusRide logo" className="login-page__logo" />
 
-        <div className="auth-copy">
-          <p>Reconnecte-toi rapidement pour gerer tes trajets et reservations.</p>
-        </div>
-
-        {!isConfigured ? (
-          <p className="auth-status auth-status--info">
-            Supabase n'est pas encore configure sur had l'environnement.
+          <h1 className="login-page__title">Bienvenue !</h1>
+          <p className="login-page__subtitle">
+            Connectez-vous pour réserver, suivre<br />
+            et profiter de vos trajets en toute sérénité.
           </p>
-        ) : null}
+        </header>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <label className="auth-field">
-            <span>Adresse email</span>
-            <input
-              autoComplete="email"
-              name="email"
-              placeholder="etu@campusride.ma"
-              required
-              type="email"
-              value={form.email}
-              onChange={updateField}
-            />
-          </label>
+        {/* Login card */}
+        <div className="login-page__card">
+          <h2 className="login-page__card-title">Se connecter</h2>
 
-          <label className="auth-field">
-            <span>Mot de passe</span>
-            <input
-              autoComplete="current-password"
-              name="password"
-              placeholder="Votre mot de passe"
-              required
-              type="password"
-              value={form.password}
-              onChange={updateField}
-            />
-          </label>
+          {!isConfigured ? (
+            <p className="auth-status auth-status--info">
+              Supabase n'est pas encore configuré sur cet environnement.
+            </p>
+          ) : null}
 
-          {error ? <p className="auth-status auth-status--error">{error}</p> : null}
+          <form className="login-page__form" onSubmit={handleSubmit}>
+            <div className="login-field">
+              <span className="login-field__icon">
+                <Icon name="send" size={18} />
+              </span>
+              <input
+                autoComplete="email"
+                name="email"
+                placeholder="Adresse e-mail"
+                required
+                type="email"
+                value={form.email}
+                onChange={updateField}
+              />
+            </div>
+
+            <div className="login-field">
+              <span className="login-field__icon">
+                <Icon name="shield" size={18} />
+              </span>
+              <input
+                autoComplete="current-password"
+                name="password"
+                placeholder="Mot de passe"
+                required
+                type={showPassword ? "text" : "password"}
+                value={form.password}
+                onChange={updateField}
+              />
+              <button
+                type="button"
+                className="login-field__toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Masquer" : "Afficher"}
+              >
+                <Icon name={showPassword ? "eye-off" : "eye"} size={18} />
+              </button>
+            </div>
+
+            <div className="login-page__options">
+              <label className="login-page__remember">
+                <input type="checkbox" />
+                <span>Se souvenir de moi</span>
+              </label>
+              <button type="button" className="login-page__forgot">
+                Mot de passe oublié ?
+              </button>
+            </div>
+
+            {error ? <p className="auth-status auth-status--error">{error}</p> : null}
+
+            <button
+              className="login-page__submit"
+              disabled={isSubmitting || isGoogleSubmitting}
+              type="submit"
+            >
+              {isSubmitting ? "Connexion..." : "Se connecter"}
+            </button>
+          </form>
+
+          <div className="login-page__divider">
+            <span>ou continuer avec</span>
+          </div>
 
           <button
-            className="primary-button primary-button--auth"
+            className="login-page__oauth"
             disabled={isSubmitting || isGoogleSubmitting}
-            type="submit"
+            type="button"
+            onClick={handleGoogleSignIn}
           >
-            {isSubmitting ? "Connexion..." : "Se connecter"}
+            <span className="login-page__oauth-mark">G</span>
+            <span>{isGoogleSubmitting ? "Redirection..." : "Continuer avec Google"}</span>
           </button>
-        </form>
 
-        <div className="auth-divider">
-          <span>ou</span>
+          <p className="login-page__register">
+            Pas encore de compte ?{" "}
+            <button type="button" onClick={() => navigate("register")}>
+              S'inscrire
+            </button>
+          </p>
         </div>
-
-        <button
-          className="oauth-button"
-          disabled={isSubmitting || isGoogleSubmitting}
-          type="button"
-          onClick={handleGoogleSignIn}
-        >
-          <span className="oauth-button__mark" aria-hidden="true">G</span>
-          <span>{isGoogleSubmitting ? "Redirection..." : "Continuer avec Google"}</span>
-        </button>
-
-        <button
-          className="text-link text-link--center"
-          type="button"
-          onClick={() => navigate("register")}
-        >
-          Je n'ai pas de compte
-        </button>
       </div>
     </div>
   );
