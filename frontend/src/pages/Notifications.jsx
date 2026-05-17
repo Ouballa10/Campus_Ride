@@ -10,9 +10,20 @@ function getNotificationTone(status = "") {
   return "neutral";
 }
 
-function NotificationItem({ item }) {
+function NotificationItem({ item, onSelect }) {
   return (
-    <article className={`notification-item notification-item--${item.tone}`}>
+    <article
+      className={`notification-item notification-item--${item.tone} notification-item--clickable`}
+      onClick={() => onSelect(item)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect(item);
+        }
+      }}
+    >
       <span className="notification-item__icon">
         <Icon name={item.icon} size={18} />
       </span>
@@ -24,10 +35,13 @@ function NotificationItem({ item }) {
         <p>{item.message}</p>
         {item.note ? <small>{item.note}</small> : null}
       </div>
-      <span className={getStatusPillClass(item.status)}>
-        <Icon name={getStatusIcon(item.status)} size={13} />
-        {item.status}
-      </span>
+      <div className="notification-item__right">
+        <span className={getStatusPillClass(item.status)}>
+          <Icon name={getStatusIcon(item.status)} size={13} />
+          {item.status}
+        </span>
+        <Icon name="chevron-right" size={14} className="notification-item__chevron" />
+      </div>
     </article>
   );
 }
@@ -35,6 +49,7 @@ function NotificationItem({ item }) {
 export default function Notifications({
   mode = "passenger",
   navigate,
+  onSelectNotification,
   publishedTrips = [],
   reservations = [],
 }) {
@@ -123,7 +138,11 @@ export default function Notifications({
       ) : (
         <div className="notification-list">
           {items.map((item) => (
-            <NotificationItem item={item} key={item.id} />
+            <NotificationItem
+              item={item}
+              key={item.id}
+              onSelect={onSelectNotification}
+            />
           ))}
         </div>
       )}
