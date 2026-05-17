@@ -6269,3 +6269,75 @@ a:focus-visible {
     transform: translateY(0);
   }
 }
+
+
+/* ===== Splash Poster Page 2 ===== */
+.splash-poster--2 {
+  background-image: url("/images/splash-bg-2.png");
+  background-position: center 30%;
+  background-size: 100% auto;
+  background-color: #f8fbff;
+}
+
+.splash-poster--2 .splash-poster__divider {
+  margin-top: -105px;
+}
+
+.splash-poster--2 .splash-poster__headline {
+  margin-top: 6px;
+  font-size: clamp(1.1rem, 4vw, 1.6rem);
+}
+
+.splash-poster--2 .splash-poster__copy {
+  margin-top: 0;
+  font-size: clamp(0.62rem, 1.8vw, 0.72rem);
+}
+
+.splash-poster__features {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 0 14px;
+}
+
+.splash-poster__feat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
+  padding: 8px 4px;
+  border-radius: 18px;
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+.splash-poster__feat-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: rgba(237, 243, 255, 0.85);
+  color: #2563eb;
+  box-shadow: none;
+}
+
+.splash-poster__feat strong {
+  color: #122050;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.splash-poster__feat p {
+  margin: 0;
+  color: #4a6491;
+  font-size: 0.58rem;
+  line-height: 1.3;
+}
