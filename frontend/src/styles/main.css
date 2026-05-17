@@ -2436,6 +2436,36 @@ a { color: var(--primary); text-decoration: none; }
   margin-top: 4px;
 }
 
+/* Sticky CTA for publish page */
+.publish-sticky-cta {
+  position: sticky;
+  bottom: 0;
+  padding: 10px 0 4px;
+  background: linear-gradient(to bottom, transparent 0%, var(--card-bg, #fff) 25%);
+  z-index: 10;
+  display: grid;
+  gap: 6px;
+}
+
+.publish-sticky-cta__summary {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.publish-sticky-cta .primary-button {
+  width: 100%;
+}
+
+.publish-card--compact {
+  padding: 14px 16px;
+}
+
+.publish-card--compact .publish-card__header {
+  display: none;
+}
+
 /* =========================
    RESERVATION PAGE
    ========================= */
