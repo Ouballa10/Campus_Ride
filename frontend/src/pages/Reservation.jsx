@@ -7,6 +7,7 @@ export default function Reservation({
   navigate,
   onReserve,
   onTripSelect,
+  onViewDriver,
   reservedTripIds,
   selectedTrip,
   tripOptions,
@@ -78,11 +79,30 @@ export default function Reservation({
         <div className="screen-panel screen-panel--primary">
           <div className="detail-card detail-card--highlight detail-card--reservation">
             <div className="trip-card__middle">
-              <div className="avatar-badge avatar-badge--large">
-                {selectedTrip.driverInitials}
+              <div
+                className="avatar-badge avatar-badge--large avatar-badge--clickable"
+                role="button"
+                tabIndex={0}
+                title={`Voir le profil de ${selectedTrip.driver}`}
+                onClick={() => onViewDriver?.(selectedTrip)}
+                onKeyDown={(e) => { if (e.key === "Enter") onViewDriver?.(selectedTrip); }}
+              >
+                {selectedTrip.driverAvatar ? (
+                  <img alt={selectedTrip.driver} src={selectedTrip.driverAvatar} />
+                ) : (
+                  selectedTrip.driverInitials
+                )}
               </div>
               <div className="trip-card__driver">
-                <strong>{selectedTrip.driver}</strong>
+                <strong
+                  className="trip-card__driver-name"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => onViewDriver?.(selectedTrip)}
+                  onKeyDown={(e) => { if (e.key === "Enter") onViewDriver?.(selectedTrip); }}
+                >
+                  {selectedTrip.driver}
+                </strong>
                 <span>{selectedTrip.role}</span>
                 <span>{selectedTrip.car}</span>
               </div>
@@ -104,8 +124,6 @@ export default function Reservation({
               </span>
             </div>
 
-            <Stars value={selectedTrip.rating} />
-
             <div className="reservation-route-grid">
               <div className="reservation-route-stop">
                 <span className="reservation-route-stop__dot" />
@@ -123,20 +141,13 @@ export default function Reservation({
                 </div>
               </div>
             </div>
-
-            {selectedTrip.description ? (
-              <div className="message-box message-box--soft">
-                <strong>Note conducteur</strong>
-                <p>{selectedTrip.description}</p>
-              </div>
-            ) : null}
           </div>
 
           <label className="reservation-note-card">
             <span className="profile-editor-field__label">Message au conducteur</span>
             <textarea
               placeholder="Optionnel: point de rendez-vous, bagage, ou info utile."
-              rows="4"
+              rows="2"
               value={note}
               onChange={(event) => setNote(event.target.value)}
             />
@@ -148,20 +159,22 @@ export default function Reservation({
             </p>
           ) : null}
 
-          <button
-            className="primary-button"
-            disabled={reservationBlocked || isSubmitting}
-            type="button"
-            onClick={handleReserve}
-          >
-            {alreadyReserved
-              ? "Deja reserve"
-              : isUnavailable
-                ? "Trajet complet"
-                : isSubmitting
-                  ? "Envoi..."
-                  : "Envoyer la demande"}
-          </button>
+          <div className="reservation-sticky-cta">
+            <button
+              className="primary-button"
+              disabled={reservationBlocked || isSubmitting}
+              type="button"
+              onClick={handleReserve}
+            >
+              {alreadyReserved
+                ? "Deja reserve"
+                : isUnavailable
+                  ? "Trajet complet"
+                  : isSubmitting
+                    ? "Envoi..."
+                    : "Envoyer la demande"}
+            </button>
+          </div>
         </div>
 
         <div className="screen-panel screen-panel--secondary">

@@ -41,7 +41,7 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
   const [form, setForm] = useState(buildInitialForm);
   const [feedback, setFeedback] = useState({ message: "", tone: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showMap, setShowMap] = useState(true);
+  const [showMap, setShowMap] = useState(false);
 
   const totalPotential = useMemo(
     () => Number(form.price || 0) * Number(form.seats || 0),
@@ -344,20 +344,13 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
             </label>
           </section>
 
-          <section className="publish-card">
-            <div className="publish-card__header">
-              <div>
-                <span className="eyebrow">Confiance</span>
-                <h3>Message conducteur</h3>
-              </div>
-            </div>
-
+          <section className="publish-card publish-card--compact">
             <label className="publish-field publish-field--wide">
-              <span>Description</span>
+              <span>Description (optionnel)</span>
               <textarea
                 name="description"
                 placeholder="Ex: Je pars a l'heure, petit bagage accepte, trajet direct vers le campus."
-                rows="5"
+                rows="2"
                 value={form.description}
                 onChange={updateField}
               />
@@ -365,79 +358,20 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
           </section>
         </div>
 
-        <aside className="publish-sidebar">
-          <section className="publish-preview">
-            <div className="publish-preview__top">
-              <div>
-                <span className="eyebrow">Apercu passager</span>
-                <h3>{form.price} DH</h3>
-              </div>
-              <span className="publish-preview__status">Offre live</span>
-            </div>
+        {feedback.message ? (
+          <p className={`profile-editor-status profile-editor-status--${feedback.tone}`}>
+            {feedback.message}
+          </p>
+        ) : null}
 
-            <div className="publish-driver">
-              <div className="avatar-badge avatar-badge--large">{user.initials}</div>
-              <div>
-                <strong>{user.name}</strong>
-                <span>{user.role}</span>
-                <span>{user.car}</span>
-              </div>
-            </div>
-
-            <div className="publish-route-preview">
-              <div>
-                <span className="publish-route-preview__dot" />
-                <div>
-                  <strong>{form.depart || "Depart a definir"}</strong>
-                  <span>{formatOfferTime(form)}</span>
-                </div>
-              </div>
-              <div>
-                <span className="publish-route-preview__dot publish-route-preview__dot--end" />
-                <div>
-                  <strong>{form.destination || "Destination"}</strong>
-                  <span>{form.durationMinutes} min estimees</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="publish-preview__stats">
-              <div>
-                <strong>{form.seats}</strong>
-                <span>places</span>
-              </div>
-              <div>
-                <strong>{totalPotential} DH</strong>
-                <span>max</span>
-              </div>
-              <div>
-                <strong>{form.durationMinutes}</strong>
-                <span>min</span>
-              </div>
-            </div>
-
-            <div className="publish-checklist">
-              <span>
-                <Icon name="shield" size={15} />
-                Visible aux autres comptes
-              </span>
-              <span>
-                <Icon name="ticket" size={15} />
-                Reservation avec compteur places
-              </span>
-            </div>
-
-            {feedback.message ? (
-              <p className={`profile-editor-status profile-editor-status--${feedback.tone}`}>
-                {feedback.message}
-              </p>
-            ) : null}
-
-            <button className="primary-button publish-submit" disabled={isSubmitting} type="submit">
-              {isSubmitting ? "Publication..." : "Publier maintenant"}
-            </button>
-          </section>
-        </aside>
+        <div className="publish-sticky-cta">
+          <div className="publish-sticky-cta__summary">
+            <span>{form.seats} place(s) · {form.price} DH/place · {totalPotential} DH max</span>
+          </div>
+          <button className="primary-button publish-submit" disabled={isSubmitting} type="submit">
+            {isSubmitting ? "Publication..." : "Publier maintenant"}
+          </button>
+        </div>
       </form>
     </div>
   );

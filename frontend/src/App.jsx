@@ -14,6 +14,7 @@ import MyReservations from "./pages/MyReservations";
 import MyTrajets from "./pages/MyTrajets";
 import Notifications from "./pages/Notifications";
 import NotificationDetail from "./pages/NotificationDetail";
+import DriverProfile from "./pages/DriverProfile";
 import Profile from "./pages/Profile";
 import PublishTrajet from "./pages/PublishTrajet";
 import Register from "./pages/Register";
@@ -44,6 +45,7 @@ const appRoutes = [
   { route: "my-reservations", label: "Reservations" },
   { route: "notifications", label: "Notifications" },
   { route: "notification-detail", label: "Detail notification" },
+  { route: "driver-profile", label: "Profil conducteur" },
 ];
 
 const allRoutes = [...authRoutes, ...appRoutes.map((screen) => screen.route)];
@@ -285,6 +287,7 @@ function App() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedTripId, setSelectedTripId] = useState("");
   const [selectedNotification, setSelectedNotification] = useState(null);
+  const [selectedDriverData, setSelectedDriverData] = useState(null);
   const [theme, setTheme] = useState(readInitialTheme);
 
   const sessionUserId = session?.user?.id || "";
@@ -475,6 +478,11 @@ function App() {
   function openNotificationDetail(notification) {
     setSelectedNotification(notification);
     navigate("notification-detail");
+  }
+
+  function openDriverProfile(tripData) {
+    setSelectedDriverData(tripData);
+    navigate("driver-profile");
   }
 
   async function handlePublish(payload) {
@@ -747,6 +755,7 @@ function App() {
         onModeChange={handleModeChange}
         onThemeChange={handleThemeChange}
         onTripSelect={openTripReservation}
+        onViewDriver={openDriverProfile}
         publishedTrips={appData.publishedTrips}
         reservations={appData.reservations}
         theme={theme}
@@ -759,6 +768,7 @@ function App() {
       <SearchTrajet
         navigate={navigate}
         onTripSelect={openTripReservation}
+        onViewDriver={openDriverProfile}
         tripOptions={discoverableTrips}
       />
     );
@@ -776,6 +786,7 @@ function App() {
         navigate={navigate}
         onReserve={handleReserve}
         onTripSelect={openTripReservation}
+        onViewDriver={openDriverProfile}
         reservedTripIds={reservedTripIds}
         selectedTrip={selectedTrip}
         tripOptions={discoverableTrips}
@@ -823,12 +834,22 @@ function App() {
         notification={selectedNotification}
       />
     );
+  } else if (route === "driver-profile") {
+    screen = (
+      <DriverProfile
+        driverData={selectedDriverData}
+        navigate={navigate}
+      />
+    );
   } else {
     screen = (
       <MyReservations
         navigate={navigate}
         onCancelReservation={handleCancelReservation}
+        onViewDriver={openDriverProfile}
         reservations={appData.reservations}
+        sessionUserId={sessionUserId}
+        tripOptions={appData.tripOptions}
       />
     );
   }

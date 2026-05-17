@@ -12,6 +12,7 @@ export default function Home({
   onModeChange,
   onThemeChange,
   onTripSelect,
+  onViewDriver,
   publishedTrips = [],
   reservations = [],
   theme,
@@ -197,6 +198,7 @@ export default function Home({
                 key={trip.id}
                 trip={trip}
                 onClick={() => onTripSelect(trip.id)}
+                onViewDriver={onViewDriver}
               />
             ))}
           </div>

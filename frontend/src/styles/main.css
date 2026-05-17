@@ -2436,6 +2436,36 @@ a { color: var(--primary); text-decoration: none; }
   margin-top: 4px;
 }
 
+/* Sticky CTA for publish page */
+.publish-sticky-cta {
+  position: sticky;
+  bottom: 0;
+  padding: 10px 0 4px;
+  background: linear-gradient(to bottom, transparent 0%, var(--card-bg, #fff) 25%);
+  z-index: 10;
+  display: grid;
+  gap: 6px;
+}
+
+.publish-sticky-cta__summary {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.publish-sticky-cta .primary-button {
+  width: 100%;
+}
+
+.publish-card--compact {
+  padding: 14px 16px;
+}
+
+.publish-card--compact .publish-card__header {
+  display: none;
+}
+
 /* =========================
    RESERVATION PAGE
    ========================= */
@@ -2500,6 +2530,19 @@ a { color: var(--primary); text-decoration: none; }
 .reservation-note-card textarea:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* Sticky CTA button for reservation page */
+.reservation-sticky-cta {
+  position: sticky;
+  bottom: 0;
+  padding: 12px 0 4px;
+  background: linear-gradient(to bottom, transparent 0%, var(--card-bg, #fff) 30%);
+  z-index: 10;
+}
+
+.reservation-sticky-cta .primary-button {
+  width: 100%;
 }
 
 
@@ -3459,6 +3502,290 @@ a { color: var(--primary); text-decoration: none; }
 .notification-detail__actions .btn--outline:hover {
   border-color: var(--primary, #6366f1);
   color: var(--primary, #6366f1);
+}
+
+/* =========================
+   CLICKABLE AVATAR BADGE
+   ========================= */
+.avatar-badge--clickable {
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.avatar-badge--clickable:hover {
+  transform: scale(1.08);
+  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.2);
+}
+
+.avatar-badge--clickable:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.trip-card__driver-name {
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.trip-card__driver-name:hover {
+  color: var(--primary, #6366f1);
+  text-decoration: underline;
+}
+
+/* =========================
+   DRIVER PROFILE PAGE
+   ========================= */
+.driver-profile-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--primary-subtle, #eef2ff) 0%, #fff 100%);
+  border-radius: var(--radius-lg, 16px);
+  margin-bottom: 16px;
+}
+
+.driver-profile-hero__avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--primary-subtle, #eef2ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--primary, #6366f1);
+}
+
+.driver-profile-hero__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.driver-profile-hero__initials {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary, #6366f1);
+}
+
+.driver-profile-hero__info h2 {
+  margin: 0 0 4px;
+  font-size: 1.3rem;
+}
+
+.driver-profile-hero__role {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+
+.driver-profile-hero__campus {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.driver-profile-section {
+  background: var(--card-bg, #fff);
+  border-radius: var(--radius-lg, 16px);
+  padding: 18px 20px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+}
+
+.driver-profile-section h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 0.92rem;
+  color: var(--primary, #6366f1);
+}
+
+.driver-profile-section p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary, #64748b);
+  line-height: 1.5;
+}
+
+.driver-profile-vehicle-info {
+  display: grid;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+.driver-profile-vehicle-info span {
+  color: var(--text-secondary, #64748b);
+}
+
+.driver-profile-vehicle-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.driver-profile-vehicle-photo {
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+}
+
+.driver-profile-vehicle-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.driver-profile-contact {
+  display: flex;
+  gap: 10px;
+}
+
+/* =========================
+   RATING MODAL
+   ========================= */
+.rating-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.rating-modal {
+  background: var(--card-bg, #fff);
+  border-radius: var(--radius-lg, 16px);
+  padding: 28px 24px;
+  max-width: 380px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.rating-modal__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 4px;
+}
+
+.rating-modal__close:hover {
+  color: var(--text-primary);
+}
+
+.rating-modal__header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.rating-modal__header h3 {
+  margin: 10px 0 4px;
+  font-size: 1.1rem;
+}
+
+.rating-modal__header p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.rating-modal__stars {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.rating-star {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #d1d5db;
+  transition: color 0.15s ease, transform 0.15s ease;
+  padding: 4px;
+}
+
+.rating-star:hover {
+  transform: scale(1.15);
+}
+
+.rating-star--active {
+  color: #f59e0b;
+}
+
+.rating-modal__label {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 4px 0 16px;
+  min-height: 1.2em;
+}
+
+.rating-modal__comment {
+  width: 100%;
+  border: 1.5px solid var(--border-soft, #e2e8f0);
+  border-radius: var(--radius-md, 10px);
+  padding: 12px;
+  font-size: 0.85rem;
+  resize: none;
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.rating-modal__comment:focus {
+  outline: none;
+  border-color: var(--primary, #6366f1);
+}
+
+.rating-modal__feedback {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--red-deep, #ef4444);
+  margin: 8px 0;
+}
+
+.rating-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.mini-button--star {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+  border: none;
+}
+
+.mini-button--star:hover {
+  background: linear-gradient(135deg, #d97706, #b45309);
 }
 
 /* =========================
@@ -5120,6 +5447,26 @@ a { color: var(--primary); text-decoration: none; }
 .screen--search,
 .screen--publish,
 .screen--reservation { /* inherits from .screen */ }
+
+.screen--reservation .screen-panel--primary {
+  position: relative;
+}
+
+.screen--reservation .detail-card--reservation {
+  padding: 14px 16px;
+  gap: 10px;
+}
+
+.screen--reservation .detail-card--reservation .trip-card__meta {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.screen--reservation .detail-card--reservation .reservation-route-grid {
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-soft, #eee);
+}
 
 /* Screen panel variants */
 .screen-panel--primary,

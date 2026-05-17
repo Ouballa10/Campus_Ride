@@ -1,11 +1,13 @@
 import React, { useMemo, useState } from "react";
 import AppHeader from "../components/AppHeader";
+import RatingModal from "../components/RatingModal";
 import { Icon } from "../components/Icons";
 import {
   getStatusIcon,
   getStatusPillClass,
   isReservationHistory,
 } from "../utils/statusUi";
+import { evaluationService } from "../services/evaluationService";
 
 function ReservationSkeleton() {
   return (
@@ -71,8 +73,9 @@ function Timeline({ status }) {
   );
 }
 
-function ReservationCard({ busyId, navigate, onCancelReservation, reservation }) {
+function ReservationCard({ busyId, navigate, onCancelReservation, onViewDriver, onRate, reservation }) {
   const isCancellable = ["En attente", "Confirmee"].includes(reservation.status);
+  const isRatable = ["Confirmee", "Terminee"].includes(reservation.status);
   const driverHref = reservation.driverPhone ? `tel:${reservation.driverPhone}` : undefined;
   const cancelLabel = busyId === reservation.id ? "Annulation..." : "Cancel reservation";
 
@@ -94,7 +97,13 @@ function ReservationCard({ busyId, navigate, onCancelReservation, reservation })
       <Timeline status={reservation.status} />
 
       <div className="reservation-driver-card">
-        <div className="avatar-badge">
+        <div
+          className="avatar-badge avatar-badge--clickable"
+          role="button"
+          tabIndex={0}
+          title={`Voir le profil de ${reservation.driver}`}
+          onClick={() => onViewDriver?.(reservation)}
+        >
           {reservation.driverAvatar ? (
             <img alt={reservation.driver} src={reservation.driverAvatar} />
           ) : (
@@ -102,7 +111,14 @@ function ReservationCard({ busyId, navigate, onCancelReservation, reservation })
           )}
         </div>
         <div>
-          <strong>{reservation.driver}</strong>
+          <strong
+            className="trip-card__driver-name"
+            role="button"
+            tabIndex={0}
+            onClick={() => onViewDriver?.(reservation)}
+          >
+            {reservation.driver}
+          </strong>
           <span>{reservation.pickup}</span>
         </div>
       </div>
@@ -130,14 +146,16 @@ function ReservationCard({ busyId, navigate, onCancelReservation, reservation })
       ) : null}
 
       <div className="reservation-card-actions">
-        <button className="mini-button mini-button--ghost" type="button" onClick={() => navigate("reservation")}>
-          <Icon name="edit" size={15} />
-          View details
+        <button className="mini-button mini-button--ghost" type="button" onClick={() => onViewDriver?.(reservation)}>
+          <Icon name="user" size={15} />
+          Profil driver
         </button>
-        <button className="mini-button mini-button--ghost" type="button" onClick={() => navigate("search")}>
-          <Icon name="route" size={15} />
-          View route/map
-        </button>
+        {isRatable ? (
+          <button className="mini-button mini-button--star" type="button" onClick={() => onRate?.(reservation)}>
+            <Icon name="star" size={15} />
+            Evaluer
+          </button>
+        ) : null}
         <a
           className={`mini-button mini-button--ghost ${!driverHref ? "mini-button--disabled" : ""}`}
           href={driverHref}
@@ -165,11 +183,15 @@ function ReservationCard({ busyId, navigate, onCancelReservation, reservation })
 export default function MyReservations({
   navigate,
   onCancelReservation,
+  onViewDriver,
   reservations,
+  sessionUserId,
+  tripOptions = [],
 }) {
   const [busyId, setBusyId] = useState("");
   const [feedback, setFeedback] = useState({ message: "", tone: "" });
   const [isRefreshing] = useState(false);
+  const [ratingTarget, setRatingTarget] = useState(null);
 
   const groupedReservations = useMemo(() => ({
     confirmed: reservations.filter((reservation) => reservation.status === "Confirmee"),
@@ -194,6 +216,46 @@ export default function MyReservations({
     } finally {
       setBusyId("");
     }
+  }
+
+  function handleViewDriverFromReservation(reservation) {
+    // Build driver data from reservation + tripOptions
+    const matchingTrip = tripOptions.find((t) => t.id === reservation.trajetId);
+    const driverData = matchingTrip || {
+      conducteurId: reservation.conducteurId || "",
+      driver: reservation.driver,
+      driverInitials: reservation.driverInitials || "",
+      driverAvatar: reservation.driverAvatar || "",
+      driverPhone: reservation.driverPhone || "",
+      car: "",
+      rating: 0,
+    };
+    onViewDriver?.(driverData);
+  }
+
+  function handleRate(reservation) {
+    setRatingTarget(reservation);
+  }
+
+  async function handleSubmitRating({ rating, comment }) {
+    if (!ratingTarget) return;
+
+    const matchingTrip = tripOptions.find((t) => t.id === ratingTarget.trajetId);
+    const conducteurId = matchingTrip?.conducteurId || ratingTarget.conducteurId || "";
+
+    if (!conducteurId || !sessionUserId) {
+      throw new Error("Impossible d'identifier le conducteur ou ton compte.");
+    }
+
+    await evaluationService.submitEvaluation({
+      trajetId: ratingTarget.trajetId,
+      conducteurId,
+      utilisateurId: sessionUserId,
+      note: rating,
+      commentaire: comment,
+    });
+
+    setFeedback({ message: "Evaluation envoyee ! Merci.", tone: "success" });
   }
 
   return (
@@ -262,6 +324,8 @@ export default function MyReservations({
                 navigate={navigate}
                 reservation={reservation}
                 onCancelReservation={handleCancelReservation}
+                onViewDriver={handleViewDriverFromReservation}
+                onRate={handleRate}
               />
             )) : (
               <EmptyState copy="Aucune demande en attente." icon="clock" title="Tout est clair" />
@@ -280,6 +344,8 @@ export default function MyReservations({
                 navigate={navigate}
                 reservation={reservation}
                 onCancelReservation={handleCancelReservation}
+                onViewDriver={handleViewDriverFromReservation}
+                onRate={handleRate}
               />
             )) : (
               <EmptyState copy="Les trajets valides par un conducteur apparaitront ici." icon="check-badge" title="Aucun trajet confirme" />
@@ -298,6 +364,8 @@ export default function MyReservations({
                 navigate={navigate}
                 reservation={reservation}
                 onCancelReservation={handleCancelReservation}
+                onViewDriver={handleViewDriverFromReservation}
+                onRate={handleRate}
               />
             )) : (
               <EmptyState copy="Aucun trajet archive pour le moment." icon="shield" title="Historique vide" />
@@ -305,6 +373,14 @@ export default function MyReservations({
           </ReservationStatusSection>
         </div>
       )}
+
+      {ratingTarget ? (
+        <RatingModal
+          driverName={ratingTarget.driver}
+          onClose={() => setRatingTarget(null)}
+          onSubmit={handleSubmitRating}
+        />
+      ) : null}
     </div>
   );
 }

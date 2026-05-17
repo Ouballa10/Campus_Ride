@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon, Stars } from "./Icons";
 
-export default function TrajetCard({ trip, ctaLabel = "Reserver", onClick }) {
+export default function TrajetCard({ trip, ctaLabel = "Reserver", onClick, onViewDriver }) {
   const isUnavailable = trip.seats <= 0;
 
   return (
@@ -16,9 +16,30 @@ export default function TrajetCard({ trip, ctaLabel = "Reserver", onClick }) {
       </div>
 
       <div className="trip-card__middle">
-        <div className="avatar-badge">{trip.driverInitials}</div>
+        <div
+          className="avatar-badge avatar-badge--clickable"
+          role="button"
+          tabIndex={0}
+          title={`Voir le profil de ${trip.driver}`}
+          onClick={(e) => { e.stopPropagation(); onViewDriver?.(trip); }}
+          onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); onViewDriver?.(trip); } }}
+        >
+          {trip.driverAvatar ? (
+            <img alt={trip.driver} src={trip.driverAvatar} />
+          ) : (
+            trip.driverInitials
+          )}
+        </div>
         <div className="trip-card__driver">
-          <strong>{trip.driver}</strong>
+          <strong
+            className="trip-card__driver-name"
+            role="button"
+            tabIndex={0}
+            onClick={(e) => { e.stopPropagation(); onViewDriver?.(trip); }}
+            onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); onViewDriver?.(trip); } }}
+          >
+            {trip.driver}
+          </strong>
           <span>{trip.car}</span>
         </div>
       </div>
