@@ -108,11 +108,13 @@ function buildDepartureAt(payload) {
 
 async function listAvailableTrajets() {
   const client = requireSupabase();
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - 30);
   const { data, error } = await client
     .from("trajets")
     .select("*")
     .gt("places_disponibles", 0)
-    .gte("departure_at", new Date().toISOString())
+    .gte("departure_at", now.toISOString())
     .order("departure_at", { ascending: true })
     .limit(50);
 
