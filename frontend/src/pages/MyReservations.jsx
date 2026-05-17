@@ -250,7 +250,7 @@ export default function MyReservations({
     await evaluationService.submitEvaluation({
       trajetId: ratingTarget.trajetId,
       conducteurId,
-      passagerId: sessionUserId,
+      utilisateurId: sessionUserId,
       note: rating,
       commentaire: comment,
     });

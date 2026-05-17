@@ -1,18 +1,17 @@
 import { requireSupabase } from "./supabaseClient";
 
-async function submitEvaluation({ trajetId, conducteurId, passagerId, note, commentaire }) {
+async function submitEvaluation({ trajetId, conducteurId, utilisateurId, note, commentaire }) {
   const client = requireSupabase();
 
-  // Insert evaluation
+  // Insert evaluation (uses utilisateur_id as per existing schema)
   const { data, error } = await client
     .from("evaluations")
     .insert({
       trajet_id: trajetId,
       conducteur_id: conducteurId,
-      passager_id: passagerId,
+      utilisateur_id: utilisateurId,
       note,
       commentaire: commentaire || null,
-      created_at: new Date().toISOString(),
     })
     .select("*")
     .single();
@@ -24,28 +23,8 @@ async function submitEvaluation({ trajetId, conducteurId, passagerId, note, comm
     throw new Error(error.message || "Impossible d'envoyer l'evaluation.");
   }
 
-  // Update driver average rating
-  await updateDriverAverageRating(conducteurId);
-
+  // The trigger refresh_conducteur_rating handles updating note_moyenne automatically
   return data;
-}
-
-async function updateDriverAverageRating(conducteurId) {
-  const client = requireSupabase();
-
-  const { data: evaluations, error } = await client
-    .from("evaluations")
-    .select("note")
-    .eq("conducteur_id", conducteurId);
-
-  if (error || !evaluations?.length) return;
-
-  const average = evaluations.reduce((sum, e) => sum + e.note, 0) / evaluations.length;
-
-  await client
-    .from("profiles")
-    .update({ note_moyenne: Math.round(average * 10) / 10 })
-    .eq("id", conducteurId);
 }
 
 async function getEvaluationsForDriver(conducteurId) {
@@ -64,14 +43,14 @@ async function getEvaluationsForDriver(conducteurId) {
   return data || [];
 }
 
-async function hasAlreadyRated(trajetId, passagerId) {
+async function hasAlreadyRated(trajetId, utilisateurId) {
   const client = requireSupabase();
 
   const { data, error } = await client
     .from("evaluations")
     .select("id")
     .eq("trajet_id", trajetId)
-    .eq("passager_id", passagerId)
+    .eq("utilisateur_id", utilisateurId)
     .maybeSingle();
 
   if (error) return false;
@@ -82,5 +61,4 @@ export const evaluationService = {
   getEvaluationsForDriver,
   hasAlreadyRated,
   submitEvaluation,
-  updateDriverAverageRating,
 };
