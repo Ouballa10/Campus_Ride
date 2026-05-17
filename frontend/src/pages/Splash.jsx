@@ -5,13 +5,8 @@ import logo from "../assets/images/logo.png";
 const slides = [
   {
     id: 1,
-    title: "Bienvenue sur CampusRide",
-    subtitle: "Votre compagnon de trajet universitaire",
-    description:
-      "Partagez vos trajets entre etudiants et voyagez ensemble vers le campus en toute simplicite.",
-    icon: "car",
     gradient: "splash-gradient--blue",
-    illustration: "car-road",
+    illustration: "campus-scene",
   },
   {
     id: 2,
@@ -62,6 +57,161 @@ export default function Splash({ navigate }) {
   const slide = slides[currentSlide];
   const isLast = currentSlide === slides.length - 1;
 
+  // First slide has a completely custom layout
+  if (slide.illustration === "campus-scene") {
+    return (
+      <div className="screen screen--splash">
+        <div className="splash-campus-scene">
+          {/* Sky background with gradient and light effects */}
+          <div className="splash-campus-scene__sky">
+            <div className="splash-sky__glow splash-sky__glow--1" />
+            <div className="splash-sky__glow splash-sky__glow--2" />
+            <div className="splash-sky__cloud splash-sky__cloud--1" />
+            <div className="splash-sky__cloud splash-sky__cloud--2" />
+            <div className="splash-sky__cloud splash-sky__cloud--3" />
+            {/* Floating particles */}
+            <div className="splash-sky__particle splash-sky__particle--1" />
+            <div className="splash-sky__particle splash-sky__particle--2" />
+            <div className="splash-sky__particle splash-sky__particle--3" />
+            <div className="splash-sky__particle splash-sky__particle--4" />
+            <div className="splash-sky__particle splash-sky__particle--5" />
+          </div>
+
+          {/* Skip button */}
+          <button
+            type="button"
+            className="splash-onboarding__skip"
+            onClick={handleSkip}
+          >
+            Passer
+          </button>
+
+          {/* Top content: Logo + text */}
+          <div className="splash-campus-scene__header">
+            <img src={logo} alt="CampusRide" className="splash-campus-scene__logo" />
+            <h1 className="splash-campus-scene__brand">CampusRide</h1>
+            <div className="splash-campus-scene__divider" />
+            <h2 className="splash-campus-scene__slogan">
+              Votre trajet, <span>notre priorite</span>
+            </h2>
+            <p className="splash-campus-scene__subtitle">
+              Facilitez vos deplacements universitaires en toute securite
+            </p>
+          </div>
+
+          {/* Campus cityscape illustration */}
+          <div className="splash-campus-scene__cityscape">
+            {/* Buildings left side */}
+            <div className="splash-city__building splash-city__building--1">
+              <div className="splash-city__windows">
+                <span /><span /><span />
+                <span /><span /><span />
+                <span /><span /><span />
+                <span /><span /><span />
+              </div>
+            </div>
+            <div className="splash-city__building splash-city__building--2">
+              <div className="splash-city__windows">
+                <span /><span />
+                <span /><span />
+                <span /><span />
+                <span /><span />
+                <span /><span />
+              </div>
+            </div>
+
+            {/* Center tower / university */}
+            <div className="splash-city__building splash-city__building--center">
+              <div className="splash-city__tower-top" />
+              <div className="splash-city__windows splash-city__windows--center">
+                <span /><span /><span />
+                <span /><span /><span />
+                <span /><span /><span />
+              </div>
+            </div>
+
+            {/* Buildings right side */}
+            <div className="splash-city__building splash-city__building--3">
+              <div className="splash-city__windows">
+                <span /><span />
+                <span /><span />
+                <span /><span />
+                <span /><span />
+              </div>
+            </div>
+            <div className="splash-city__building splash-city__building--4">
+              <div className="splash-city__windows">
+                <span /><span /><span />
+                <span /><span /><span />
+                <span /><span /><span />
+              </div>
+            </div>
+
+            {/* Trees */}
+            <div className="splash-city__trees">
+              <span className="splash-city__tree" />
+              <span className="splash-city__tree" />
+              <span className="splash-city__tree" />
+              <span className="splash-city__tree" />
+            </div>
+
+            {/* Road */}
+            <div className="splash-city__road">
+              <div className="splash-city__road-line" />
+              <div className="splash-city__road-line" />
+              <div className="splash-city__road-line" />
+              <div className="splash-city__road-line" />
+            </div>
+
+            {/* Car */}
+            <div className="splash-city__car">
+              <div className="splash-city__car-body">
+                <div className="splash-city__car-roof" />
+                <div className="splash-city__car-window splash-city__car-window--front" />
+                <div className="splash-city__car-window splash-city__car-window--rear" />
+                <div className="splash-city__car-light splash-city__car-light--front" />
+                <div className="splash-city__car-light splash-city__car-light--rear" />
+              </div>
+              <div className="splash-city__car-wheel splash-city__car-wheel--left" />
+              <div className="splash-city__car-wheel splash-city__car-wheel--right" />
+              <div className="splash-city__car-shadow" />
+            </div>
+
+            {/* Location pin */}
+            <div className="splash-city__pin">
+              <Icon name="location" size={16} />
+            </div>
+          </div>
+
+          {/* Footer: dots + button */}
+          <div className="splash-campus-scene__footer">
+            <div className="splash-onboarding__dots">
+              {slides.map((s, i) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  className={`splash-dot ${i === currentSlide ? "splash-dot--active" : ""}`}
+                  onClick={() => handleDotClick(i)}
+                  aria-label={`Page ${i + 1}`}
+                />
+              ))}
+            </div>
+
+            <button
+              type="button"
+              className="splash-onboarding__btn"
+              onClick={handleNext}
+            >
+              <span>Suivant</span>
+              <Icon name="arrow-right" size={18} />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Slides 2 and 3 use the original layout
   return (
     <div className="screen screen--splash">
       <div className={`splash-onboarding ${slide.gradient}`}>
@@ -94,25 +244,6 @@ export default function Splash({ navigate }) {
 
         {/* Illustration area */}
         <div className="splash-onboarding__illustration">
-          {slide.illustration === "car-road" && (
-            <div className="splash-illust splash-illust--car">
-              <div className="splash-illust__road">
-                <div className="splash-illust__road-line" />
-                <div className="splash-illust__road-line" />
-                <div className="splash-illust__road-line" />
-              </div>
-              <div className="splash-illust__car-wrapper">
-                <Icon name="car" size={64} />
-              </div>
-              <div className="splash-illust__pin splash-illust__pin--start">
-                <Icon name="location" size={28} />
-              </div>
-              <div className="splash-illust__pin splash-illust__pin--end">
-                <Icon name="location" size={28} />
-              </div>
-            </div>
-          )}
-
           {slide.illustration === "features" && (
             <div className="splash-illust splash-illust--features">
               {slide.features.map((feat, i) => (

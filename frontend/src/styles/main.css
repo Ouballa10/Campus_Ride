@@ -4082,15 +4082,15 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .splash-gradient--blue {
-  background: linear-gradient(160deg, #0a2e6e 0%, #1456c4 30%, #3b82f6 60%, #93c5fd 100%);
+  background: linear-gradient(160deg, #0a2e6e 0%, #1456c4 30%, #3b82f6 60%, #93c5fd 85%, #ffffff 100%);
 }
 
 .splash-gradient--purple {
-  background: linear-gradient(160deg, #1e1048 0%, #4c1d95 30%, #7c3aed 60%, #c4b5fd 100%);
+  background: linear-gradient(160deg, #0a2e6e 0%, #1456c4 30%, #3b82f6 60%, #93c5fd 85%, #ffffff 100%);
 }
 
 .splash-gradient--green {
-  background: linear-gradient(160deg, #052e16 0%, #166534 30%, #22c55e 60%, #86efac 100%);
+  background: linear-gradient(160deg, #0a2e6e 0%, #1456c4 30%, #3b82f6 60%, #93c5fd 85%, #ffffff 100%);
 }
 
 /* Background decorations */
@@ -4189,11 +4189,11 @@ a { color: var(--primary); text-decoration: none; }
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 8px;
+  margin-top: -4px;
 }
 
 .splash-onboarding__logo-img {
-  width: min(44vw, 150px);
+  width: min(56vw, 190px);
   height: auto;
   object-fit: contain;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
@@ -5597,4 +5597,579 @@ a:focus-visible {
     max-width: 420px;
     margin: 0 auto;
   }
+}
+
+
+
+/* =========================
+   SPLASH CAMPUS SCENE (First Slide - Premium Design)
+   Modern campus cityscape with sky, buildings, car
+   ========================= */
+.splash-campus-scene {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 28px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0a2e6e 0%, #1456c4 20%, #3b82f6 40%, #7bc8f6 60%, #b8e4ff 75%, #e8f4ff 88%, #ffffff 100%);
+}
+
+/* --- Sky Background Effects --- */
+.splash-campus-scene__sky {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.splash-sky__glow {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.splash-sky__glow--1 {
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 70%);
+  animation: splashFloat 8s ease-in-out infinite;
+}
+
+.splash-sky__glow--2 {
+  top: 15%;
+  right: -10%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(147, 197, 253, 0.3) 0%, transparent 70%);
+  animation: splashFloat 10s ease-in-out infinite reverse;
+}
+
+/* Clouds */
+.splash-sky__cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  filter: blur(2px);
+}
+
+.splash-sky__cloud::before,
+.splash-sky__cloud::after {
+  content: "";
+  position: absolute;
+  background: inherit;
+  border-radius: 50%;
+}
+
+.splash-sky__cloud--1 {
+  top: 18%;
+  left: -5%;
+  width: 120px;
+  height: 36px;
+  opacity: 0.8;
+  animation: splashCloudDrift 25s linear infinite;
+}
+.splash-sky__cloud--1::before { width: 50px; height: 50px; top: -18px; left: 20px; }
+.splash-sky__cloud--1::after { width: 60px; height: 55px; top: -22px; right: 18px; }
+
+.splash-sky__cloud--2 {
+  top: 12%;
+  right: 5%;
+  width: 100px;
+  height: 30px;
+  opacity: 0.6;
+  animation: splashCloudDrift 30s linear infinite 5s;
+}
+.splash-sky__cloud--2::before { width: 44px; height: 44px; top: -16px; left: 14px; }
+.splash-sky__cloud--2::after { width: 50px; height: 46px; top: -18px; right: 12px; }
+
+.splash-sky__cloud--3 {
+  top: 26%;
+  left: 20%;
+  width: 80px;
+  height: 24px;
+  opacity: 0.5;
+  animation: splashCloudDrift 35s linear infinite 10s;
+}
+.splash-sky__cloud--3::before { width: 36px; height: 36px; top: -14px; left: 12px; }
+.splash-sky__cloud--3::after { width: 40px; height: 38px; top: -15px; right: 10px; }
+
+@keyframes splashCloudDrift {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(30px); }
+  100% { transform: translateX(0); }
+}
+
+/* Floating particles (stars/lights) */
+.splash-sky__particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  animation: splashParticleFloat 5s ease-in-out infinite;
+}
+
+.splash-sky__particle--1 { top: 8%; left: 15%; animation-delay: 0s; width: 5px; height: 5px; }
+.splash-sky__particle--2 { top: 14%; right: 20%; animation-delay: 1.2s; }
+.splash-sky__particle--3 { top: 22%; left: 35%; animation-delay: 2.5s; width: 3px; height: 3px; }
+.splash-sky__particle--4 { top: 10%; right: 35%; animation-delay: 0.8s; width: 6px; height: 6px; }
+.splash-sky__particle--5 { top: 28%; left: 60%; animation-delay: 3s; }
+
+@keyframes splashParticleFloat {
+  0%, 100% { opacity: 0.4; transform: translateY(0) scale(1); }
+  50% { opacity: 1; transform: translateY(-8px) scale(1.3); }
+}
+
+/* --- Header: Logo + Text --- */
+.splash-campus-scene__header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  padding-top: 10px;
+  animation: splashSlideUp 0.6s ease-out both;
+}
+
+.splash-campus-scene__logo {
+  width: min(48vw, 160px);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15));
+  margin-bottom: -8px;
+}
+
+.splash-campus-scene__brand {
+  margin: 0;
+  font-size: clamp(1.6rem, 6vw, 2.2rem);
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.splash-campus-scene__divider {
+  width: 40px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.5);
+  margin: 6px 0;
+}
+
+.splash-campus-scene__slogan {
+  margin: 0;
+  font-size: clamp(1rem, 4vw, 1.3rem);
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.12);
+}
+
+.splash-campus-scene__slogan span {
+  display: block;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.splash-campus-scene__subtitle {
+  margin: 6px 0 0;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 280px;
+  line-height: 1.4;
+}
+
+/* --- Cityscape Illustration --- */
+.splash-campus-scene__cityscape {
+  position: absolute;
+  bottom: 90px;
+  left: 0;
+  right: 0;
+  height: 260px;
+  z-index: 5;
+  animation: splashSlideUp 0.8s ease-out 0.2s both;
+}
+
+/* Buildings */
+.splash-city__building {
+  position: absolute;
+  bottom: 50px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, #1e3a6e 0%, #1a3260 40%, #152a52 100%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.splash-city__building--1 {
+  left: 4%;
+  width: 52px;
+  height: 130px;
+  background: linear-gradient(180deg, #1e4080 0%, #163060 100%);
+}
+
+.splash-city__building--2 {
+  left: 18%;
+  width: 44px;
+  height: 165px;
+  background: linear-gradient(180deg, #1a3870 0%, #142c58 100%);
+}
+
+.splash-city__building--center {
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 180px;
+  background: linear-gradient(180deg, #2050a0 0%, #1a4080 50%, #153060 100%);
+  border-radius: 6px 6px 0 0;
+  z-index: 2;
+}
+
+.splash-city__tower-top {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 20px;
+  background: linear-gradient(180deg, #3b82f6, #2050a0);
+  border-radius: 3px 3px 0 0;
+}
+
+.splash-city__tower-top::after {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 8px;
+  background: #60a5fa;
+  border-radius: 2px 2px 0 0;
+}
+
+.splash-city__building--3 {
+  right: 18%;
+  width: 48px;
+  height: 145px;
+  background: linear-gradient(180deg, #1c3c74 0%, #15305c 100%);
+}
+
+.splash-city__building--4 {
+  right: 4%;
+  width: 54px;
+  height: 120px;
+  background: linear-gradient(180deg, #1e3a6e 0%, #162e56 100%);
+}
+
+/* Windows */
+.splash-city__windows {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px 4px;
+  padding: 12px 6px;
+}
+
+.splash-city__building--2 .splash-city__windows,
+.splash-city__building--3 .splash-city__windows {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.splash-city__windows span {
+  width: 100%;
+  aspect-ratio: 1 / 1.2;
+  border-radius: 2px;
+  background: rgba(147, 197, 253, 0.35);
+  box-shadow: 0 0 4px rgba(147, 197, 253, 0.2);
+}
+
+.splash-city__windows span:nth-child(odd) {
+  background: rgba(251, 191, 36, 0.5);
+  box-shadow: 0 0 6px rgba(251, 191, 36, 0.3);
+}
+
+.splash-city__windows--center {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px 5px;
+  padding: 14px 8px;
+}
+
+/* Trees */
+.splash-city__trees {
+  position: absolute;
+  bottom: 46px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 0 12%;
+  z-index: 3;
+}
+
+.splash-city__tree {
+  width: 20px;
+  height: 32px;
+  background: radial-gradient(ellipse at 50% 60%, #166534 0%, #15803d 50%, #14532d 100%);
+  border-radius: 50% 50% 40% 40%;
+  position: relative;
+}
+
+.splash-city__tree::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 8px;
+  background: #78350f;
+  border-radius: 2px;
+}
+
+/* Road */
+.splash-city__road {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  height: 22px;
+  background: linear-gradient(180deg, #374151 0%, #1f2937 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 4;
+}
+
+.splash-city__road-line {
+  width: 28px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 2px;
+}
+
+/* Car */
+.splash-city__car {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 38px;
+  z-index: 6;
+  animation: splashCarBounce 3s ease-in-out infinite;
+}
+
+.splash-city__car-body {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  height: 22px;
+  background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 60%, #1e40af 100%);
+  border-radius: 6px 6px 4px 4px;
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.4);
+}
+
+.splash-city__car-roof {
+  position: absolute;
+  top: -10px;
+  left: 18px;
+  right: 18px;
+  height: 12px;
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 6px 6px 0 0;
+}
+
+.splash-city__car-window {
+  position: absolute;
+  top: -8px;
+  height: 9px;
+  background: rgba(186, 230, 253, 0.7);
+  border-radius: 3px 3px 0 0;
+}
+
+.splash-city__car-window--front {
+  left: 42px;
+  width: 16px;
+}
+
+.splash-city__car-window--rear {
+  left: 22px;
+  width: 16px;
+}
+
+.splash-city__car-light {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 5px;
+  border-radius: 2px;
+}
+
+.splash-city__car-light--front {
+  right: -1px;
+  background: #fbbf24;
+  box-shadow: 0 0 6px rgba(251, 191, 36, 0.6);
+}
+
+.splash-city__car-light--rear {
+  left: -1px;
+  background: #ef4444;
+  box-shadow: 0 0 4px rgba(239, 68, 68, 0.5);
+}
+
+.splash-city__car-wheel {
+  position: absolute;
+  bottom: 2px;
+  width: 12px;
+  height: 12px;
+  background: #1f2937;
+  border-radius: 50%;
+  border: 2px solid #374151;
+}
+
+.splash-city__car-wheel--left {
+  left: 12px;
+}
+
+.splash-city__car-wheel--right {
+  right: 12px;
+}
+
+.splash-city__car-shadow {
+  position: absolute;
+  bottom: -4px;
+  left: 10%;
+  right: 10%;
+  height: 8px;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.25) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+/* Location pin above car */
+.splash-city__pin {
+  position: absolute;
+  bottom: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #3b82f6;
+  border-radius: 50% 50% 50% 0;
+  transform: translateX(-50%) rotate(-45deg);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  z-index: 7;
+  animation: splashPinBob 2s ease-in-out infinite;
+}
+
+.splash-city__pin svg,
+.splash-city__pin .icon {
+  transform: rotate(45deg);
+  color: #ffffff;
+}
+
+@keyframes splashPinBob {
+  0%, 100% { transform: translateX(-50%) rotate(-45deg) translateY(0); }
+  50% { transform: translateX(-50%) rotate(-45deg) translateY(-6px); }
+}
+
+/* Ground under the road */
+.splash-campus-scene__cityscape::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: linear-gradient(180deg, #d1fae5 0%, #a7f3d0 50%, #6ee7b7 100%);
+  z-index: 3;
+}
+
+/* --- Footer --- */
+.splash-campus-scene__footer {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  padding-top: 12px;
+}
+
+/* Responsive adjustments for the campus scene */
+@media (max-height: 680px) {
+  .splash-campus-scene {
+    padding: 14px 20px 20px;
+  }
+
+  .splash-campus-scene__logo {
+    width: min(38vw, 120px);
+    margin-bottom: -6px;
+  }
+
+  .splash-campus-scene__brand {
+    font-size: clamp(1.3rem, 5vw, 1.7rem);
+  }
+
+  .splash-campus-scene__slogan {
+    font-size: clamp(0.88rem, 3.5vw, 1.1rem);
+  }
+
+  .splash-campus-scene__cityscape {
+    height: 200px;
+    bottom: 80px;
+  }
+
+  .splash-city__building--1 { height: 100px; }
+  .splash-city__building--2 { height: 125px; }
+  .splash-city__building--center { height: 140px; }
+  .splash-city__building--3 { height: 110px; }
+  .splash-city__building--4 { height: 90px; }
+}
+
+@media (max-height: 560px) {
+  .splash-campus-scene__cityscape {
+    height: 160px;
+    bottom: 70px;
+  }
+
+  .splash-campus-scene__subtitle {
+    display: none;
+  }
+
+  .splash-city__building--1 { height: 70px; width: 40px; }
+  .splash-city__building--2 { height: 90px; width: 36px; }
+  .splash-city__building--center { height: 100px; width: 48px; }
+  .splash-city__building--3 { height: 80px; width: 38px; }
+  .splash-city__building--4 { height: 65px; width: 42px; }
+
+  .splash-city__tree { width: 14px; height: 22px; }
+}
+
+@media (max-width: 340px) {
+  .splash-campus-scene__logo {
+    width: min(42vw, 110px);
+  }
+
+  .splash-campus-scene__brand {
+    font-size: 1.4rem;
+  }
+
+  .splash-city__building--1 { width: 40px; }
+  .splash-city__building--2 { width: 34px; }
+  .splash-city__building--center { width: 48px; }
+  .splash-city__building--3 { width: 38px; }
+  .splash-city__building--4 { width: 42px; }
 }
