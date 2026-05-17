@@ -102,6 +102,7 @@ export default function Profile({
     profile,
     refreshProfile,
     session,
+    signOut,
   } = useAuth();
   const [form, setForm] = useState(() => buildProfileForm(profile, user, mode));
   const [selectedPhoto, setSelectedPhoto] = useState(null);
@@ -192,6 +193,16 @@ export default function Profile({
 
     if (feedback.message) {
       setFeedback({ message: "", tone: "" });
+    }
+  }
+
+  async function handleSignOut() {
+    try {
+      await signOut();
+      navigate("login");
+    } catch (error) {
+      console.error("Sign out failed:", error);
+      setFeedback({ message: "Deconnexion impossible. Reessaie.", tone: "error" });
     }
   }
 
@@ -855,6 +866,19 @@ export default function Profile({
             ))}
           </div>
         </div>
+
+        {isConfigured && (
+          <div className="screen-panel">
+            <button
+              className="profile-logout-btn"
+              type="button"
+              onClick={handleSignOut}
+            >
+              <Icon name="x" size={18} />
+              <span>Se deconnecter</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

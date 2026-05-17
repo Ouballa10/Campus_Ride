@@ -366,9 +366,23 @@ function App() {
   }, [authLoading, isConfigured, route, sessionUserId]);
 
   useEffect(() => {
+    if (authLoading) {
+      return;
+    }
+
     if (!canUseSupabaseData) {
-      setDataError("");
-      setAppData(defaultAppData);
+      if (!isConfigured) {
+        setDataError("");
+        setAppData(defaultAppData);
+      } else {
+        setDataError("");
+        setAppData((current) => current === defaultAppData ? defaultAppData : {
+          currentUser: defaultCurrentUser,
+          publishedTrips: [],
+          reservations: [],
+          tripOptions: [],
+        });
+      }
       return;
     }
 
@@ -422,7 +436,7 @@ function App() {
     return () => {
       isActive = false;
     };
-  }, [canUseSupabaseData, profile, refreshKey, sessionUserId]);
+  }, [authLoading, canUseSupabaseData, isConfigured, profile, refreshKey, sessionUserId]);
 
   useEffect(() => {
     if (!canUseSupabaseData || !supabase) {

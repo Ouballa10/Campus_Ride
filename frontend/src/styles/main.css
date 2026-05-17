@@ -1535,6 +1535,31 @@ a { color: var(--primary); text-decoration: none; }
   color: #ffffff;
 }
 
+.profile-logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.profile-logout-btn:hover {
+  background: #dc2626;
+}
+
+.profile-logout-btn:active {
+  transform: scale(0.97);
+}
+
 /* =========================
    LIST CARD
    ========================= */
