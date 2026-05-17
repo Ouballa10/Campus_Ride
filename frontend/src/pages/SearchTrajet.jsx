@@ -50,7 +50,7 @@ function matchesTrip(trip, filters) {
   return matchesDepart && matchesDestination && matchesDate && matchesTime;
 }
 
-export default function SearchTrajet({ navigate, onTripSelect, tripOptions }) {
+export default function SearchTrajet({ navigate, onTripSelect, onViewDriver, tripOptions }) {
   const [filters, setFilters] = useState(initialFilters);
   const filteredTrips = tripOptions.filter((trip) => matchesTrip(trip, filters));
   const activeFilters = Object.values(filters).filter(Boolean).length;
@@ -129,6 +129,7 @@ export default function SearchTrajet({ navigate, onTripSelect, tripOptions }) {
               key={trip.id}
               trip={trip}
               onClick={() => onTripSelect(trip.id)}
+              onViewDriver={onViewDriver}
             />
           ))}
         </div>
