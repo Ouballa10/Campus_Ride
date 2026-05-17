@@ -3659,6 +3659,7 @@ a { color: var(--primary); text-decoration: none; }
    Keep existing splash styles intact
    ========================= */
 .screen--splash {
+  position: relative;
   width: 100%;
   height: 100dvh;
   min-height: 100dvh;
@@ -6172,4 +6173,99 @@ a:focus-visible {
   .splash-city__building--center { width: 48px; }
   .splash-city__building--3 { width: 38px; }
   .splash-city__building--4 { width: 42px; }
+}
+
+
+/* ===== Splash Poster (Page 1 with background image) ===== */
+.splash-poster {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #e8f2ff;
+  background-image: url("/images/splash-bg.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  cursor: pointer;
+  border-radius: inherit;
+}
+
+.splash-poster__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 20px 0;
+  gap: 0;
+}
+
+.splash-poster__logo {
+  width: min(65vw, 240px);
+  height: auto;
+  object-fit: contain;
+  margin-top: -60px;
+  filter: drop-shadow(0 8px 18px rgba(0, 40, 120, 0.15));
+  animation: splashPosterFadeDown 0.7s ease both;
+}
+
+.splash-poster__divider {
+  display: block;
+  width: 60px;
+  height: 4px;
+  margin-top: -90px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #1b71ff, #51a2ff);
+  box-shadow: 0 4px 12px rgba(36, 109, 235, 0.22);
+  animation: splashPosterFadeDown 0.9s ease 0.2s both;
+}
+
+.splash-poster__headline {
+  margin: 2px 0 0;
+  color: #122050;
+  font-size: clamp(1.3rem, 4.5vw, 2rem);
+  font-weight: 900;
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+  animation: splashPosterFadeDown 1s ease 0.3s both;
+}
+
+.splash-poster__headline span {
+  color: #246cff;
+}
+
+.splash-poster__copy {
+  margin: 2px 0 0;
+  color: #3a5078;
+  font-size: clamp(0.72rem, 2vw, 0.85rem);
+  line-height: 1.4;
+  font-weight: 500;
+  animation: splashPosterFadeDown 1.1s ease 0.4s both;
+}
+
+.splash-poster__footer {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+}
+
+@keyframes splashPosterFadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
