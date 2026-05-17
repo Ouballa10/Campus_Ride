@@ -372,12 +372,30 @@ function App() {
 
     if (!canUseSupabaseData) {
       if (!isConfigured) {
+        // Demo mode: use mock data
         setDataError("");
         setAppData(defaultAppData);
       } else {
+        // Supabase configured but no session: clear data
         setDataError("");
-        setAppData((current) => current === defaultAppData ? defaultAppData : {
-          currentUser: defaultCurrentUser,
+        setAppData({
+          currentUser: {
+            name: "",
+            initials: "",
+            role: "",
+            roleValue: "passager",
+            email: "",
+            phone: "",
+            photo: "",
+            rating: 0,
+            tripsCount: 0,
+            reservationsCount: 0,
+            reviewCount: 0,
+            car: "",
+            bio: "",
+            campus: "",
+            vehicle: null,
+          },
           publishedTrips: [],
           reservations: [],
           tripOptions: [],

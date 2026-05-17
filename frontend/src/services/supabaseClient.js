@@ -15,6 +15,8 @@ export const supabase = isSupabaseConfigured
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: true,
+        storageKey: "campusride-auth",
+        flowType: "pkce",
       },
     })
   : null;

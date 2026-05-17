@@ -13,48 +13,17 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let isActive = true;
 
-    async function bootstrapAuth() {
-      if (!isSupabaseConfigured) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const nextSession = await authService.getSession();
-
-        if (!isActive) {
-          return;
-        }
-
-        setSession(nextSession);
-
-        if (nextSession?.user?.id) {
-          const nextProfile = await authService.ensureCurrentProfile(nextSession.user);
-
-          if (isActive) {
-            setProfile(nextProfile);
-          }
-        }
-      } catch (error) {
-        console.error("Auth bootstrap failed:", error);
-      } finally {
-        if (isActive) {
-          setLoading(false);
-        }
-      }
-    }
-
-    bootstrapAuth();
-
     if (!isSupabaseConfigured) {
-      return () => {
-        isActive = false;
-      };
+      setLoading(false);
+      return () => { isActive = false; };
     }
 
+    // Use onAuthStateChange as the single source of truth for session.
+    // This avoids the lock race condition that happens when getSession()
+    // and onAuthStateChange both try to refresh the token simultaneously.
     const {
       data: { subscription },
-    } = authService.onAuthStateChange(async (_event, nextSession) => {
+    } = authService.onAuthStateChange(async (event, nextSession) => {
       if (!isActive) {
         return;
       }
@@ -62,18 +31,35 @@ export function AuthProvider({ children }) {
       setSession(nextSession);
 
       if (nextSession?.user?.id) {
-        const nextProfile = await authService.ensureCurrentProfile(nextSession.user);
+        try {
+          const nextProfile = await authService.ensureCurrentProfile(nextSession.user);
 
-        if (isActive) {
-          setProfile(nextProfile);
+          if (isActive) {
+            setProfile(nextProfile);
+          }
+        } catch (error) {
+          console.error("Profile load failed:", error);
         }
       } else {
         setProfile(null);
       }
+
+      if (isActive) {
+        setLoading(false);
+      }
     });
+
+    // Fallback: if onAuthStateChange doesn't fire within 3s (e.g. no session),
+    // stop loading to unblock the UI.
+    const timeout = setTimeout(() => {
+      if (isActive && loading) {
+        setLoading(false);
+      }
+    }, 3000);
 
     return () => {
       isActive = false;
+      clearTimeout(timeout);
       subscription?.unsubscribe();
     };
   }, []);
