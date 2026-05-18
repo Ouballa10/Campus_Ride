@@ -381,9 +381,13 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .app-header__brand-logo {
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   object-fit: contain;
+  border-radius: 10px;
+  background: white;
+  padding: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* =========================
@@ -542,13 +546,13 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .app-menu__brand img {
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-md);
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
   object-fit: contain;
   background: white;
   padding: 6px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .app-menu__brand strong {
@@ -1318,18 +1322,19 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .home-brand-row__logo {
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-sm);
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
   object-fit: contain;
-  background: rgba(255, 255, 255, 0.15);
-  padding: 4px;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 6px;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .home-brand-row__logo--large {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
 }
 
 .home-mode-banner {
