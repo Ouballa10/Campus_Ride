@@ -381,8 +381,8 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .app-header__brand-logo {
-  width: 22px;
-  height: 22px;
+  width: 32px;
+  height: 32px;
   object-fit: contain;
 }
 
@@ -542,12 +542,12 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .app-menu__brand img {
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   border-radius: var(--radius-md);
   object-fit: contain;
   background: white;
-  padding: 4px;
+  padding: 6px;
   box-shadow: var(--shadow-sm);
 }
 
@@ -1318,8 +1318,8 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .home-brand-row__logo {
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   border-radius: var(--radius-sm);
   object-fit: contain;
   background: rgba(255, 255, 255, 0.15);
@@ -1328,8 +1328,8 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .home-brand-row__logo--large {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
 }
 
 .home-mode-banner {
@@ -4060,8 +4060,8 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .auth-brand__logo {
-  width: 52px;
-  height: 52px;
+  width: 64px;
+  height: 64px;
   border-radius: var(--radius-md);
   object-fit: contain;
   background: var(--primary-subtle);
@@ -7186,13 +7186,12 @@ a:focus-visible {
 }
 
 .login-page__logo {
-  width: min(68vw, 250px);
+  width: min(50vw, 180px);
   height: auto;
   object-fit: contain;
-  margin-top: -75px;
-  margin-bottom: -105px;
+  margin-top: -40px;
+  margin-bottom: -60px;
   filter: drop-shadow(0 6px 14px rgba(0, 40, 120, 0.12));
-  animation: splashLogoIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .login-page__title {
