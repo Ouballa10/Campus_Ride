@@ -160,7 +160,7 @@ button {
 }
 
 img { display: block; max-width: 100%; }
-#root { display: flex; }
+#root { display: flex; overflow: hidden; width: 100%; }
 
 a { color: var(--primary); text-decoration: none; }
 
@@ -175,6 +175,7 @@ a { color: var(--primary); text-decoration: none; }
   align-items: stretch;
   justify-content: center;
   background: linear-gradient(160deg, #eef2ff 0%, #faf5ff 40%, #f0f9ff 100%);
+  overflow-x: hidden;
 }
 
 .app-theme--dark .app-shell {
@@ -188,6 +189,7 @@ a { color: var(--primary); text-decoration: none; }
   display: flex;
   justify-content: center;
   align-items: stretch;
+  overflow: hidden;
 }
 
 .site-stage--single {
