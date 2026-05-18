@@ -56,6 +56,29 @@ const defaultAppData = {
   tripOptions: defaultTripOptions,
 };
 
+const emptyAppData = {
+  currentUser: {
+    name: "",
+    initials: "",
+    role: "",
+    roleValue: "passager",
+    email: "",
+    phone: "",
+    photo: "",
+    rating: 0,
+    tripsCount: 0,
+    reservationsCount: 0,
+    reviewCount: 0,
+    car: "",
+    bio: "",
+    campus: "",
+    vehicle: null,
+  },
+  publishedTrips: [],
+  reservations: [],
+  tripOptions: [],
+};
+
 const appModeConfig = {
   passenger: {
     defaultRoute: "search",
@@ -282,7 +305,7 @@ function App() {
 
     return readInitialMode(getRouteFromHash(window.location.hash));
   });
-  const [appData, setAppData] = useState(defaultAppData);
+  const [appData, setAppData] = useState(() => isConfigured ? emptyAppData : defaultAppData);
   const [dataError, setDataError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedTripId, setSelectedTripId] = useState("");
@@ -372,34 +395,11 @@ function App() {
 
     if (!canUseSupabaseData) {
       if (!isConfigured) {
-        // Demo mode: use mock data
         setDataError("");
         setAppData(defaultAppData);
       } else {
-        // Supabase configured but no session: clear data
         setDataError("");
-        setAppData({
-          currentUser: {
-            name: "",
-            initials: "",
-            role: "",
-            roleValue: "passager",
-            email: "",
-            phone: "",
-            photo: "",
-            rating: 0,
-            tripsCount: 0,
-            reservationsCount: 0,
-            reviewCount: 0,
-            car: "",
-            bio: "",
-            campus: "",
-            vehicle: null,
-          },
-          publishedTrips: [],
-          reservations: [],
-          tripOptions: [],
-        });
+        setAppData(emptyAppData);
       }
       return;
     }
