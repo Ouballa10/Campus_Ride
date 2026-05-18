@@ -129,12 +129,19 @@ html, body, #root {
   padding: 0;
 }
 
+html {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 body {
   margin: 0;
   min-height: 100dvh;
   background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 50%, #f5f3ff 100%);
   color: var(--text);
   overflow-x: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .app-theme--dark body,
@@ -247,6 +254,7 @@ a { color: var(--primary); text-decoration: none; }
   padding: 16px 16px 24px;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
 }
 
 .phone-shell__body::-webkit-scrollbar { display: none; }
@@ -941,12 +949,12 @@ a { color: var(--primary); text-decoration: none; }
   padding: 16px;
   border-radius: var(--radius-lg);
   background: var(--surface-elevated);
-  transition: all var(--transition-fast);
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
 }
 
 .trip-card:active,
 .option-card--interactive:active {
-  transform: scale(0.98);
+  opacity: 0.9;
 }
 
 .detail-card--highlight {
@@ -1197,7 +1205,7 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .search-pill:active {
-  transform: scale(0.98);
+  opacity: 0.85;
   border-color: var(--primary-light);
 }
 
@@ -1238,7 +1246,7 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .action-card:active {
-  transform: scale(0.96);
+  opacity: 0.9;
 }
 
 .action-card strong {
@@ -2665,7 +2673,7 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .driver-stat-card:active {
-  transform: scale(0.95);
+  opacity: 0.9;
 }
 
 .driver-stat-card--active {
@@ -3306,7 +3314,7 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .notification-item:active {
-  transform: scale(0.98);
+  opacity: 0.85;
 }
 
 .notification-item__icon {
@@ -3386,7 +3394,6 @@ a { color: var(--primary); text-decoration: none; }
 
 .notification-item--clickable:hover {
   box-shadow: 0 4px 16px rgba(99, 102, 241, 0.12);
-  transform: translateY(-1px);
 }
 
 .notification-item--clickable:focus-visible {
