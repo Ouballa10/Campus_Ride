@@ -138,8 +138,11 @@ export default function Profile({
     },
   };
 
+  const isSavingRef = useRef(false);
   useEffect(() => {
-    setForm(buildProfileForm(profile, user, mode));
+    if (!isSavingRef.current) {
+      setForm(buildProfileForm(profile, user, mode));
+    }
   }, [mode, profile, user]);
 
   useEffect(() => {
@@ -339,6 +342,7 @@ export default function Profile({
 
     try {
       setIsSaving(true);
+      isSavingRef.current = true;
       setUploadStep("Preparation des images...");
       setFeedback({ message: "", tone: "" });
 
@@ -420,6 +424,7 @@ export default function Profile({
         tone: "error",
       });
     } finally {
+      isSavingRef.current = false;
       setIsSaving(false);
       setUploadStep("");
     }
