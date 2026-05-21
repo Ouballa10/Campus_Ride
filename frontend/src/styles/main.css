@@ -174,12 +174,12 @@ a { color: var(--primary); text-decoration: none; }
   display: flex;
   align-items: stretch;
   justify-content: center;
-  background: linear-gradient(160deg, #eef2ff 0%, #faf5ff 40%, #f0f9ff 100%);
+  background: var(--surface-elevated);
   overflow-x: hidden;
 }
 
 .app-theme--dark .app-shell {
-  background: linear-gradient(160deg, #0f0a2e 0%, #1e1b4b 50%, #1a0f3c 100%);
+  background: #0f0a2e;
 }
 
 .site-stage {
@@ -193,31 +193,20 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .site-stage--single {
-  max-width: 430px;
+  max-width: 480px;
   margin: 0 auto;
 }
 
 .stage-orb {
-  position: absolute;
-  border-radius: 999px;
-  filter: blur(40px);
-  pointer-events: none;
+  display: none;
 }
 
 .stage-orb--one {
-  top: -60px;
-  left: -80px;
-  width: 280px;
-  height: 280px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.2), transparent 70%);
+  display: none;
 }
 
 .stage-orb--two {
-  right: -60px;
-  bottom: 100px;
-  width: 240px;
-  height: 240px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.18), transparent 70%);
+  display: none;
 }
 
 .phone-shell {
@@ -225,7 +214,8 @@ a { color: var(--primary); text-decoration: none; }
   z-index: 1;
   width: 100%;
   min-height: 100dvh;
-  max-width: 430px;
+  max-width: 480px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   padding: 0;
@@ -5376,25 +5366,17 @@ a { color: var(--primary); text-decoration: none; }
    ========================= */
 @media (min-width: 768px) {
   .site-stage--single {
-    max-width: 440px;
+    max-width: 480px;
+    margin: 0 auto;
   }
 
   .phone-shell {
-    max-width: 440px;
+    max-width: 480px;
     margin: 0 auto;
-    border-radius: var(--radius-xl);
-    min-height: calc(100dvh - 40px);
-    box-shadow: var(--shadow-xl);
   }
 
   .phone-shell::before {
-    content: "";
-    display: block;
-    width: 34%;
-    height: 16px;
-    margin: 0 auto 8px;
-    border-radius: 0 0 12px 12px;
-    background: linear-gradient(180deg, var(--primary-subtle), rgba(99, 102, 241, 0.08));
+    display: none;
   }
 
   .phone-shell--splash {
@@ -5408,7 +5390,7 @@ a { color: var(--primary); text-decoration: none; }
   }
 
   .bottom-nav {
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-radius: 0;
   }
 
   .profile-editor-grid {
