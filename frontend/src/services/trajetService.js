@@ -162,7 +162,12 @@ async function listPublishedTrajets(userId) {
 
 async function createTrajet(payload, conducteurId) {
   const client = requireSupabase();
-  const placesTotal = Number(payload.placesTotal || payload.places || 4);
+
+  if (!conducteurId) {
+    throw new Error("Session invalide. Reconnecte-toi et reessaie.");
+  }
+
+  const placesTotal = Number(payload.placesTotal || payload.places || payload.seats || 4);
   const payloadToInsert = {
     depart: payload.depart,
     destination: payload.destination,
@@ -176,11 +181,17 @@ async function createTrajet(payload, conducteurId) {
     conducteur_id: conducteurId,
   };
 
-  const { data, error } = await client
+  const insertPromise = client
     .from("trajets")
     .insert(payloadToInsert)
     .select("*")
     .single();
+
+  const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error("La publication a pris trop de temps. Verifie ta connexion et reessaie.")), 15000),
+  );
+
+  const { data, error } = await Promise.race([insertPromise, timeoutPromise]);
 
   if (error) {
     throw formatSupabaseError(error, "Impossible de publier le trajet.");

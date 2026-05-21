@@ -519,8 +519,13 @@ function App() {
 
   async function handlePublish(payload) {
     if (canUseSupabaseData) {
-      await trajetService.createTrajet(payload, sessionUserId);
-      setRefreshKey((currentKey) => currentKey + 1);
+      try {
+        await trajetService.createTrajet(payload, sessionUserId);
+        setRefreshKey((currentKey) => currentKey + 1);
+      } catch (publishError) {
+        console.error("[CampusRide] Publication failed:", publishError);
+        throw publishError;
+      }
       return;
     }
 
