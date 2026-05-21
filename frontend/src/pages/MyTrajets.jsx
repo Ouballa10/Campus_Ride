@@ -1,224 +1,7 @@
 import React, { useState } from "react";
 import AppHeader from "../components/AppHeader";
 import { Icon } from "../components/Icons";
-import {
-  getStatusIcon,
-  getStatusPillClass,
-  isReservationHistory,
-} from "../utils/statusUi";
-
-function PassengerAvatar({ passenger }) {
-  return (
-    <div className="avatar-badge">
-      {passenger.passengerAvatar ? (
-        <img alt={passenger.passenger} src={passenger.passengerAvatar} />
-      ) : (
-        passenger.passengerInitials || "?"
-      )}
-    </div>
-  );
-}
-
-function TripCard({
-  busyAction,
-  onCloseTrip,
-  onConfirmReservation,
-  onDeleteTrip,
-  onRejectReservation,
-  runAction,
-  trip,
-}) {
-  const [expanded, setExpanded] = useState(true);
-  const reservations = trip.passengerReservations || [];
-  const pendingReservations = reservations.filter((r) => r.status === "En attente");
-  const confirmedReservations = reservations.filter((r) => r.status === "Confirmee");
-  const historyReservations = reservations.filter((r) => isReservationHistory(r.status));
-  const isClosed = ["Ferme", "Passe", "Terminee"].includes(trip.status);
-
-  return (
-    <article className="trip-detail-card">
-      {/* Trip header */}
-      <div className="trip-detail-card__header" onClick={() => setExpanded(!expanded)}>
-        <div className="trip-detail-card__route">
-          <div className="trip-detail-card__places">
-            <Icon name="location" size={16} />
-            <strong>{trip.depart || trip.route}</strong>
-          </div>
-          <Icon name="arrow-right" size={14} />
-          <div className="trip-detail-card__places">
-            <Icon name="route" size={16} />
-            <strong>{trip.destination || ""}</strong>
-          </div>
-        </div>
-        <span className={getStatusPillClass(trip.status)}>
-          <Icon name={getStatusIcon(trip.status)} size={12} />
-          {trip.status}
-        </span>
-      </div>
-
-      {/* Trip info */}
-      <div className="trip-detail-card__info">
-        <span><Icon name="calendar" size={14} /> {trip.date}</span>
-        <span><Icon name="clock" size={14} /> {trip.time}</span>
-        <span><Icon name="seat" size={14} /> {trip.seats}</span>
-        <span><Icon name="ticket" size={14} /> {trip.earningsEstimate || 0} DH</span>
-      </div>
-
-      {expanded ? (
-        <>
-          {/* Pending requests */}
-          {pendingReservations.length > 0 ? (
-            <div className="trip-detail-section trip-detail-section--pending">
-              <div className="trip-detail-section__title">
-                <Icon name="clock" size={15} />
-                <span>Demandes en attente</span>
-                <b>{pendingReservations.length}</b>
-              </div>
-              {pendingReservations.map((reservation) => (
-                <div className="passenger-card" key={reservation.id}>
-                  <div className="passenger-card__top">
-                    <PassengerAvatar passenger={reservation} />
-                    <div className="passenger-card__info">
-                      <strong>{reservation.passenger}</strong>
-                      <span>{reservation.phone || reservation.campus || ""}</span>
-                    </div>
-                  </div>
-                  {reservation.message ? (
-                    <p className="passenger-card__message">{reservation.message}</p>
-                  ) : null}
-                  <div className="passenger-card__actions">
-                    <button
-                      className="btn-accept"
-                      disabled={busyAction === `accept-${reservation.id}`}
-                      type="button"
-                      onClick={() => runAction(
-                        `accept-${reservation.id}`,
-                        () => onConfirmReservation(reservation.id),
-                        "Demande confirmee.",
-                      )}
-                    >
-                      <Icon name="check-badge" size={15} />
-                      {busyAction === `accept-${reservation.id}` ? "..." : "Accepter"}
-                    </button>
-                    <button
-                      className="btn-reject"
-                      disabled={busyAction === `reject-${reservation.id}`}
-                      type="button"
-                      onClick={() => runAction(
-                        `reject-${reservation.id}`,
-                        () => onRejectReservation(reservation.id),
-                        "Demande refusee.",
-                      )}
-                    >
-                      <Icon name="x" size={15} />
-                      {busyAction === `reject-${reservation.id}` ? "..." : "Refuser"}
-                    </button>
-                    {reservation.phone ? (
-                      <a className="btn-contact" href={`tel:${reservation.phone}`}>
-                        <Icon name="phone" size={14} />
-                      </a>
-                    ) : null}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : null}
-
-          {/* Confirmed passengers */}
-          {confirmedReservations.length > 0 ? (
-            <div className="trip-detail-section trip-detail-section--confirmed">
-              <div className="trip-detail-section__title">
-                <Icon name="check-badge" size={15} />
-                <span>Passagers confirmes</span>
-                <b>{confirmedReservations.length}</b>
-              </div>
-              {confirmedReservations.map((reservation) => (
-                <div className="passenger-card passenger-card--confirmed" key={reservation.id}>
-                  <div className="passenger-card__top">
-                    <PassengerAvatar passenger={reservation} />
-                    <div className="passenger-card__info">
-                      <strong>{reservation.passenger}</strong>
-                      <span>{reservation.phone || reservation.campus || ""}</span>
-                    </div>
-                    {reservation.phone ? (
-                      <a className="btn-contact" href={`tel:${reservation.phone}`}>
-                        <Icon name="phone" size={14} />
-                      </a>
-                    ) : null}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : null}
-
-          {/* History */}
-          {historyReservations.length > 0 ? (
-            <div className="trip-detail-section trip-detail-section--history">
-              <div className="trip-detail-section__title">
-                <Icon name="shield" size={15} />
-                <span>Historique</span>
-                <b>{historyReservations.length}</b>
-              </div>
-              {historyReservations.map((reservation) => (
-                <div className="passenger-card passenger-card--history" key={reservation.id}>
-                  <div className="passenger-card__top">
-                    <PassengerAvatar passenger={reservation} />
-                    <div className="passenger-card__info">
-                      <strong>{reservation.passenger}</strong>
-                      <span className={getStatusPillClass(reservation.status)}>
-                        {reservation.status}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : null}
-
-          {/* No reservations */}
-          {!reservations.length ? (
-            <div className="trip-detail-empty">
-              <Icon name="user" size={20} />
-              <span>Aucune demande pour ce trajet</span>
-            </div>
-          ) : null}
-
-          {/* Trip actions */}
-          <div className="trip-detail-card__footer">
-            {!isClosed ? (
-              <button
-                className="btn-secondary"
-                disabled={busyAction === `close-${trip.id}`}
-                type="button"
-                onClick={() => runAction(
-                  `close-${trip.id}`,
-                  () => onCloseTrip(trip.id),
-                  "Reservations fermees.",
-                )}
-              >
-                <Icon name="shield" size={14} />
-                Fermer
-              </button>
-            ) : null}
-            <button
-              className="btn-danger-outline"
-              disabled={busyAction === `delete-${trip.id}`}
-              type="button"
-              onClick={() => runAction(
-                `delete-${trip.id}`,
-                () => onDeleteTrip(trip.id),
-                "Trajet supprime.",
-              )}
-            >
-              <Icon name="x" size={14} />
-              Supprimer
-            </button>
-          </div>
-        </>
-      ) : null}
-    </article>
-  );
-}
+import { isReservationHistory } from "../utils/statusUi";
 
 export default function MyTrajets({
   navigate,
@@ -232,32 +15,24 @@ export default function MyTrajets({
   const [busyAction, setBusyAction] = useState("");
   const [feedback, setFeedback] = useState({ message: "", tone: "" });
 
-  async function runAction(actionKey, action, successMessage) {
+  async function runAction(key, action, msg) {
     try {
-      setBusyAction(actionKey);
+      setBusyAction(key);
       setFeedback({ message: "", tone: "" });
       await action();
-      setFeedback({ message: successMessage, tone: "success" });
-    } catch (error) {
-      setFeedback({
-        message: error.message || "Action impossible pour le moment.",
-        tone: "error",
-      });
+      setFeedback({ message: msg, tone: "success" });
+    } catch (e) {
+      setFeedback({ message: e.message || "Erreur.", tone: "error" });
     } finally {
       setBusyAction("");
     }
   }
 
-  const totalPending = publishedTrips.reduce(
-    (sum, trip) => sum + (trip.passengerReservations || []).filter((r) => r.status === "En attente").length,
-    0,
-  );
-
   return (
-    <div className="screen screen--my-trips">
+    <div className="screen screen--simple">
       <AppHeader
         title="Mes trajets"
-        subtitle={`${user.name} - conducteur`}
+        subtitle="Espace conducteur"
         leftIcon="arrow-left"
         onLeftClick={() => navigate("home")}
         rightLabel="Publier"
@@ -265,48 +40,149 @@ export default function MyTrajets({
         onRightClick={() => navigate("publish")}
       />
 
-      {/* Quick summary */}
-      <div className="trips-summary">
-        <div className="trips-summary__item">
-          <strong>{publishedTrips.length}</strong>
-          <span>Trajets</span>
-        </div>
-        <div className="trips-summary__item trips-summary__item--accent">
-          <strong>{totalPending}</strong>
-          <span>En attente</span>
-        </div>
-      </div>
-
       {feedback.message ? (
-        <p className={`feedback-message feedback-message--${feedback.tone}`}>
-          {feedback.message}
-        </p>
+        <div className={`toast toast--${feedback.tone}`}>{feedback.message}</div>
       ) : null}
 
       {!publishedTrips.length ? (
-        <div className="empty-state">
-          <Icon name="route" size={32} />
-          <strong>Aucun trajet publie</strong>
-          <p>Publie ton premier trajet pour recevoir des demandes.</p>
-          <button className="btn-primary" type="button" onClick={() => navigate("publish")}>
-            <Icon name="plus" size={16} />
+        <div className="empty-box">
+          <Icon name="route" size={28} />
+          <p>Aucun trajet publie</p>
+          <button className="cta-btn" type="button" onClick={() => navigate("publish")}>
             Publier un trajet
           </button>
         </div>
       ) : (
-        <div className="trips-list">
-          {publishedTrips.map((trip) => (
-            <TripCard
-              busyAction={busyAction}
-              key={trip.id}
-              onCloseTrip={onCloseTrip}
-              onConfirmReservation={onConfirmReservation}
-              onDeleteTrip={onDeleteTrip}
-              onRejectReservation={onRejectReservation}
-              runAction={runAction}
-              trip={trip}
-            />
-          ))}
+        <div className="card-list">
+          {publishedTrips.map((trip) => {
+            const reservations = trip.passengerReservations || [];
+            const pending = reservations.filter((r) => r.status === "En attente");
+            const confirmed = reservations.filter((r) => r.status === "Confirmee");
+            const history = reservations.filter((r) => isReservationHistory(r.status));
+            const isClosed = ["Ferme", "Passe", "Terminee"].includes(trip.status);
+
+            return (
+              <div className="t-card" key={trip.id}>
+                {/* Route */}
+                <div className="t-card__route">
+                  <div className="t-card__dot t-card__dot--start" />
+                  <div className="t-card__route-text">
+                    <strong>{trip.depart || trip.route}</strong>
+                    <small>{trip.date} · {trip.time}</small>
+                  </div>
+                </div>
+                <div className="t-card__route">
+                  <div className="t-card__dot t-card__dot--end" />
+                  <div className="t-card__route-text">
+                    <strong>{trip.destination || ""}</strong>
+                    <small>{trip.seats} places · {trip.earningsEstimate || 0} DH</small>
+                  </div>
+                  <span className={`t-badge t-badge--${trip.status === "Actif" ? "green" : trip.status === "Ferme" ? "gray" : "blue"}`}>
+                    {trip.status}
+                  </span>
+                </div>
+
+                {/* Pending */}
+                {pending.length > 0 ? (
+                  <div className="t-section t-section--orange">
+                    <div className="t-section__head">
+                      <span>🟡 {pending.length} demande{pending.length > 1 ? "s" : ""} en attente</span>
+                    </div>
+                    {pending.map((r) => (
+                      <div className="t-passenger" key={r.id}>
+                        <div className="t-passenger__name">
+                          <strong>{r.passenger}</strong>
+                          {r.message ? <small>"{r.message}"</small> : null}
+                        </div>
+                        <div className="t-passenger__btns">
+                          <button
+                            className="t-btn t-btn--green"
+                            disabled={busyAction === `a-${r.id}`}
+                            type="button"
+                            onClick={() => runAction(`a-${r.id}`, () => onConfirmReservation(r.id), "Accepte !")}
+                          >
+                            ✓
+                          </button>
+                          <button
+                            className="t-btn t-btn--red"
+                            disabled={busyAction === `r-${r.id}`}
+                            type="button"
+                            onClick={() => runAction(`r-${r.id}`, () => onRejectReservation(r.id), "Refuse.")}
+                          >
+                            ✕
+                          </button>
+                          {r.phone ? (
+                            <a className="t-btn t-btn--ghost" href={`tel:${r.phone}`}>📞</a>
+                          ) : null}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                {/* Confirmed */}
+                {confirmed.length > 0 ? (
+                  <div className="t-section t-section--green">
+                    <div className="t-section__head">
+                      <span>🟢 {confirmed.length} confirme{confirmed.length > 1 ? "s" : ""}</span>
+                    </div>
+                    {confirmed.map((r) => (
+                      <div className="t-passenger t-passenger--confirmed" key={r.id}>
+                        <strong>{r.passenger}</strong>
+                        {r.phone ? (
+                          <a className="t-btn t-btn--ghost" href={`tel:${r.phone}`}>📞</a>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                {/* History */}
+                {history.length > 0 ? (
+                  <div className="t-section t-section--gray">
+                    <div className="t-section__head">
+                      <span>⚪ {history.length} archive{history.length > 1 ? "s" : ""}</span>
+                    </div>
+                    {history.map((r) => (
+                      <div className="t-passenger t-passenger--muted" key={r.id}>
+                        <strong>{r.passenger}</strong>
+                        <small>{r.status}</small>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                {/* No reservations */}
+                {!reservations.length ? (
+                  <div className="t-section t-section--empty">
+                    <span>Aucune demande</span>
+                  </div>
+                ) : null}
+
+                {/* Actions */}
+                <div className="t-card__actions">
+                  {!isClosed ? (
+                    <button
+                      className="t-btn t-btn--outline"
+                      disabled={busyAction === `c-${trip.id}`}
+                      type="button"
+                      onClick={() => runAction(`c-${trip.id}`, () => onCloseTrip(trip.id), "Ferme.")}
+                    >
+                      Fermer
+                    </button>
+                  ) : null}
+                  <button
+                    className="t-btn t-btn--outline t-btn--outline-red"
+                    disabled={busyAction === `d-${trip.id}`}
+                    type="button"
+                    onClick={() => runAction(`d-${trip.id}`, () => onDeleteTrip(trip.id), "Supprime.")}
+                  >
+                    Supprimer
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

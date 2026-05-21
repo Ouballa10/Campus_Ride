@@ -3242,6 +3242,338 @@ a { color: var(--primary); text-decoration: none; }
   gap: 18px;
 }
 
+/* =========================
+   CLEAN CARD SYSTEM (shared)
+   ========================= */
+.screen--simple {
+  padding-bottom: 90px;
+}
+
+.card-list {
+  display: grid;
+  gap: 16px;
+}
+
+/* Toast */
+.toast {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.toast--success { background: #ecfdf5; color: #065f46; }
+.toast--error { background: #fef2f2; color: #991b1b; }
+
+/* Empty box */
+.empty-box {
+  text-align: center;
+  padding: 48px 20px;
+  color: #6b7280;
+}
+.empty-box p {
+  margin: 10px 0 16px;
+  font-size: 0.9rem;
+}
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 24px;
+  background: var(--primary);
+  color: white;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Section blocks (for grouping) */
+.section-block {
+  border-radius: 14px;
+  overflow: hidden;
+}
+.section-block h3 {
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 10px 14px;
+  margin: 0;
+}
+.section-block--orange { background: #fffbeb; }
+.section-block--orange h3 { color: #92400e; }
+.section-block--green { background: #ecfdf5; }
+.section-block--green h3 { color: #065f46; }
+.section-block--gray { background: #f9fafb; }
+.section-block--gray h3 { color: #4b5563; }
+
+/* =========================
+   T-CARD (Driver trip card)
+   ========================= */
+.t-card {
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+.t-card__route {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px 0;
+}
+.t-card__route:last-of-type {
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.t-card__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.t-card__dot--start { background: var(--primary); }
+.t-card__dot--end { background: var(--green); }
+
+.t-card__route-text {
+  flex: 1;
+  min-width: 0;
+}
+.t-card__route-text strong {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.t-card__route-text small {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+/* Badge */
+.t-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.t-badge--green { background: #d1fae5; color: #065f46; }
+.t-badge--orange { background: #fef3c7; color: #92400e; }
+.t-badge--blue { background: #dbeafe; color: #1e40af; }
+.t-badge--gray { background: #f3f4f6; color: #4b5563; }
+.t-badge--red { background: #fee2e2; color: #991b1b; }
+
+/* T-section (pending/confirmed/history inside trip) */
+.t-section {
+  padding: 10px 14px;
+  border-top: 1px solid #f3f4f6;
+}
+.t-section--orange { background: #fffbeb; border-left: 3px solid #f59e0b; }
+.t-section--green { background: #ecfdf5; border-left: 3px solid #10b981; }
+.t-section--gray { background: #f9fafb; border-left: 3px solid #d1d5db; }
+.t-section--empty { color: #9ca3af; font-size: 0.78rem; text-align: center; padding: 16px; }
+
+.t-section__head {
+  margin-bottom: 8px;
+}
+.t-section__head span {
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+/* Passenger row inside trip */
+.t-passenger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  border: 1px solid #f3f4f6;
+}
+.t-passenger:last-child { margin-bottom: 0; }
+.t-passenger--confirmed { border-color: #a7f3d0; }
+.t-passenger--muted { opacity: 0.6; }
+
+.t-passenger__name {
+  flex: 1;
+  min-width: 0;
+}
+.t-passenger__name strong {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.t-passenger__name small {
+  font-size: 0.7rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.t-passenger__btns {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Buttons */
+.t-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.1s;
+}
+.t-btn:active { transform: scale(0.93); }
+.t-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.t-btn--green { background: #10b981; color: white; }
+.t-btn--red { background: #ef4444; color: white; }
+.t-btn--ghost { background: #f3f4f6; color: #374151; }
+.t-btn--star { background: #fef3c7; color: #92400e; }
+.t-btn--outline {
+  background: white;
+  border: 1.5px solid #e5e7eb;
+  color: #374151;
+}
+.t-btn--outline-red {
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+/* Trip card actions */
+.t-card__actions {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid #f3f4f6;
+}
+
+/* =========================
+   R-CARD (Passenger reservation card)
+   ========================= */
+.r-card {
+  background: white;
+  border-radius: 12px;
+  padding: 14px;
+  margin: 8px 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  border: 1px solid #f3f4f6;
+}
+
+.r-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.r-card__route {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+.r-card__route strong {
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
+.r-card__arrow {
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.r-card__info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.r-card__info span {
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  background: #f9fafb;
+  border-radius: 6px;
+  color: #4b5563;
+}
+
+.r-card__driver {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: #f0f4ff;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+.r-card__avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #a5b4fc, #c4b5fd);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.r-card__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.r-card__driver strong {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.r-card__driver small {
+  font-size: 0.7rem;
+  color: #6b7280;
+}
+
+.r-card__msg {
+  padding: 6px 10px;
+  background: #fefce8;
+  border-radius: 8px;
+  font-size: 0.73rem;
+  color: #713f12;
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
+.r-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
 /* Trip detail card */
 .trip-detail-card {
   border-radius: 16px;
