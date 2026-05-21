@@ -440,12 +440,32 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .bottom-nav__icon {
+  position: relative;
   width: 32px;
   height: 32px;
   display: grid;
   place-items: center;
   border-radius: 10px;
   transition: all var(--transition-fast);
+}
+
+.bottom-nav__badge {
+  position: absolute;
+  top: -2px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--red);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
 }
 
 .bottom-nav__button--active {

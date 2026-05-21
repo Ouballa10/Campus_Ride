@@ -30,7 +30,7 @@ function getActiveTab(route, mode) {
   return route;
 }
 
-export default function BottomNav({ mode = "passenger", route, navigate }) {
+export default function BottomNav({ mode = "passenger", notificationCount = 0, route, navigate }) {
   const activeTab = getActiveTab(route, mode);
   const navItems = navItemsByMode[mode] || navItemsByMode.passenger;
 
@@ -47,6 +47,11 @@ export default function BottomNav({ mode = "passenger", route, navigate }) {
         >
           <span className="bottom-nav__icon">
             <Icon name={item.icon} size={18} />
+            {item.route === "notifications" && notificationCount > 0 ? (
+              <span className="bottom-nav__badge">
+                {notificationCount > 9 ? "9+" : notificationCount}
+              </span>
+            ) : null}
           </span>
           <span>{item.label}</span>
         </button>

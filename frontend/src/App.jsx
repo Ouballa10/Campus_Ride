@@ -494,6 +494,13 @@ function App() {
     (trip) => !isTripOwnedByCurrentUser(trip, currentUser, sessionUserId),
   );
 
+  const notificationCount = activeMode === "driver"
+    ? appData.publishedTrips.reduce(
+        (sum, trip) => sum + (trip.passengerReservations || []).filter((r) => r.status === "En attente").length,
+        0,
+      )
+    : appData.reservations.filter((r) => r.status === "Confirmee" || r.status === "En attente").length;
+
   const reservedTripIds = appData.reservations
     .filter((reservation) => reservation.status !== "Annulee")
     .map((reservation) => reservation.trajetId)
@@ -918,6 +925,7 @@ function App() {
           {showNav ? (
             <BottomNav
               mode={activeMode}
+              notificationCount={notificationCount}
               route={route}
               navigate={navigate}
             />
