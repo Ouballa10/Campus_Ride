@@ -515,8 +515,12 @@ function App() {
   }
 
   function openNotificationDetail(notification) {
-    setSelectedNotification(notification);
-    navigate("notification-detail");
+    // Navigate directly to the relevant page instead of a detail view
+    if (notification.id?.startsWith("driver-")) {
+      navigate("my-trips");
+    } else {
+      navigate("my-reservations");
+    }
   }
 
   function openDriverProfile(tripData) {

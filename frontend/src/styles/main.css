@@ -4274,6 +4274,74 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 /* =========================
+   NOTIF LIST (new clean style)
+   ========================= */
+.notif-list {
+  display: grid;
+  gap: 8px;
+}
+
+.notif-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.notif-item:active {
+  transform: scale(0.98);
+}
+
+.notif-item--success {
+  border-color: #a7f3d0;
+  background: #f0fdf4;
+}
+
+.notif-item--pending {
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.notif-item--danger {
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.notif-item__content {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.notif-item__content strong {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.notif-item__route {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #4b5563;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notif-item__meta {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+/* =========================
    NOTIFICATION DETAIL PAGE
    ========================= */
 .notification-detail {
