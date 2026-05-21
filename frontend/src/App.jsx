@@ -15,6 +15,7 @@ import MyTrajets from "./pages/MyTrajets";
 import Notifications from "./pages/Notifications";
 import NotificationDetail from "./pages/NotificationDetail";
 import DriverProfile from "./pages/DriverProfile";
+import TripDetailPage from "./pages/TripDetailPage";
 import Profile from "./pages/Profile";
 import PublishTrajet from "./pages/PublishTrajet";
 import Register from "./pages/Register";
@@ -46,6 +47,7 @@ const appRoutes = [
   { route: "notifications", label: "Notifications" },
   { route: "notification-detail", label: "Detail notification" },
   { route: "driver-profile", label: "Profil conducteur" },
+  { route: "trip-detail", label: "Detail trajet" },
 ];
 
 const allRoutes = [...authRoutes, ...appRoutes.map((screen) => screen.route)];
@@ -310,6 +312,7 @@ function App() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedTripId, setSelectedTripId] = useState("");
   const [selectedNotification, setSelectedNotification] = useState(null);
+  const [selectedTripDetail, setSelectedTripDetail] = useState(null);
   const [selectedDriverData, setSelectedDriverData] = useState(null);
   const [theme, setTheme] = useState(readInitialTheme);
 
@@ -515,8 +518,20 @@ function App() {
   }
 
   function openNotificationDetail(notification) {
-    // Navigate directly to the relevant page instead of a detail view
     if (notification.id?.startsWith("driver-")) {
+      // Extract trip ID from "driver-{tripId}-{reservationId}"
+      const parts = notification.id.split("-");
+      // parts = ["driver", ...tripIdParts, reservationIdLastPart]
+      // Trip IDs are UUIDs so we need to reconstruct: everything between first "driver-" and last UUID
+      const fullId = notification.id.replace("driver-", "");
+      // fullId = "{tripUUID}-{reservationUUID}" — both are UUIDs (36 chars each with dashes)
+      const tripId = fullId.slice(0, 36);
+      const trip = appData.publishedTrips.find((t) => t.id === tripId);
+      if (trip) {
+        setSelectedTripDetail(trip);
+        navigate("trip-detail");
+        return;
+      }
       navigate("my-trips");
     } else {
       navigate("my-reservations");
@@ -887,6 +902,19 @@ function App() {
       <DriverProfile
         driverData={selectedDriverData}
         navigate={navigate}
+      />
+    );
+  } else if (route === "trip-detail" && selectedTripDetail) {
+    screen = (
+      <TripDetailPage
+        navigate={navigate}
+        onConfirmReservation={handleConfirmPassengerReservation}
+        onRejectReservation={handleRejectPassengerReservation}
+        onCloseTrip={handleCloseTripReservations}
+        onDeleteTrip={handleDeleteTrip}
+        trip={selectedTripDetail}
+        refreshKey={refreshKey}
+        publishedTrips={appData.publishedTrips}
       />
     );
   } else {

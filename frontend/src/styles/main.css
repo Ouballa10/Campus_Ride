@@ -3606,6 +3606,148 @@ a { color: var(--primary); text-decoration: none; }
   gap: 6px;
 }
 
+/* =========================
+   TRIP DETAIL PAGE
+   ========================= */
+.td-info {
+  background: white;
+  border-radius: 14px;
+  border: 2px solid #e5e7eb;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.td-info__row {
+  margin-bottom: 8px;
+}
+
+.td-info__row .td-info__label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.td-info__row strong {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1e1b4b;
+}
+
+.td-info__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.td-info__grid > div {
+  text-align: center;
+}
+
+.td-info__grid span {
+  font-size: 0.9rem;
+}
+
+.td-info__grid strong {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #374151;
+  margin-top: 2px;
+}
+
+.td-info__status {
+  margin-top: 12px;
+  text-align: right;
+}
+
+/* Trip detail sections */
+.td-section {
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border: 2px solid #e5e7eb;
+}
+
+.td-section h3 {
+  font-size: 0.85rem;
+  font-weight: 800;
+  margin: 0 0 12px;
+}
+
+.td-section--orange {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+.td-section--orange h3 { color: #92400e; }
+
+.td-section--green {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+}
+.td-section--green h3 { color: #065f46; }
+
+.td-section--gray {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+}
+.td-section--gray h3 { color: #4b5563; }
+
+/* Passenger in detail */
+.td-passenger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  border: 1.5px solid #e5e7eb;
+}
+.td-passenger:last-child { margin-bottom: 0; }
+.td-passenger--confirmed { border-color: #6ee7b7; background: #f0fdf4; }
+.td-passenger--muted { opacity: 0.55; }
+
+.td-passenger__info {
+  flex: 1;
+  min-width: 0;
+}
+.td-passenger__info strong {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+.td-passenger__info small {
+  font-size: 0.72rem;
+  color: #6b7280;
+}
+.td-passenger__info p {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  color: #4b5563;
+  font-style: italic;
+}
+
+.td-passenger__actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.td-actions {
+  display: flex;
+  gap: 10px;
+  padding: 16px 0;
+  flex-wrap: wrap;
+}
+
 /* Trip detail card */
 .trip-detail-card {
   border-radius: 16px;
