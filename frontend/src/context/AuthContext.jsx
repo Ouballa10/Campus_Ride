@@ -105,21 +105,19 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut() {
-    let signOutError = null;
+    // Clear local state immediately so UI responds right away
+    setSession(null);
+    setProfile(null);
 
     if (isSupabaseConfigured) {
       try {
         await authService.signOut();
       } catch (error) {
-        signOutError = error;
         console.error("Supabase sign out failed:", error);
       }
     }
 
-    setSession(null);
-    setProfile(null);
-
-    return { error: signOutError };
+    return { error: null };
   }
 
   const value = {

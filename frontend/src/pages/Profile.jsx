@@ -202,11 +202,10 @@ export default function Profile({
   async function handleSignOut() {
     try {
       await signOut();
-      navigate("login");
     } catch (error) {
       console.error("Sign out failed:", error);
-      setFeedback({ message: "Deconnexion impossible. Reessaie.", tone: "error" });
     }
+    navigate("login");
   }
 
   function handlePickPhoto() {

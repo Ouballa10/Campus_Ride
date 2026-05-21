@@ -172,10 +172,19 @@ async function signUp({ email, password, fullName, phone, role = "passager" }) {
 
 async function signOut() {
   const client = requireSupabase();
-  const { error } = await client.auth.signOut({ scope: "global" });
+
+  const signOutWithTimeout = Promise.race([
+    client.auth.signOut({ scope: "global" }),
+    new Promise((resolve) => setTimeout(() => resolve({ error: { message: "timeout" } }), 5000)),
+  ]);
+
+  const { error } = await signOutWithTimeout;
 
   if (error) {
-    const fallback = await client.auth.signOut({ scope: "local" });
+    const fallback = await Promise.race([
+      client.auth.signOut({ scope: "local" }),
+      new Promise((resolve) => setTimeout(() => resolve({ error: null }), 3000)),
+    ]);
 
     if (fallback.error) {
       throw formatSupabaseError(fallback.error, "Deconnexion impossible.");
