@@ -16,6 +16,9 @@ begin
 end;
 $$;
 
+alter type public.reservation_status add value if not exists 'refusee';
+alter type public.reservation_status add value if not exists 'terminee';
+
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   full_name text not null default '',

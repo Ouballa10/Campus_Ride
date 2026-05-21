@@ -8,11 +8,11 @@ import {
 } from "../utils/statusUi";
 
 const dashboardViews = [
-  { id: "overview", label: "Overview", icon: "home" },
-  { id: "active", label: "Active rides", icon: "route" },
-  { id: "requests", label: "Requests", icon: "clock" },
-  { id: "confirmed", label: "Confirmed", icon: "user" },
-  { id: "closed", label: "Closed", icon: "shield" },
+  { id: "overview", label: "Apercu", icon: "home" },
+  { id: "active", label: "Actifs", icon: "route" },
+  { id: "requests", label: "Demandes", icon: "clock" },
+  { id: "confirmed", label: "Confirmes", icon: "user" },
+  { id: "closed", label: "Archives", icon: "shield" },
 ];
 
 function DriverStat({ active, icon, label, onClick, value }) {
@@ -226,19 +226,19 @@ export default function MyTrajets({
       <section className="records-hero records-hero--driver">
         <div>
           <span className="eyebrow">Conducteur</span>
-          <h3>Driver dashboard</h3>
+          <h3>Tableau de bord</h3>
           <p>
             Garde une vue nette sur tes departs, demandes passagers, places restantes et revenus estimes.
           </p>
         </div>
 
         <div className="driver-stats-grid">
-          <DriverStat active={activeView === "active"} icon="route" label="active rides" value={stats.activeTrips} onClick={() => setActiveView("active")} />
-          <DriverStat active={activeView === "closed"} icon="check-badge" label="completed" value={stats.completedTrips} onClick={() => setActiveView("closed")} />
-          <DriverStat active={activeView === "requests"} icon="clock" label="pending requests" value={stats.pendingRequests} onClick={() => setActiveView("requests")} />
-          <DriverStat active={activeView === "confirmed"} icon="user" label="confirmed" value={stats.confirmedPassengers} onClick={() => setActiveView("confirmed")} />
-          <DriverStat active={activeView === "closed"} icon="shield" label="canceled/closed" value={stats.canceledTrips} onClick={() => setActiveView("closed")} />
-          <DriverStat active={activeView === "overview"} icon="ticket" label="estimated earnings" value={`${stats.earnings} DH`} onClick={() => setActiveView("overview")} />
+          <DriverStat active={activeView === "active"} icon="route" label="trajets actifs" value={stats.activeTrips} onClick={() => setActiveView("active")} />
+          <DriverStat active={activeView === "closed"} icon="check-badge" label="termines" value={stats.completedTrips} onClick={() => setActiveView("closed")} />
+          <DriverStat active={activeView === "requests"} icon="clock" label="en attente" value={stats.pendingRequests} onClick={() => setActiveView("requests")} />
+          <DriverStat active={activeView === "confirmed"} icon="user" label="confirmes" value={stats.confirmedPassengers} onClick={() => setActiveView("confirmed")} />
+          <DriverStat active={activeView === "closed"} icon="shield" label="annules/fermes" value={stats.canceledTrips} onClick={() => setActiveView("closed")} />
+          <DriverStat active={activeView === "overview"} icon="ticket" label="gains estimes" value={`${stats.earnings} DH`} onClick={() => setActiveView("overview")} />
         </div>
       </section>
 
@@ -317,7 +317,7 @@ export default function MyTrajets({
               <div className="driver-trip-metrics">
                 <span>
                   <Icon name="seat" size={14} />
-                  {trip.seats} seats
+                  {trip.seats} places
                 </span>
                 <span>
                   <Icon name="user" size={14} />
@@ -325,7 +325,7 @@ export default function MyTrajets({
                 </span>
                 <span>
                   <Icon name="ticket" size={14} />
-                  {trip.earningsEstimate || 0} DH estimated
+                  {trip.earningsEstimate || 0} DH
                 </span>
               </div>
 
@@ -336,14 +336,14 @@ export default function MyTrajets({
                 {!confirmedReservations.length ? (
                   <span>Aucun passager confirme</span>
                 ) : (
-                  <span>{confirmedReservations.length} confirmed passengers</span>
+                  <span>{confirmedReservations.length} passager(s) confirme(s)</span>
                 )}
               </div>
 
               <div className="driver-trip-actions">
                 <button className="mini-button mini-button--ghost" type="button" onClick={() => navigate("publish")}>
                   <Icon name="edit" size={15} />
-                  Edit
+                  Modifier
                 </button>
                 <button
                   className="mini-button mini-button--ghost"
@@ -356,7 +356,7 @@ export default function MyTrajets({
                   )}
                 >
                   <Icon name="shield" size={15} />
-                  Close reservations
+                  Fermer
                 </button>
                 <button
                   className="mini-button mini-button--danger"
@@ -369,7 +369,7 @@ export default function MyTrajets({
                   )}
                 >
                   <Icon name="x" size={15} />
-                  Delete
+                  Supprimer
                 </button>
               </div>
 
@@ -378,7 +378,7 @@ export default function MyTrajets({
                 <ReservationGroup
                   count={pendingReservations.length}
                   label="Demandes"
-                  title="Pending passenger requests"
+                  title="Demandes en attente"
                   tone="pending"
                 >
                   {pendingReservations.length ? pendingReservations.map((reservation) => (
@@ -394,7 +394,7 @@ export default function MyTrajets({
                             "Demande confirmee.",
                           )}
                         >
-                          Accept
+                          Accepter
                         </button>
                       )}
                       key={reservation.id}
@@ -410,7 +410,7 @@ export default function MyTrajets({
                             "Demande refusee.",
                           )}
                         >
-                          Reject
+                          Refuser
                         </button>
                       )}
                       onContact={() => contactPassenger(reservation)}
@@ -426,7 +426,7 @@ export default function MyTrajets({
                 <ReservationGroup
                   count={confirmedReservations.length}
                   label="Confirmes"
-                  title="Confirmed passengers"
+                  title="Passagers confirmes"
                   tone="confirmed"
                 >
                   {confirmedReservations.length ? confirmedReservations.map((reservation) => (
@@ -446,7 +446,7 @@ export default function MyTrajets({
                   <ReservationGroup
                     count={historyReservations.length}
                     label="Archive"
-                    title="Canceled / refused / completed"
+                    title="Annules / refuses / termines"
                     tone="history"
                   >
                     {historyReservations.map((reservation) => (
@@ -522,7 +522,7 @@ export default function MyTrajets({
                       "Demande confirmee.",
                     )}
                   >
-                    Accept
+                    Accepter
                   </button>
                   <button
                     className="mini-button mini-button--danger"
@@ -534,7 +534,7 @@ export default function MyTrajets({
                       "Demande refusee.",
                     )}
                   >
-                    Reject
+                    Refuser
                   </button>
                 </>
               ) : null}

@@ -268,6 +268,34 @@ async function updateReservationStatus({
     .single();
 
   if (error) {
+    // If "refusee" or "terminee" is not in the enum, fallback to "annulee"
+    const isEnumError = `${error.message || ""}`.toLowerCase().includes("invalid input value")
+      || `${error.message || ""}`.toLowerCase().includes("enum");
+    if (isEnumError && statut === "refusee") {
+      const fallback = await client
+        .from("reservations")
+        .update({ statut: "annulee" })
+        .eq("id", reservationId)
+        .select("*")
+        .single();
+      if (fallback.error) {
+        throw formatSupabaseError(fallback.error, "Impossible de refuser la reservation.");
+      }
+      // Still restore the seat
+      const wasActive = !["refusee", "annulee"].includes(reservation.statut);
+      if (wasActive) {
+        await client
+          .from("trajets")
+          .update({
+            places_disponibles: Math.min(
+              Number(trajet.places_total),
+              Number(trajet.places_disponibles) + 1,
+            ),
+          })
+          .eq("id", trajet.id);
+      }
+      return fallback.data;
+    }
     throw formatSupabaseError(error, "Impossible de confirmer la reservation.");
   }
 

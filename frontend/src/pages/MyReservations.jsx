@@ -77,7 +77,7 @@ function ReservationCard({ busyId, navigate, onCancelReservation, onViewDriver, 
   const isCancellable = ["En attente", "Confirmee"].includes(reservation.status);
   const isRatable = ["Confirmee", "Terminee"].includes(reservation.status);
   const driverHref = reservation.driverPhone ? `tel:${reservation.driverPhone}` : undefined;
-  const cancelLabel = busyId === reservation.id ? "Annulation..." : "Cancel reservation";
+  const cancelLabel = busyId === reservation.id ? "Annulation..." : "Annuler";
 
   return (
     <article className="reservation-pro-card">
@@ -130,11 +130,11 @@ function ReservationCard({ busyId, navigate, onCancelReservation, onViewDriver, 
         </span>
         <span>
           <Icon name="seat" size={14} />
-          {reservation.seats} seats
+          {reservation.seats} places
         </span>
         <span>
           <Icon name="location" size={14} />
-          Meeting point
+          Point de RDV
         </span>
       </div>
 
@@ -148,7 +148,7 @@ function ReservationCard({ busyId, navigate, onCancelReservation, onViewDriver, 
       <div className="reservation-card-actions">
         <button className="mini-button mini-button--ghost" type="button" onClick={() => onViewDriver?.(reservation)}>
           <Icon name="user" size={15} />
-          Profil driver
+          Profil conducteur
         </button>
         {isRatable ? (
           <button className="mini-button mini-button--star" type="button" onClick={() => onRate?.(reservation)}>
@@ -164,7 +164,7 @@ function ReservationCard({ busyId, navigate, onCancelReservation, onViewDriver, 
           }}
         >
           <Icon name="phone" size={15} />
-          Contact driver
+          Contact conducteur
         </a>
         <button
           className="mini-button mini-button--danger"
@@ -314,7 +314,7 @@ export default function MyReservations({
         <div className="reservation-page-board">
           <ReservationStatusSection
             count={groupedReservations.pending.length}
-            title="Pending requests"
+            title="Demandes en attente"
             tone="pending"
           >
             {groupedReservations.pending.length ? groupedReservations.pending.map((reservation) => (
@@ -334,7 +334,7 @@ export default function MyReservations({
 
           <ReservationStatusSection
             count={groupedReservations.confirmed.length}
-            title="Confirmed trips"
+            title="Trajets confirmes"
             tone="confirmed"
           >
             {groupedReservations.confirmed.length ? groupedReservations.confirmed.map((reservation) => (
@@ -354,7 +354,7 @@ export default function MyReservations({
 
           <ReservationStatusSection
             count={groupedReservations.history.length}
-            title="Canceled / refused / completed"
+            title="Annules / refuses / termines"
             tone="history"
           >
             {groupedReservations.history.length ? groupedReservations.history.map((reservation) => (
