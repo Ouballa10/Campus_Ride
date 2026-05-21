@@ -2302,7 +2302,7 @@ a { color: var(--primary); text-decoration: none; }
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 10px;
 }
 
 .publish-stepper__control button {
@@ -2329,14 +2329,14 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .publish-stepper__input {
-  width: 60px;
+  width: 52px;
   text-align: center;
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 4px 6px;
+  padding: 4px 4px;
   background: var(--surface-elevated);
   -moz-appearance: textfield;
 }
@@ -2350,13 +2350,14 @@ a { color: var(--primary); text-decoration: none; }
 .publish-stepper__price-input {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 
 .publish-stepper__unit {
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--muted);
+  white-space: nowrap;
 }
 
 /* Publish sidebar (preview) */

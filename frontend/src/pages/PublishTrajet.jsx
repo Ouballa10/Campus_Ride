@@ -5,6 +5,7 @@ import InteractiveMap from "../components/InteractiveMap";
 import "../components/InteractiveMap.css";
 
 const numberFields = ["seats", "price", "durationMinutes"];
+const numberFieldsSet = new Set(numberFields);
 
 function getDateValue(daysFromNow = 1) {
   const targetDate = new Date(Date.now() + daysFromNow * 86400000);
@@ -44,7 +45,7 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
   const [showMap, setShowMap] = useState(false);
 
   const totalPotential = useMemo(
-    () => Number(form.price || 0) * Number(form.seats || 0),
+    () => (Number(form.price) || 0) * (Number(form.seats) || 0),
     [form.price, form.seats],
   );
 
@@ -58,9 +59,19 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
     const { name, value } = event.target;
     setForm((currentForm) => ({
       ...currentForm,
-      [name]: numberFields.includes(name) ? Number(value) : value,
+      [name]: numberFieldsSet.has(name) ? value : value,
     }));
     clearFeedback();
+  }
+
+  function handleNumberBlur(event) {
+    const { name, value } = event.target;
+    if (numberFieldsSet.has(name)) {
+      setForm((currentForm) => ({
+        ...currentForm,
+        [name]: Number(value) || 0,
+      }));
+    }
   }
 
   function adjustNumber(field, delta, min, max) {
@@ -302,6 +313,7 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
                     max="8"
                     value={form.seats}
                     onChange={updateField}
+                    onBlur={handleNumberBlur}
                     className="publish-stepper__input"
                   />
                   <button
@@ -332,6 +344,7 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
                       max="1000"
                       value={form.price}
                       onChange={updateField}
+                      onBlur={handleNumberBlur}
                       className="publish-stepper__input"
                     />
                     <span className="publish-stepper__unit">DH</span>
@@ -358,6 +371,7 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
                   type="number"
                   value={form.durationMinutes}
                   onChange={updateField}
+                  onBlur={handleNumberBlur}
                 />
               </div>
             </label>
