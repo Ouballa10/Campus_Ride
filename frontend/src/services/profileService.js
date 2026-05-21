@@ -17,37 +17,49 @@ async function compressImage(file, maxWidth = 1280, quality = 0.82) {
     return file;
   }
 
-  const imageBitmap = await createImageBitmap(file);
-  const scale = Math.min(1, maxWidth / imageBitmap.width);
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(imageBitmap.width * scale);
-  canvas.height = Math.round(imageBitmap.height * scale);
+  try {
+    const imageBitmap = await createImageBitmap(file);
+    const scale = Math.min(1, maxWidth / imageBitmap.width);
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(imageBitmap.width * scale);
+    canvas.height = Math.round(imageBitmap.height * scale);
 
-  const context = canvas.getContext("2d");
-  context.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
+    const context = canvas.getContext("2d");
+    context.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
 
-  const blob = await new Promise((resolve) => {
-    canvas.toBlob(resolve, "image/webp", quality);
-  });
+    const blob = await new Promise((resolve) => {
+      canvas.toBlob(resolve, "image/webp", quality);
+    });
 
-  imageBitmap.close?.();
+    imageBitmap.close?.();
 
-  if (!blob) {
+    if (!blob) {
+      return file;
+    }
+
+    return new File([blob], `${sanitizeFileName(file.name.replace(/\.[^.]+$/, "")) || "image"}.webp`, {
+      type: "image/webp",
+    });
+  } catch {
+    // If compression fails, use original file
     return file;
   }
-
-  return new File([blob], `${sanitizeFileName(file.name.replace(/\.[^.]+$/, "")) || "image"}.webp`, {
-    type: "image/webp",
-  });
 }
 
 async function updateProfile(userId, payload) {
   const client = requireSupabase();
-  const { data, error } = await client
+
+  const updatePromise = client
     .from("profiles")
     .upsert({ ...payload, id: userId }, { onConflict: "id" })
     .select("*")
     .single();
+
+  const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error("Sauvegarde trop longue. Verifie ta connexion et reessaie.")), 15000),
+  );
+
+  const { data, error } = await Promise.race([updatePromise, timeoutPromise]);
 
   if (error) {
     throw formatSupabaseError(error, "Impossible de mettre a jour le profil.");
@@ -91,13 +103,19 @@ async function uploadProfileAsset(file, userId, bucketName, fallbackName) {
   const safeName = sanitizeFileName(compressedFile.name.replace(/\.[^.]+$/, ""));
   const filePath = `${userId}/${safeName || fallbackName}-${Date.now()}.${fileExtension}`;
 
-  const { error } = await client.storage
+  const uploadPromise = client.storage
     .from(bucketName)
     .upload(filePath, compressedFile, {
       cacheControl: "3600",
       upsert: true,
       contentType: compressedFile.type,
     });
+
+  const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error("Upload trop long. Verifie ta connexion et reessaie.")), 30000),
+  );
+
+  const { error } = await Promise.race([uploadPromise, timeoutPromise]);
 
   if (error) {
     throw formatSupabaseError(

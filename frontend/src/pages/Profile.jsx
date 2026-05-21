@@ -362,13 +362,15 @@ export default function Profile({
       }
 
       setUploadStep("Upload des photos vehicule...");
-      const uploadedVehiclePhotos = selectedVehiclePhotos.length
-        ? await Promise.all(
-            selectedVehiclePhotos.map((item) =>
-              profileService.uploadVehiclePhoto(item.file, session.user.id),
-            ),
-          )
-        : [];
+      const uploadedVehiclePhotos = [];
+      for (let i = 0; i < selectedVehiclePhotos.length; i++) {
+        setUploadStep(`Upload photo vehicule ${i + 1}/${selectedVehiclePhotos.length}...`);
+        const url = await profileService.uploadVehiclePhoto(
+          selectedVehiclePhotos[i].file,
+          session.user.id,
+        );
+        uploadedVehiclePhotos.push(url);
+      }
       const nextVehiclePhotos = [
         ...form.vehiclePhotos,
         ...uploadedVehiclePhotos,
