@@ -2,6 +2,12 @@ import React, { useState } from "react";
 import AppHeader from "../components/AppHeader";
 import { Icon, Stars } from "../components/Icons";
 
+function shortAddress(addr = "") {
+  const parts = addr.split(",");
+  const short = parts[0]?.trim() || addr;
+  return short.length > 30 ? short.slice(0, 30) + "..." : short;
+}
+
 const initialFilters = {
   depart: "",
   destination: "",
@@ -52,8 +58,8 @@ function TripResult({ trip, onSelect, onViewDriver }) {
           <span className="find-card__dot find-card__dot--end" />
         </div>
         <div className="find-card__route-names">
-          <span>{trip.depart}</span>
-          <span>{trip.destination}</span>
+          <span>{shortAddress(trip.depart)}</span>
+          <span>{shortAddress(trip.destination)}</span>
         </div>
       </div>
 

@@ -2,6 +2,13 @@ import React, { useState } from "react";
 import AppHeader from "../components/AppHeader";
 import { Icon, Stars } from "../components/Icons";
 
+function shortAddress(addr = "") {
+  // Take only the first part before the first comma (or first 30 chars)
+  const parts = addr.split(",");
+  const short = parts[0]?.trim() || addr;
+  return short.length > 35 ? short.slice(0, 35) + "..." : short;
+}
+
 export default function Reservation({
   navigate,
   onReserve,
@@ -53,7 +60,7 @@ export default function Reservation({
     <div className="screen screen--simple">
       <AppHeader
         title="Reserver"
-        subtitle={`${selectedTrip.depart} → ${selectedTrip.destination}`}
+        subtitle={`${shortAddress(selectedTrip.depart)} → ${shortAddress(selectedTrip.destination)}`}
         leftIcon="arrow-left"
         onLeftClick={() => navigate("search")}
       />
@@ -69,11 +76,11 @@ export default function Reservation({
           </div>
           <div className="res-route__names">
             <div>
-              <strong>{selectedTrip.depart}</strong>
+              <strong>{shortAddress(selectedTrip.depart)}</strong>
               <small>Depart</small>
             </div>
             <div>
-              <strong>{selectedTrip.destination}</strong>
+              <strong>{shortAddress(selectedTrip.destination)}</strong>
               <small>Arrivee</small>
             </div>
           </div>
@@ -161,7 +168,7 @@ export default function Reservation({
             <button className="res-alt" key={trip.id} type="button" onClick={() => onTripSelect(trip.id)}>
               <div className="res-alt__info">
                 <strong>{trip.driver}</strong>
-                <span>{trip.depart} → {trip.destination}</span>
+                <span>{shortAddress(trip.depart)} → {shortAddress(trip.destination)}</span>
               </div>
               <div className="res-alt__meta">
                 <span>{trip.price} DH</span>

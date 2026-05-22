@@ -8919,6 +8919,7 @@ a:focus-visible {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 /* Driver section */
@@ -9093,6 +9094,8 @@ a:focus-visible {
   justify-content: space-between;
   flex: 1;
   gap: 12px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .res-route__names strong {
@@ -9100,6 +9103,10 @@ a:focus-visible {
   font-size: 0.92rem;
   font-weight: 800;
   color: #1e1b4b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .res-route__names small {
@@ -9310,6 +9317,11 @@ a:focus-visible {
 .res-alt__info span {
   font-size: 0.7rem;
   color: #6b7280;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
 }
 
 .res-alt__meta {
