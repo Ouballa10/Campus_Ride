@@ -49,13 +49,13 @@ export function AuthProvider({ children }) {
       }
     });
 
-    // Fallback: if onAuthStateChange doesn't fire within 3s (e.g. no session),
+    // Fallback: if onAuthStateChange doesn't fire within 6s (e.g. no session),
     // stop loading to unblock the UI.
     const timeout = setTimeout(() => {
       if (isActive && loading) {
         setLoading(false);
       }
-    }, 3000);
+    }, 6000);
 
     return () => {
       isActive = false;

@@ -99,6 +99,7 @@ export default function Profile({
   const vehiclePreviewUrlsRef = useRef([]);
   const {
     isConfigured,
+    loading: authLoading,
     profile,
     refreshProfile,
     session,
@@ -429,6 +430,18 @@ export default function Profile({
       setIsSaving(false);
       setUploadStep("");
     }
+  }
+
+  // Show loading if profile hasn't loaded yet
+  if (authLoading || (isConfigured && session?.user?.id && !profile)) {
+    return (
+      <div className="screen screen--simple" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
+        <div style={{ textAlign: "center", color: "#6b7280" }}>
+          <div style={{ fontSize: "1.5rem", marginBottom: "8px" }}>⏳</div>
+          <span style={{ fontSize: "0.85rem" }}>Chargement du profil...</span>
+        </div>
+      </div>
+    );
   }
 
   return (
