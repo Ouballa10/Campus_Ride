@@ -8605,6 +8605,7 @@ a:focus-visible {
   font-weight: 700;
   flex-shrink: 0;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .chat-row__avatar img {

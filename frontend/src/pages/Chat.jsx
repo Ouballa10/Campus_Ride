@@ -184,7 +184,7 @@ export default function Chat({ chatContext, navigate, onViewProfile }) {
             return (
               <div className={`chat-row ${isMine ? "chat-row--mine" : "chat-row--other"}`} key={msg.id}>
                 {!isMine && showOtherAvatar ? (
-                  <div className="chat-row__avatar">
+                  <div className="chat-row__avatar" onClick={() => onViewProfile?.(chatContext)} role="button" tabIndex={0}>
                     {otherPhoto ? (
                       <img alt={otherName} src={otherPhoto} />
                     ) : (

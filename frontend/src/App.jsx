@@ -890,7 +890,8 @@ function App() {
 
   const isAuthRoute = authRoutes.includes(route);
   const isSplashRoute = route === "splash";
-  const showNav = !isAuthRoute;
+  const hideNavRoutes = ["chat", "trip-detail", "notification-detail", "driver-profile"];
+  const showNav = !isAuthRoute && !hideNavRoutes.includes(route);
   let screen = null;
 
   // Show simple loading while auth is being checked (not the full splash)
