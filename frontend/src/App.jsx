@@ -600,8 +600,6 @@ function App() {
         tripRoute: notification.tripRoute || notification.route || "",
         backRoute: "notifications",
       });
-      // Clear this message from recent
-      setRecentMessages((prev) => prev.filter((m) => `msg-${m.id}` !== notification.id));
       navigate("chat");
       return;
     }
