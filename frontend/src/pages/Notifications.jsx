@@ -10,6 +10,19 @@ function getNotificationTone(status = "") {
   return "neutral";
 }
 
+function timeAgo(dateStr) {
+  const now = Date.now();
+  const then = new Date(dateStr).getTime();
+  const diff = Math.max(0, now - then);
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "a l'instant";
+  if (mins < 60) return `il y a ${mins} min`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `il y a ${hours}h`;
+  const days = Math.floor(hours / 24);
+  return `il y a ${days}j`;
+}
+
 export default function Notifications({
   mode = "passenger",
   navigate,
@@ -27,13 +40,14 @@ export default function Notifications({
       route: msg.tripRoute || "Conversation",
       driver: msg.senderName || "Contact",
       passenger: msg.senderName || "Contact",
-      time: new Date(msg.created_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+      time: timeAgo(msg.created_at),
       status: "message",
       tone: "chat",
       reservationId: msg.reservation_id,
       otherName: msg.senderName || "Contact",
       tripRoute: msg.tripRoute || "",
       backRoute: mode === "driver" ? "my-trips" : "my-reservations",
+      createdAt: msg.created_at,
     }));
 
     const passengerItems = reservations.map((reservation) => ({
