@@ -333,7 +333,7 @@ function App() {
 
       if (hintedMode) {
         setActiveMode(hintedMode);
-        persistMode(hintedMode);
+        // Don't persist — only explicit user mode switches persist
       }
     }
 
@@ -353,7 +353,7 @@ function App() {
 
     if (hintedMode) {
       setActiveMode(hintedMode);
-      persistMode(hintedMode);
+      // Don't persist route-hinted mode — only explicit user switches persist
     }
 
     if (typeof window !== "undefined") {
