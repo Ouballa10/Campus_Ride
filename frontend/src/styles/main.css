@@ -4456,6 +4456,11 @@ a { color: var(--primary); text-decoration: none; }
   background: #fef2f2;
 }
 
+.notif-item--chat {
+  border-color: #c4b5fd;
+  background: #f5f3ff;
+}
+
 .notif-item__content {
   flex: 1;
   min-width: 0;

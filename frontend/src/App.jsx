@@ -316,6 +316,7 @@ function App() {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [selectedTripDetail, setSelectedTripDetail] = useState(null);
   const [chatContext, setChatContext] = useState(null);
+  const [recentMessages, setRecentMessages] = useState([]);
   const [selectedDriverData, setSelectedDriverData] = useState(null);
   const [theme, setTheme] = useState(readInitialTheme);
 
@@ -488,6 +489,19 @@ function App() {
         { event: "UPDATE", schema: "public", table: "profiles" },
         refreshAppData,
       )
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages" },
+        (payload) => {
+          const msg = payload.new;
+          if (msg && msg.sender_id !== sessionUserId) {
+            setRecentMessages((prev) => {
+              if (prev.some((m) => m.id === msg.id)) return prev;
+              return [msg, ...prev].slice(0, 20);
+            });
+          }
+        },
+      )
       .subscribe();
 
     return () => {
@@ -500,12 +514,12 @@ function App() {
     (trip) => !isTripOwnedByCurrentUser(trip, currentUser, sessionUserId),
   );
 
-  const notificationCount = activeMode === "driver"
+  const notificationCount = recentMessages.length + (activeMode === "driver"
     ? appData.publishedTrips.reduce(
         (sum, trip) => sum + (trip.passengerReservations || []).filter((r) => r.status === "En attente").length,
         0,
       )
-    : appData.reservations.filter((r) => r.status === "Confirmee" || r.status === "En attente").length;
+    : appData.reservations.filter((r) => r.status === "Confirmee" || r.status === "En attente").length);
 
   const reservedTripIds = appData.reservations
     .filter((reservation) => reservation.status !== "Annulee")
@@ -521,13 +535,23 @@ function App() {
   }
 
   function openNotificationDetail(notification) {
+    // Message notification → open chat
+    if (notification.type === "message" || notification.id?.startsWith("msg-")) {
+      setChatContext({
+        reservationId: notification.reservationId,
+        otherName: notification.otherName || notification.driver || notification.passenger || "Contact",
+        tripRoute: notification.tripRoute || notification.route || "",
+        backRoute: "notifications",
+      });
+      // Clear this message from recent
+      setRecentMessages((prev) => prev.filter((m) => `msg-${m.id}` !== notification.id));
+      navigate("chat");
+      return;
+    }
+
+    // Driver notification → open trip detail
     if (notification.id?.startsWith("driver-")) {
-      // Extract trip ID from "driver-{tripId}-{reservationId}"
-      const parts = notification.id.split("-");
-      // parts = ["driver", ...tripIdParts, reservationIdLastPart]
-      // Trip IDs are UUIDs so we need to reconstruct: everything between first "driver-" and last UUID
       const fullId = notification.id.replace("driver-", "");
-      // fullId = "{tripUUID}-{reservationUUID}" — both are UUIDs (36 chars each with dashes)
       const tripId = fullId.slice(0, 36);
       const trip = appData.publishedTrips.find((t) => t.id === tripId);
       if (trip) {
@@ -536,9 +560,11 @@ function App() {
         return;
       }
       navigate("my-trips");
-    } else {
-      navigate("my-reservations");
+      return;
     }
+
+    // Passenger notification → open reservations
+    navigate("my-reservations");
   }
 
   function openDriverProfile(tripData) {
@@ -895,6 +921,7 @@ function App() {
         navigate={navigate}
         onSelectNotification={openNotificationDetail}
         publishedTrips={appData.publishedTrips}
+        recentMessages={recentMessages}
         reservations={appData.reservations}
       />
     );

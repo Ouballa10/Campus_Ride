@@ -5,6 +5,7 @@ import { Icon } from "../components/Icons";
 function getNotificationTone(status = "") {
   if (status === "Confirmee" || status === "Actif") return "success";
   if (status === "En attente") return "pending";
+  if (status === "message") return "chat";
   if (["Annulee", "Refusee"].includes(status)) return "danger";
   return "neutral";
 }
@@ -15,10 +16,28 @@ export default function Notifications({
   onSelectNotification,
   publishedTrips = [],
   reservations = [],
+  recentMessages = [],
 }) {
   const items = useMemo(() => {
+    // Message notifications
+    const messageItems = recentMessages.map((msg) => ({
+      id: `msg-${msg.id}`,
+      type: "message",
+      title: "💬 Nouveau message",
+      route: msg.tripRoute || "",
+      driver: msg.senderName || "Contact",
+      passenger: msg.senderName || "Contact",
+      time: new Date(msg.created_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+      status: "message",
+      tone: "chat",
+      reservationId: msg.reservation_id,
+      otherName: msg.senderName || "Contact",
+      backRoute: mode === "driver" ? "my-trips" : "my-reservations",
+    }));
+
     const passengerItems = reservations.map((reservation) => ({
       id: `reservation-${reservation.id}`,
+      type: "reservation",
       title: reservation.status === "Confirmee"
         ? "✅ Reservation acceptee"
         : reservation.status === "En attente"
@@ -29,11 +48,15 @@ export default function Notifications({
       time: `${reservation.date} · ${reservation.time}`,
       status: reservation.status,
       tone: getNotificationTone(reservation.status),
+      reservationId: reservation.id,
+      otherName: reservation.driver,
+      tripRoute: `${reservation.depart} → ${reservation.destination}`,
     }));
 
     const driverItems = publishedTrips.flatMap((trip) =>
       (trip.passengerReservations || []).map((reservation) => ({
         id: `driver-${trip.id}-${reservation.id}`,
+        type: "driver-reservation",
         title: reservation.status === "En attente"
           ? "🔔 Nouvelle demande"
           : reservation.status === "Confirmee"
@@ -44,19 +67,32 @@ export default function Notifications({
         time: trip.date ? `${trip.date} · ${trip.time}` : "",
         status: reservation.status,
         tone: getNotificationTone(reservation.status),
+        reservationId: reservation.id,
+        otherName: reservation.passenger,
+        tripRoute: trip.route || `${trip.depart} → ${trip.destination}`,
       })),
     );
 
-    return (mode === "driver" ? driverItems : passengerItems).slice(0, 40);
-  }, [mode, publishedTrips, reservations]);
+    const reservationItems = mode === "driver" ? driverItems : passengerItems;
 
+    // Messages first, then reservations
+    return [...messageItems, ...reservationItems].slice(0, 50);
+  }, [mode, publishedTrips, reservations, recentMessages]);
+
+  const messageCount = recentMessages.length;
   const pendingCount = items.filter((item) => item.status === "En attente").length;
 
   return (
     <div className="screen screen--simple">
       <AppHeader
         title="Notifications"
-        subtitle={pendingCount > 0 ? `${pendingCount} en attente` : "Tout est a jour"}
+        subtitle={
+          messageCount > 0
+            ? `${messageCount} message${messageCount > 1 ? "s" : ""} · ${pendingCount} en attente`
+            : pendingCount > 0
+              ? `${pendingCount} en attente`
+              : "Tout est a jour"
+        }
         leftIcon="arrow-left"
         onLeftClick={() => navigate("home")}
       />
