@@ -385,15 +385,15 @@ function App() {
       return;
     }
 
-    if (!sessionUserId && !authRoutes.includes(route)) {
-      navigate("splash");
+    if (sessionUserId && authRoutes.includes(route)) {
+      navigate("home");
       return;
     }
 
-    if (sessionUserId && authRoutes.includes(route)) {
-      navigate("home");
+    if (!sessionUserId && !authRoutes.includes(route)) {
+      navigate("splash");
     }
-  }, [authLoading, isConfigured, sessionUserId]);
+  }, [authLoading, isConfigured, route, sessionUserId]);
 
   useEffect(() => {
     if (authLoading) {
@@ -893,7 +893,17 @@ function App() {
   const showNav = !isAuthRoute;
   let screen = null;
 
-  if (route === "splash") {
+  // Show simple loading while auth is being checked (not the full splash)
+  if (authLoading && isConfigured && route !== "splash") {
+    screen = (
+      <div className="screen screen--simple" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
+        <div style={{ textAlign: "center", color: "#6b7280" }}>
+          <div style={{ fontSize: "1.5rem", marginBottom: "8px" }}>⏳</div>
+          <span style={{ fontSize: "0.85rem" }}>Chargement...</span>
+        </div>
+      </div>
+    );
+  } else if (route === "splash") {
     screen = <Splash navigate={navigate} />;
   } else if (route === "login") {
     screen = <Login navigate={navigate} />;
