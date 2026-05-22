@@ -495,17 +495,79 @@ function App() {
         (payload) => {
           const msg = payload.new;
           if (msg && msg.sender_id !== sessionUserId) {
+            // Enrich with sender name from known data
+            const enrichedMsg = { ...msg };
+            // Try to find sender name from reservations/trips
+            const allPassengers = appData.publishedTrips.flatMap(
+              (t) => (t.passengerReservations || []),
+            );
+            const matchedPassenger = allPassengers.find(
+              (r) => r.id === msg.reservation_id || r.passagerId === msg.sender_id,
+            );
+            const matchedReservation = appData.reservations.find(
+              (r) => r.id === msg.reservation_id,
+            );
+            enrichedMsg.senderName = matchedPassenger?.passenger
+              || matchedReservation?.driver
+              || "Nouveau message";
+            enrichedMsg.tripRoute = matchedReservation
+              ? `${matchedReservation.depart} → ${matchedReservation.destination}`
+              : "";
+
             setRecentMessages((prev) => {
-              if (prev.some((m) => m.id === msg.id)) return prev;
-              return [msg, ...prev].slice(0, 20);
+              if (prev.some((m) => m.id === enrichedMsg.id)) return prev;
+              return [enrichedMsg, ...prev].slice(0, 20);
             });
           }
         },
       )
       .subscribe();
 
+    // Polling fallback: check for new messages every 15s in case realtime doesn't work
+    const pollInterval = setInterval(async () => {
+      try {
+        const since = new Date(Date.now() - 60000).toISOString(); // last 60s
+        const { data } = await supabase
+          .from("messages")
+          .select("*")
+          .neq("sender_id", sessionUserId)
+          .gte("created_at", since)
+          .order("created_at", { ascending: false })
+          .limit(10);
+
+        if (data && data.length > 0) {
+          setRecentMessages((prev) => {
+            const existingIds = new Set(prev.map((m) => m.id));
+            const newMsgs = data.filter((m) => !existingIds.has(m.id)).map((msg) => {
+              const allPassengers = appData.publishedTrips.flatMap(
+                (t) => (t.passengerReservations || []),
+              );
+              const matchedPassenger = allPassengers.find(
+                (r) => r.id === msg.reservation_id || r.passagerId === msg.sender_id,
+              );
+              const matchedReservation = appData.reservations.find(
+                (r) => r.id === msg.reservation_id,
+              );
+              return {
+                ...msg,
+                senderName: matchedPassenger?.passenger || matchedReservation?.driver || "Message",
+                tripRoute: matchedReservation
+                  ? `${matchedReservation.depart} → ${matchedReservation.destination}`
+                  : "",
+              };
+            });
+            if (!newMsgs.length) return prev;
+            return [...newMsgs, ...prev].slice(0, 20);
+          });
+        }
+      } catch {
+        // Silently ignore polling errors
+      }
+    }, 15000);
+
     return () => {
       supabase.removeChannel(channel);
+      clearInterval(pollInterval);
     };
   }, [canUseSupabaseData, sessionUserId]);
 

@@ -45,6 +45,8 @@ with check (
 );
 
 -- Enable realtime for messages
+-- IMPORTANT: You must also enable Realtime for the 'messages' table
+-- in Supabase Dashboard > Database > Replication > Enable for 'messages'
 alter table public.messages replica identity full;
 
 do $$
@@ -57,5 +59,8 @@ begin
   end;
 end
 $$;
+
+-- Grant realtime access
+grant select on public.messages to authenticated;
 
 notify pgrst, 'reload schema';
