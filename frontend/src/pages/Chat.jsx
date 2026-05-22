@@ -12,6 +12,7 @@ export default function Chat({ chatContext, navigate, onViewProfile }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [otherPhoto, setOtherPhoto] = useState(chatContext?.otherAvatar || "");
+  const [otherUserId, setOtherUserId] = useState(chatContext?.conducteurId || "");
   const listRef = useRef(null);
   const userId = session?.user?.id || "";
 
@@ -37,6 +38,7 @@ export default function Chat({ chatContext, navigate, onViewProfile }) {
           ? reservation.trajets?.conducteur_id
           : reservation.passager_id;
         if (!otherId) return;
+        if (active) setOtherUserId(otherId);
         const { data: prof } = await client
           .from("profiles")
           .select("photo_profil")
@@ -147,7 +149,7 @@ export default function Chat({ chatContext, navigate, onViewProfile }) {
         <button className="chat-header__back" type="button" onClick={() => navigate(chatContext?.backRoute || "my-reservations")}>
           <Icon name="arrow-left" size={18} />
         </button>
-        <div className="chat-header__profile" onClick={() => onViewProfile?.(chatContext)} role="button" tabIndex={0}>
+        <div className="chat-header__profile" onClick={() => onViewProfile?.({ ...chatContext, conducteurId: otherUserId, otherAvatar: otherPhoto })} role="button" tabIndex={0}>
           <div className="chat-header__avatar">
             {otherPhoto ? (
               <img alt={otherName} src={otherPhoto} />
@@ -184,7 +186,7 @@ export default function Chat({ chatContext, navigate, onViewProfile }) {
             return (
               <div className={`chat-row ${isMine ? "chat-row--mine" : "chat-row--other"}`} key={msg.id}>
                 {!isMine && showOtherAvatar ? (
-                  <div className="chat-row__avatar" onClick={() => onViewProfile?.(chatContext)} role="button" tabIndex={0}>
+                  <div className="chat-row__avatar" onClick={() => onViewProfile?.({ ...chatContext, conducteurId: otherUserId, otherAvatar: otherPhoto })} role="button" tabIndex={0}>
                     {otherPhoto ? (
                       <img alt={otherName} src={otherPhoto} />
                     ) : (
