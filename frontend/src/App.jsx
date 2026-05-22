@@ -16,6 +16,7 @@ import Notifications from "./pages/Notifications";
 import NotificationDetail from "./pages/NotificationDetail";
 import DriverProfile from "./pages/DriverProfile";
 import TripDetailPage from "./pages/TripDetailPage";
+import Chat from "./pages/Chat";
 import Profile from "./pages/Profile";
 import PublishTrajet from "./pages/PublishTrajet";
 import Register from "./pages/Register";
@@ -48,6 +49,7 @@ const appRoutes = [
   { route: "notification-detail", label: "Detail notification" },
   { route: "driver-profile", label: "Profil conducteur" },
   { route: "trip-detail", label: "Detail trajet" },
+  { route: "chat", label: "Chat" },
 ];
 
 const allRoutes = [...authRoutes, ...appRoutes.map((screen) => screen.route)];
@@ -313,6 +315,7 @@ function App() {
   const [selectedTripId, setSelectedTripId] = useState("");
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [selectedTripDetail, setSelectedTripDetail] = useState(null);
+  const [chatContext, setChatContext] = useState(null);
   const [selectedDriverData, setSelectedDriverData] = useState(null);
   const [theme, setTheme] = useState(readInitialTheme);
 
@@ -541,6 +544,11 @@ function App() {
   function openDriverProfile(tripData) {
     setSelectedDriverData(tripData);
     navigate("driver-profile");
+  }
+
+  function openChat(context) {
+    setChatContext(context);
+    navigate("chat");
   }
 
   async function handlePublish(payload) {
@@ -874,6 +882,7 @@ function App() {
         onCloseTrip={handleCloseTripReservations}
         onConfirmReservation={handleConfirmPassengerReservation}
         onDeleteTrip={handleDeleteTrip}
+        onOpenChat={openChat}
         onRejectReservation={handleRejectPassengerReservation}
         publishedTrips={appData.publishedTrips}
         user={currentUser}
@@ -917,11 +926,19 @@ function App() {
         publishedTrips={appData.publishedTrips}
       />
     );
+  } else if (route === "chat") {
+    screen = (
+      <Chat
+        chatContext={chatContext}
+        navigate={navigate}
+      />
+    );
   } else {
     screen = (
       <MyReservations
         navigate={navigate}
         onCancelReservation={handleCancelReservation}
+        onOpenChat={openChat}
         onViewDriver={openDriverProfile}
         reservations={appData.reservations}
         sessionUserId={sessionUserId}

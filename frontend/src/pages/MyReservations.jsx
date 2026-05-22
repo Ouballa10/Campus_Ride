@@ -8,6 +8,7 @@ import { evaluationService } from "../services/evaluationService";
 export default function MyReservations({
   navigate,
   onCancelReservation,
+  onOpenChat,
   onViewDriver,
   reservations,
   sessionUserId,
@@ -113,6 +114,18 @@ export default function MyReservations({
 
         {/* Actions */}
         <div className="r-card__actions">
+          <button
+            className="t-btn t-btn--chat"
+            type="button"
+            onClick={() => onOpenChat?.({
+              reservationId: r.id,
+              otherName: r.driver,
+              tripRoute: `${r.depart} → ${r.destination}`,
+              backRoute: "my-reservations",
+            })}
+          >
+            💬 Chat
+          </button>
           {r.driverPhone ? (
             <a className="t-btn t-btn--ghost" href={`tel:${r.driverPhone}`}>📞 Appeler</a>
           ) : null}

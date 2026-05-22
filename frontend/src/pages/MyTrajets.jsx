@@ -8,6 +8,7 @@ export default function MyTrajets({
   onCloseTrip,
   onConfirmReservation,
   onDeleteTrip,
+  onOpenChat,
   onRejectReservation,
   publishedTrips,
   user,
@@ -129,9 +130,23 @@ export default function MyTrajets({
                     {confirmed.map((r) => (
                       <div className="t-passenger t-passenger--confirmed" key={r.id}>
                         <strong>{r.passenger}</strong>
-                        {r.phone ? (
-                          <a className="t-btn t-btn--ghost" href={`tel:${r.phone}`}>📞</a>
-                        ) : null}
+                        <div className="t-passenger__btns">
+                          <button
+                            className="t-btn t-btn--chat"
+                            type="button"
+                            onClick={() => onOpenChat?.({
+                              reservationId: r.id,
+                              otherName: r.passenger,
+                              tripRoute: `${trip.depart || trip.route} → ${trip.destination || ""}`,
+                              backRoute: "my-trips",
+                            })}
+                          >
+                            💬
+                          </button>
+                          {r.phone ? (
+                            <a className="t-btn t-btn--ghost" href={`tel:${r.phone}`}>📞</a>
+                          ) : null}
+                        </div>
                       </div>
                     ))}
                   </div>

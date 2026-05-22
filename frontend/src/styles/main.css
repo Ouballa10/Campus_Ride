@@ -8492,3 +8492,134 @@ a:focus-visible {
 .phone-shell--auth .phone-shell__body {
   background: transparent !important;
 }
+
+
+/* =========================
+   CHAT PAGE
+   ========================= */
+.screen--chat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chat-loading,
+.chat-error {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.chat-error {
+  color: #dc2626;
+}
+
+.chat-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #9ca3af;
+}
+.chat-empty p {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+}
+
+/* Bubbles */
+.chat-bubble {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  word-wrap: break-word;
+}
+.chat-bubble p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+.chat-bubble small {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.65rem;
+  opacity: 0.6;
+}
+
+.chat-bubble--mine {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+.chat-bubble--mine small {
+  text-align: right;
+  color: rgba(255,255,255,0.7);
+}
+
+.chat-bubble--other {
+  align-self: flex-start;
+  background: #f3f4f6;
+  color: #1f2937;
+  border-bottom-left-radius: 4px;
+}
+
+/* Input */
+.chat-input {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  background: white;
+  border-top: 2px solid #f3f4f6;
+  flex-shrink: 0;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 24px;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.chat-input input:focus {
+  border-color: #6366f1;
+}
+
+.chat-send {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s;
+  flex-shrink: 0;
+}
+.chat-send:active {
+  transform: scale(0.9);
+}
+.chat-send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Chat button style */
+.t-btn--chat {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
