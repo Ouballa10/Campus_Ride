@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import AppHeader from "../components/AppHeader";
 import { Icon } from "../components/Icons";
 import { useAuth } from "../context/AuthContext";
 import { messageService } from "../services/messageService";
+import { requireSupabase } from "../services/supabaseClient";
 
 export default function Chat({ chatContext, navigate, onViewProfile }) {
   const { session, profile } = useAuth();
@@ -11,42 +11,89 @@ export default function Chat({ chatContext, navigate, onViewProfile }) {
   const [sending, setSending] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [otherPhoto, setOtherPhoto] = useState(chatContext?.otherAvatar || "");
   const listRef = useRef(null);
   const userId = session?.user?.id || "";
 
   const reservationId = chatContext?.reservationId || "";
   const otherName = chatContext?.otherName || "Contact";
-  const otherAvatar = chatContext?.otherAvatar || "";
   const tripRoute = chatContext?.tripRoute || "";
-  const myAvatar = profile?.photo_profil || "";
 
-  // Load messages
+  // Fetch other person's photo if not provided
   useEffect(() => {
-    if (!reservationId) return;
+    if (otherPhoto || !reservationId) return;
+    let active = true;
+    async function fetchOtherPhoto() {
+      try {
+        const client = requireSupabase();
+        // Get the reservation to find the other person's ID
+        const { data: reservation } = await client
+          .from("reservations")
+          .select("passager_id, trajets(conducteur_id)")
+          .eq("id", reservationId)
+          .maybeSingle();
+        if (!reservation || !active) return;
+        const otherId = reservation.passager_id === userId
+          ? reservation.trajets?.conducteur_id
+          : reservation.passager_id;
+        if (!otherId) return;
+        const { data: prof } = await client
+          .from("profiles")
+          .select("photo_profil")
+          .eq("id", otherId)
+          .maybeSingle();
+        if (prof?.photo_profil && active) {
+          setOtherPhoto(prof.photo_profil);
+        }
+      } catch { /* ignore */ }
+    }
+    fetchOtherPhoto();
+    return () => { active = false; };
+  }, [reservationId, userId, otherPhoto]);
+
+  // Load messages + mark as read
+  useEffect(() => {
+    if (!reservationId || !userId) return;
     let active = true;
     async function load() {
       try {
         const data = await messageService.getMessages(reservationId);
         if (active) { setMessages(data); setLoading(false); }
+        // Mark other person's messages as read
+        await messageService.markAsRead(reservationId, userId);
       } catch (e) {
         if (active) { setError(e.message); setLoading(false); }
       }
     }
     load();
     return () => { active = false; };
-  }, [reservationId]);
+  }, [reservationId, userId]);
 
-  // Subscribe to realtime
+  // Subscribe to realtime + mark new messages as read
   useEffect(() => {
-    if (!reservationId) return;
-    const unsubscribe = messageService.subscribeToMessages(reservationId, (newMsg) => {
-      setMessages((prev) => {
-        if (prev.some((m) => m.id === newMsg.id)) return prev;
-        return [...prev, newMsg];
-      });
-    });
+    if (!reservationId || !userId) return;
+    const unsubscribe = messageService.subscribeToMessages(
+      reservationId,
+      // New message
+      (newMsg) => {
+        setMessages((prev) => {
+          if (prev.some((m) => m.id === newMsg.id)) return prev;
+          return [...prev, newMsg];
+        });
+        // If message is from the other person, mark as read immediately
+        if (newMsg.sender_id !== userId) {
+          messageService.markAsRead(reservationId, userId);
+        }
+      },
+      // Message updated (read receipt)
+      (updatedMsg) => {
+        setMessages((prev) =>
+          prev.map((m) => m.id === updatedMsg.id ? { ...m, read_at: updatedMsg.read_at } : m),
+        );
+      },
+    );
     return unsubscribe;
-  }, [reservationId]);
+  }, [reservationId, userId]);
 
   // Auto-scroll
   useEffect(() => {
@@ -89,8 +136,9 @@ export default function Chat({ chatContext, navigate, onViewProfile }) {
     );
   }
 
-  // Group consecutive messages by sender for cleaner display
-  const lastOtherMsgIndex = messages.reduce((last, msg, i) => msg.sender_id !== userId ? i : last, -1);
+  // Find last message sent by me that has been read
+  const myMessages = messages.filter((m) => m.sender_id === userId);
+  const lastReadMsgId = myMessages.reduce((lastId, msg) => msg.read_at ? msg.id : lastId, null);
 
   return (
     <div className="screen screen--chat">
@@ -101,8 +149,8 @@ export default function Chat({ chatContext, navigate, onViewProfile }) {
         </button>
         <div className="chat-header__profile" onClick={() => onViewProfile?.(chatContext)} role="button" tabIndex={0}>
           <div className="chat-header__avatar">
-            {otherAvatar ? (
-              <img alt={otherName} src={otherAvatar} />
+            {otherPhoto ? (
+              <img alt={otherName} src={otherPhoto} />
             ) : (
               otherName.charAt(0).toUpperCase()
             )}
@@ -137,8 +185,8 @@ export default function Chat({ chatContext, navigate, onViewProfile }) {
               <div className={`chat-row ${isMine ? "chat-row--mine" : "chat-row--other"}`} key={msg.id}>
                 {!isMine && showOtherAvatar ? (
                   <div className="chat-row__avatar">
-                    {otherAvatar ? (
-                      <img alt={otherName} src={otherAvatar} />
+                    {otherPhoto ? (
+                      <img alt={otherName} src={otherPhoto} />
                     ) : (
                       otherName.charAt(0)
                     )}
@@ -150,8 +198,10 @@ export default function Chat({ chatContext, navigate, onViewProfile }) {
                   <p>{msg.content}</p>
                   <small>
                     {new Date(msg.created_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
-                    {isLastMine && lastOtherMsgIndex > index ? (
+                    {isMine && msg.read_at ? (
                       <span className="chat-bubble__seen"> · Vu ✓</span>
+                    ) : isMine ? (
+                      <span> · Envoye</span>
                     ) : null}
                   </small>
                 </div>

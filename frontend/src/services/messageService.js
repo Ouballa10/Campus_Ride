@@ -34,7 +34,18 @@ async function sendMessage({ reservationId, senderId, content }) {
   return data;
 }
 
-function subscribeToMessages(reservationId, onNewMessage) {
+async function markAsRead(reservationId, currentUserId) {
+  const client = requireSupabase();
+  // Mark all messages from the OTHER person as read
+  await client
+    .from("messages")
+    .update({ read_at: new Date().toISOString() })
+    .eq("reservation_id", reservationId)
+    .neq("sender_id", currentUserId)
+    .is("read_at", null);
+}
+
+function subscribeToMessages(reservationId, onNewMessage, onMessageUpdated) {
   const client = requireSupabase();
   const channel = client
     .channel(`chat-${reservationId}`)
@@ -50,6 +61,18 @@ function subscribeToMessages(reservationId, onNewMessage) {
         onNewMessage(payload.new);
       },
     )
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "messages",
+        filter: `reservation_id=eq.${reservationId}`,
+      },
+      (payload) => {
+        if (onMessageUpdated) onMessageUpdated(payload.new);
+      },
+    )
     .subscribe();
 
   return () => {
@@ -59,6 +82,7 @@ function subscribeToMessages(reservationId, onNewMessage) {
 
 export const messageService = {
   getMessages,
+  markAsRead,
   sendMessage,
   subscribeToMessages,
 };

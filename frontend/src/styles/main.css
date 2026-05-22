@@ -8546,11 +8546,14 @@ a:focus-visible {
 .chat-messages {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 12px 14px;
   display: flex;
   flex-direction: column;
   gap: 3px;
   -webkit-overflow-scrolling: touch;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .chat-loading,
@@ -8581,7 +8584,8 @@ a:focus-visible {
   display: flex;
   align-items: flex-end;
   gap: 6px;
-  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .chat-row--mine {
@@ -8616,11 +8620,12 @@ a:focus-visible {
 
 /* Bubbles */
 .chat-bubble {
-  max-width: 75%;
+  max-width: 70%;
   padding: 10px 14px;
   border-radius: 18px;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .chat-bubble p {
@@ -8665,7 +8670,7 @@ a:focus-visible {
   font-weight: 700;
 }
 
-/* Input */
+/* Input - font-size 16px to prevent iOS zoom */
 .chat-input {
   display: flex;
   gap: 10px;
@@ -8681,10 +8686,12 @@ a:focus-visible {
   padding: 10px 14px;
   border: 2px solid #e5e7eb;
   border-radius: 24px;
-  font-size: 0.85rem;
+  font-size: 16px;
   outline: none;
   transition: border-color 0.15s;
+  -webkit-appearance: none;
 }
+
 .chat-input input:focus {
   border-color: #6366f1;
 }
@@ -8703,12 +8710,28 @@ a:focus-visible {
   transition: transform 0.1s;
   flex-shrink: 0;
 }
+
 .chat-send:active {
   transform: scale(0.9);
 }
+
 .chat-send:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 24px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.15s;
+  -webkit-appearance: none;
+}
+.chat-input input:focus {
+  border-color: #6366f1;
 }
 
 /* Chat button style */
