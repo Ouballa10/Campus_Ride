@@ -389,7 +389,7 @@ function App() {
     if (sessionUserId && authRoutes.includes(route)) {
       navigate("home");
     }
-  }, [authLoading, isConfigured, route, sessionUserId]);
+  }, [authLoading, isConfigured, sessionUserId]);
 
   useEffect(() => {
     if (authLoading) {

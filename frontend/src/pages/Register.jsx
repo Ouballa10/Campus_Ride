@@ -64,7 +64,7 @@ export default function Register({ navigate }) {
       });
 
       if (response.session) {
-        navigate("home");
+        // Navigation is handled automatically by the auth useEffect in App.jsx
         return;
       }
 
