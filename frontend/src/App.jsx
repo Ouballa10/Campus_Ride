@@ -584,7 +584,9 @@ function App() {
     .filter(Boolean);
 
   const selectedTrip =
-    discoverableTrips.find((trip) => trip.id === selectedTripId) || null;
+    discoverableTrips.find((trip) => trip.id === selectedTripId)
+    || appData.tripOptions.find((trip) => trip.id === selectedTripId)
+    || null;
 
   function openTripReservation(tripId) {
     setSelectedTripId(tripId);
@@ -610,7 +612,7 @@ function App() {
       const tripId = fullId.slice(0, 36);
       const trip = appData.publishedTrips.find((t) => t.id === tripId);
       if (trip) {
-        setSelectedTripDetail(trip);
+        setSelectedTripDetail({ ...trip, _backRoute: "notifications" });
         navigate("trip-detail");
         return;
       }
@@ -618,7 +620,20 @@ function App() {
       return;
     }
 
-    // Passenger notification → open reservations
+    // Passenger notification → open the specific trip reservation
+    if (notification.reservationId) {
+      const reservation = appData.reservations.find((r) => r.id === notification.reservationId);
+      if (reservation?.trajetId) {
+        const trip = appData.tripOptions.find((t) => t.id === reservation.trajetId)
+          || discoverableTrips.find((t) => t.id === reservation.trajetId);
+        if (trip) {
+          setSelectedTripId(trip.id);
+          navigate("reservation");
+          return;
+        }
+      }
+    }
+
     navigate("my-reservations");
   }
 

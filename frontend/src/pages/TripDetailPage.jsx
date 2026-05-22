@@ -59,7 +59,7 @@ export default function TripDetailPage({
         title={freshTrip.depart || "Trajet"}
         subtitle={`→ ${freshTrip.destination || ""}`}
         leftIcon="arrow-left"
-        onLeftClick={() => navigate("my-trips")}
+        onLeftClick={() => navigate(freshTrip._backRoute || "my-trips")}
       />
 
       {/* Trip info card */}

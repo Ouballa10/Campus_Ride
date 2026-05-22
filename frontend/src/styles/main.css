@@ -9424,3 +9424,209 @@ a:focus-visible {
   font-size: 2.5rem;
   margin-bottom: 8px;
 }
+
+
+/* =========================
+   MY RESERVATIONS (Passenger tracking)
+   ========================= */
+.my-res-list {
+  display: grid;
+  gap: 14px;
+}
+
+.my-res-card {
+  background: white;
+  border-radius: 16px;
+  border: 2px solid #e5e7eb;
+  border-left: 5px solid #a7f3d0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.my-res-card__status {
+  padding: 8px 16px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.my-res-card__route {
+  padding: 14px 16px 8px;
+  display: grid;
+  gap: 8px;
+}
+
+.my-res-card__from,
+.my-res-card__to {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.my-res-card__from strong,
+.my-res-card__to strong {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #1e1b4b;
+}
+
+.my-res-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.my-res-dot--start {
+  background: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.my-res-dot--end {
+  background: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.my-res-card__info {
+  display: flex;
+  gap: 10px;
+  padding: 6px 16px 12px;
+  flex-wrap: wrap;
+}
+
+.my-res-card__info span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #4b5563;
+  padding: 3px 8px;
+  background: #f9fafb;
+  border-radius: 6px;
+}
+
+.my-res-card__driver {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: #f9fafb;
+  border-top: 1px solid #f3f4f6;
+  cursor: pointer;
+}
+
+.my-res-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a5b4fc, #c4b5fd);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.my-res-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.my-res-card__driver strong {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.my-res-card__driver small {
+  font-size: 0.68rem;
+  color: #6b7280;
+}
+
+.my-res-card__actions {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid #f3f4f6;
+  flex-wrap: wrap;
+}
+
+.my-res-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s;
+  text-decoration: none;
+}
+
+.my-res-btn:active { transform: scale(0.93); }
+.my-res-btn:disabled { opacity: 0.4; }
+
+.my-res-btn--chat {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.25);
+}
+
+.my-res-btn--call {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.my-res-btn--rate {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.my-res-btn--cancel {
+  background: white;
+  color: #dc2626;
+  border: 2px solid #fecaca;
+}
+
+/* History section */
+.my-res-history {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px solid #f3f4f6;
+}
+
+.my-res-history h4 {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #6b7280;
+  margin: 0 0 10px;
+}
+
+.my-res-history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: #f9fafb;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  border: 1px solid #f3f4f6;
+}
+
+.my-res-history-item strong {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.my-res-history-item small {
+  font-size: 0.68rem;
+  color: #9ca3af;
+}
