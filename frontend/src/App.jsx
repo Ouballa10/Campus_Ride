@@ -492,44 +492,49 @@ function App() {
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "messages" },
-        (payload) => {
+        async (payload) => {
           const msg = payload.new;
-          if (msg && msg.sender_id !== sessionUserId) {
-            // Enrich with sender name from known data
-            const enrichedMsg = { ...msg };
-            // Try to find sender name from reservations/trips
-            const allPassengers = appData.publishedTrips.flatMap(
-              (t) => (t.passengerReservations || []),
-            );
-            const matchedPassenger = allPassengers.find(
-              (r) => r.id === msg.reservation_id || r.passagerId === msg.sender_id,
-            );
-            const matchedReservation = appData.reservations.find(
-              (r) => r.id === msg.reservation_id,
-            );
-            enrichedMsg.senderName = matchedPassenger?.passenger
-              || matchedReservation?.driver
-              || "Nouveau message";
-            enrichedMsg.tripRoute = matchedReservation
-              ? `${matchedReservation.depart} → ${matchedReservation.destination}`
-              : "";
+          if (!msg || msg.sender_id === sessionUserId) return;
+
+          try {
+            // Fetch sender profile + reservation + trajet info
+            const [profileRes, reservationRes] = await Promise.all([
+              supabase.from("profiles").select("full_name").eq("id", msg.sender_id).maybeSingle(),
+              supabase.from("reservations").select("*, trajets(depart, destination)").eq("id", msg.reservation_id).maybeSingle(),
+            ]);
+
+            const senderName = profileRes.data?.full_name || "Contact";
+            const trajet = reservationRes.data?.trajets;
+            const tripRoute = trajet ? `${trajet.depart} → ${trajet.destination}` : "";
+
+            const enrichedMsg = {
+              ...msg,
+              senderName,
+              tripRoute,
+            };
 
             setRecentMessages((prev) => {
               if (prev.some((m) => m.id === enrichedMsg.id)) return prev;
               return [enrichedMsg, ...prev].slice(0, 20);
+            });
+          } catch {
+            // Fallback: add without enrichment
+            setRecentMessages((prev) => {
+              if (prev.some((m) => m.id === msg.id)) return prev;
+              return [{ ...msg, senderName: "Nouveau message", tripRoute: "" }, ...prev].slice(0, 20);
             });
           }
         },
       )
       .subscribe();
 
-    // Polling fallback: check for new messages every 15s in case realtime doesn't work
+    // Polling fallback: check for new messages every 10s
     const pollInterval = setInterval(async () => {
       try {
-        const since = new Date(Date.now() - 60000).toISOString(); // last 60s
+        const since = new Date(Date.now() - 30000).toISOString(); // last 30s
         const { data } = await supabase
           .from("messages")
-          .select("*")
+          .select("*, profiles!messages_sender_id_fkey(full_name), reservations!messages_reservation_id_fkey(trajet_id, trajets(depart, destination))")
           .neq("sender_id", sessionUserId)
           .gte("created_at", since)
           .order("created_at", { ascending: false })
@@ -538,24 +543,14 @@ function App() {
         if (data && data.length > 0) {
           setRecentMessages((prev) => {
             const existingIds = new Set(prev.map((m) => m.id));
-            const newMsgs = data.filter((m) => !existingIds.has(m.id)).map((msg) => {
-              const allPassengers = appData.publishedTrips.flatMap(
-                (t) => (t.passengerReservations || []),
-              );
-              const matchedPassenger = allPassengers.find(
-                (r) => r.id === msg.reservation_id || r.passagerId === msg.sender_id,
-              );
-              const matchedReservation = appData.reservations.find(
-                (r) => r.id === msg.reservation_id,
-              );
-              return {
-                ...msg,
-                senderName: matchedPassenger?.passenger || matchedReservation?.driver || "Message",
-                tripRoute: matchedReservation
-                  ? `${matchedReservation.depart} → ${matchedReservation.destination}`
-                  : "",
-              };
-            });
+            const newMsgs = data
+              .filter((m) => !existingIds.has(m.id))
+              .map((msg) => {
+                const senderName = msg.profiles?.full_name || "Contact";
+                const trajet = msg.reservations?.trajets;
+                const tripRoute = trajet ? `${trajet.depart} → ${trajet.destination}` : "";
+                return { ...msg, senderName, tripRoute, profiles: undefined, reservations: undefined };
+              });
             if (!newMsgs.length) return prev;
             return [...newMsgs, ...prev].slice(0, 20);
           });
@@ -563,7 +558,7 @@ function App() {
       } catch {
         // Silently ignore polling errors
       }
-    }, 15000);
+    }, 10000);
 
     return () => {
       supabase.removeChannel(channel);

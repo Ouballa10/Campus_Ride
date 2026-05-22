@@ -23,8 +23,8 @@ export default function Notifications({
     const messageItems = recentMessages.map((msg) => ({
       id: `msg-${msg.id}`,
       type: "message",
-      title: "💬 Nouveau message",
-      route: msg.tripRoute || "",
+      title: `💬 Message de ${msg.senderName || "Contact"}`,
+      route: msg.tripRoute || "Conversation",
       driver: msg.senderName || "Contact",
       passenger: msg.senderName || "Contact",
       time: new Date(msg.created_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
@@ -32,6 +32,7 @@ export default function Notifications({
       tone: "chat",
       reservationId: msg.reservation_id,
       otherName: msg.senderName || "Contact",
+      tripRoute: msg.tripRoute || "",
       backRoute: mode === "driver" ? "my-trips" : "my-reservations",
     }));
 
