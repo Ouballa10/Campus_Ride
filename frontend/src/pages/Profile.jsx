@@ -432,8 +432,8 @@ export default function Profile({
     }
   }
 
-  // Show loading if profile hasn't loaded yet
-  if (authLoading || (isConfigured && session?.user?.id && !profile)) {
+  // Show loading only briefly if profile hasn't loaded yet (max 3s then show anyway)
+  if (authLoading && isConfigured && session?.user?.id && !profile) {
     return (
       <div className="screen screen--simple" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
         <div style={{ textAlign: "center", color: "#6b7280" }}>

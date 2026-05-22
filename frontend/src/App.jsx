@@ -894,17 +894,8 @@ function App() {
   const showNav = !isAuthRoute && !hideNavRoutes.includes(route);
   let screen = null;
 
-  // Show simple loading while auth is being checked (not the full splash)
-  if (authLoading && isConfigured && route !== "splash") {
-    screen = (
-      <div className="screen screen--simple" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
-        <div style={{ textAlign: "center", color: "#6b7280" }}>
-          <div style={{ fontSize: "1.5rem", marginBottom: "8px" }}>⏳</div>
-          <span style={{ fontSize: "0.85rem" }}>Chargement...</span>
-        </div>
-      </div>
-    );
-  } else if (route === "splash") {
+  // Don't block the UI - let pages handle their own loading states
+  if (route === "splash") {
     screen = <Splash navigate={navigate} />;
   } else if (route === "login") {
     screen = <Login navigate={navigate} />;
