@@ -9306,10 +9306,10 @@ a:focus-visible {
 .chat-header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   padding: 12px 16px;
   background: white;
-  border-bottom: 2px solid #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
   flex-shrink: 0;
 }
 
@@ -9324,6 +9324,22 @@ a:focus-visible {
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+}
+
+.chat-header__profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 10px;
+  transition: background 0.15s;
+}
+
+.chat-header__profile:active {
+  background: #f3f4f6;
 }
 
 .chat-header__avatar {

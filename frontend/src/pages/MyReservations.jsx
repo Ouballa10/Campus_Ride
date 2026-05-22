@@ -120,6 +120,8 @@ export default function MyReservations({
             onClick={() => onOpenChat?.({
               reservationId: r.id,
               otherName: r.driver,
+              otherAvatar: r.driverAvatar || "",
+              conducteurId: r.conducteurId || "",
               tripRoute: `${r.depart} → ${r.destination}`,
               backRoute: "my-reservations",
             })}

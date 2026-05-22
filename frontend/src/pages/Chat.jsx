@@ -4,7 +4,7 @@ import { Icon } from "../components/Icons";
 import { useAuth } from "../context/AuthContext";
 import { messageService } from "../services/messageService";
 
-export default function Chat({ chatContext, navigate }) {
+export default function Chat({ chatContext, navigate, onViewProfile }) {
   const { session, profile } = useAuth();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -94,21 +94,23 @@ export default function Chat({ chatContext, navigate }) {
 
   return (
     <div className="screen screen--chat">
-      {/* Header with avatar */}
+      {/* Header with avatar - clickable to view profile */}
       <div className="chat-header">
         <button className="chat-header__back" type="button" onClick={() => navigate(chatContext?.backRoute || "my-reservations")}>
           <Icon name="arrow-left" size={18} />
         </button>
-        <div className="chat-header__avatar">
-          {otherAvatar ? (
-            <img alt={otherName} src={otherAvatar} />
-          ) : (
-            otherName.charAt(0).toUpperCase()
-          )}
-        </div>
-        <div className="chat-header__info">
-          <strong>{otherName}</strong>
-          <small>{tripRoute}</small>
+        <div className="chat-header__profile" onClick={() => onViewProfile?.(chatContext)} role="button" tabIndex={0}>
+          <div className="chat-header__avatar">
+            {otherAvatar ? (
+              <img alt={otherName} src={otherAvatar} />
+            ) : (
+              otherName.charAt(0).toUpperCase()
+            )}
+          </div>
+          <div className="chat-header__info">
+            <strong>{otherName}</strong>
+            <small>{tripRoute}</small>
+          </div>
         </div>
       </div>
 

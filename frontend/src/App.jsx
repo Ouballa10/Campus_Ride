@@ -1023,6 +1023,12 @@ function App() {
       <Chat
         chatContext={chatContext}
         navigate={navigate}
+        onViewProfile={(ctx) => {
+          if (ctx?.conducteurId) {
+            setSelectedDriverData({ conducteurId: ctx.conducteurId, driver: ctx.otherName, driverAvatar: ctx.otherAvatar || "" });
+            navigate("driver-profile");
+          }
+        }}
       />
     );
   } else {

@@ -137,6 +137,8 @@ export default function MyTrajets({
                             onClick={() => onOpenChat?.({
                               reservationId: r.id,
                               otherName: r.passenger,
+                              otherAvatar: r.passengerAvatar || "",
+                              conducteurId: r.passagerId || "",
                               tripRoute: `${trip.depart || trip.route} → ${trip.destination || ""}`,
                               backRoute: "my-trips",
                             })}
