@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import AppHeader from "../components/AppHeader";
 import { Icon } from "../components/Icons";
 
@@ -11,6 +11,7 @@ function getNotificationTone(status = "") {
 }
 
 function timeAgo(dateStr) {
+  if (!dateStr) return "";
   const now = Date.now();
   const then = new Date(dateStr).getTime();
   const diff = Math.max(0, now - then);
@@ -23,6 +24,23 @@ function timeAgo(dateStr) {
   return `il y a ${days}j`;
 }
 
+// Persist read notification IDs in localStorage
+function getReadIds() {
+  try {
+    return new Set(JSON.parse(localStorage.getItem("campusride-read-notifs") || "[]"));
+  } catch {
+    return new Set();
+  }
+}
+
+function saveReadIds(ids) {
+  try {
+    // Keep only last 200 to avoid localStorage bloat
+    const arr = [...ids].slice(-200);
+    localStorage.setItem("campusride-read-notifs", JSON.stringify(arr));
+  } catch { /* ignore */ }
+}
+
 export default function Notifications({
   mode = "passenger",
   navigate,
@@ -31,8 +49,14 @@ export default function Notifications({
   reservations = [],
   recentMessages = [],
 }) {
+  const [readIds, setReadIds] = useState(getReadIds);
+
+  // Sync from localStorage on mount
+  useEffect(() => {
+    setReadIds(getReadIds());
+  }, []);
+
   const items = useMemo(() => {
-    // Message notifications
     const messageItems = recentMessages.map((msg) => ({
       id: `msg-${msg.id}`,
       type: "message",
@@ -89,25 +113,26 @@ export default function Notifications({
     );
 
     const reservationItems = mode === "driver" ? driverItems : passengerItems;
-
-    // Messages first, then reservations
     return [...messageItems, ...reservationItems].slice(0, 50);
   }, [mode, publishedTrips, reservations, recentMessages]);
 
-  const messageCount = recentMessages.length;
-  const pendingCount = items.filter((item) => item.status === "En attente").length;
+  const unreadCount = items.filter((item) => !readIds.has(item.id)).length;
+
+  function handleClick(item) {
+    // Mark as read
+    const newReadIds = new Set(readIds);
+    newReadIds.add(item.id);
+    setReadIds(newReadIds);
+    saveReadIds(newReadIds);
+    // Navigate
+    onSelectNotification(item);
+  }
 
   return (
     <div className="screen screen--simple">
       <AppHeader
         title="Notifications"
-        subtitle={
-          messageCount > 0
-            ? `${messageCount} message${messageCount > 1 ? "s" : ""} · ${pendingCount} en attente`
-            : pendingCount > 0
-              ? `${pendingCount} en attente`
-              : "Tout est a jour"
-        }
+        subtitle={unreadCount > 0 ? `${unreadCount} nouvelle${unreadCount > 1 ? "s" : ""}` : "Tout est lu"}
         leftIcon="arrow-left"
         onLeftClick={() => navigate("home")}
       />
@@ -119,23 +144,27 @@ export default function Notifications({
         </div>
       ) : (
         <div className="notif-list">
-          {items.map((item) => (
-            <button
-              className={`notif-item notif-item--${item.tone}`}
-              key={item.id}
-              type="button"
-              onClick={() => onSelectNotification(item)}
-            >
-              <div className="notif-item__content">
-                <strong>{item.title}</strong>
-                <span className="notif-item__route">{item.route}</span>
-                <span className="notif-item__meta">
-                  {item.driver || item.passenger} · {item.time}
-                </span>
-              </div>
-              <Icon name="chevron-right" size={16} />
-            </button>
-          ))}
+          {items.map((item) => {
+            const isRead = readIds.has(item.id);
+            return (
+              <button
+                className={`notif-item notif-item--${item.tone} ${isRead ? "notif-item--read" : "notif-item--unread"}`}
+                key={item.id}
+                type="button"
+                onClick={() => handleClick(item)}
+              >
+                {!isRead ? <span className="notif-item__dot" /> : null}
+                <div className="notif-item__content">
+                  <strong>{item.title}</strong>
+                  <span className="notif-item__route">{item.route}</span>
+                  <span className="notif-item__meta">
+                    {item.driver || item.passenger} · {item.time}
+                  </span>
+                </div>
+                <Icon name="chevron-right" size={16} />
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
