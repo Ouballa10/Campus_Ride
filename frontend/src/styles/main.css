@@ -9630,3 +9630,167 @@ a:focus-visible {
   font-size: 0.68rem;
   color: #9ca3af;
 }
+
+
+/* =========================
+   DRIVER PROFILE PAGE
+   ========================= */
+.dp-card {
+  background: white;
+  border-radius: 16px;
+  border: 2px solid #e5e7eb;
+  padding: 24px 16px;
+  text-align: center;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.dp-card__avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  background: linear-gradient(135deg, #a5b4fc, #c4b5fd);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  overflow: hidden;
+  border: 3px solid #e0e7ff;
+}
+
+.dp-card__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dp-card__name {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0 0 2px;
+  color: #1e1b4b;
+}
+
+.dp-card__role {
+  font-size: 0.75rem;
+  color: #6b7280;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.dp-card__rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dp-card__rating span {
+  font-size: 0.72rem;
+  color: #6b7280;
+}
+
+.dp-card__campus {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: #4b5563;
+}
+
+.dp-section {
+  background: white;
+  border-radius: 14px;
+  border: 2px solid #e5e7eb;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+
+.dp-section h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: #1f2937;
+}
+
+.dp-section p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.dp-vehicle-info {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.dp-vehicle-info span {
+  font-size: 0.8rem;
+  color: #4b5563;
+}
+
+.dp-vehicle-photos {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0;
+}
+
+.dp-vehicle-photos img {
+  width: 100px;
+  height: 70px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid #e5e7eb;
+}
+
+.dp-call-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1.5px solid #a7f3d0;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* Reviews */
+.dp-reviews {
+  display: grid;
+  gap: 8px;
+}
+
+.dp-review {
+  padding: 10px 12px;
+  background: #f9fafb;
+  border-radius: 10px;
+  border: 1px solid #f3f4f6;
+}
+
+.dp-review__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.dp-review__top small {
+  font-size: 0.65rem;
+  color: #9ca3af;
+}
+
+.dp-review p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #4b5563;
+  line-height: 1.4;
+}

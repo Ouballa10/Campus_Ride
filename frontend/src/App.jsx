@@ -568,7 +568,8 @@ function App() {
 
   const currentUser = applyModeToUser(appData.currentUser, activeMode);
   const discoverableTrips = appData.tripOptions.filter(
-    (trip) => !isTripOwnedByCurrentUser(trip, currentUser, sessionUserId),
+    (trip) => !isTripOwnedByCurrentUser(trip, currentUser, sessionUserId)
+      && trip.seats > 0,
   );
 
   const notificationCount = recentMessages.length + (activeMode === "driver"
