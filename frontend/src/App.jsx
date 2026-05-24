@@ -725,8 +725,18 @@ function App() {
 
     // Check profile completeness for passenger
     const currentUser = appData.currentUser;
-    if (!currentUser?.name || currentUser.name === "CampusRide" || !currentUser?.phone) {
-      throw new Error("Complete ton profil (nom et telephone) avant de reserver. Va dans Profil pour mettre a jour tes infos.");
+    const passengerMissing = [];
+    if (!currentUser?.name || currentUser.name === "CampusRide") passengerMissing.push("nom complet");
+    if (!currentUser?.phone) {
+      passengerMissing.push("telephone");
+    } else {
+      // Validate phone format: must start with +212 or 0 and have 10+ digits
+      const phoneClean = currentUser.phone.replace(/[\s\-\.]/g, "");
+      const validPhone = /^(\+212|0)[5-7]\d{8}$/.test(phoneClean);
+      if (!validPhone) passengerMissing.push("telephone valide (ex: +212 6XX XXX XXX)");
+    }
+    if (passengerMissing.length > 0) {
+      throw new Error(`Complete ton profil avant de reserver : ${passengerMissing.join(", ")}. Va dans Profil.`);
     }
 
     if (reservedTripIds.includes(selectedTripOption.id)) {

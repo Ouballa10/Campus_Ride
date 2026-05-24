@@ -44,11 +44,14 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showMap, setShowMap] = useState(false);
 
-  // Check if profile is complete enough to publish
+  // Check if profile is complete enough to publish (driver requirements)
   const missingFields = [];
   if (!user?.name || user.name === "CampusRide") missingFields.push("Nom complet");
   if (!user?.phone) missingFields.push("Telephone");
   if (!user?.vehicle?.make && !user?.vehicle?.model) missingFields.push("Vehicule (marque/modele)");
+  if (!user?.vehicle?.plate) missingFields.push("Plaque d'immatriculation");
+  if (!user?.vehicle?.license) missingFields.push("Numero de permis");
+  if (!user?.vehicle?.photos || user.vehicle.photos.length === 0) missingFields.push("Photo du vehicule (min 1)");
   const profileIncomplete = missingFields.length > 0;
 
   const totalPotential = useMemo(
