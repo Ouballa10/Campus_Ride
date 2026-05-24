@@ -18,6 +18,11 @@ export const supabase = isSupabaseConfigured
         storageKey: "campusride-auth",
         flowType: "pkce",
       },
+      global: {
+        headers: {
+          "X-Client-Info": "campusride-web",
+        },
+      },
     })
   : null;
 

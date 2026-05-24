@@ -69,9 +69,18 @@ export function AuthProvider({ children }) {
       return null;
     }
 
-    const nextProfile = await authService.ensureCurrentProfile(session.user);
-    setProfile(nextProfile);
-    return nextProfile;
+    try {
+      const nextProfile = await authService.ensureCurrentProfile(session.user);
+      setProfile(nextProfile);
+      return nextProfile;
+    } catch (error) {
+      // Suppress lock race condition errors - profile will sync via onAuthStateChange
+      if (error?.message?.includes("lock") || error?.message?.includes("Lock")) {
+        console.warn("Auth lock race (harmless):", error.message);
+        return profile; // Return current profile, don't clear it
+      }
+      throw error;
+    }
   }
 
   async function signIn(credentials) {

@@ -447,9 +447,9 @@ function App() {
 
     async function loadSupabaseData() {
       try {
-        // Timeout after 3s to avoid infinite loading
+        // Timeout after 8s to avoid infinite loading
         const timeout = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Chargement trop long (>3s). Verifie ta connexion.")), 3000)
+          setTimeout(() => reject(new Error("Chargement trop long. Verifie ta connexion.")), 8000)
         );
 
         const dataFetch = Promise.all([

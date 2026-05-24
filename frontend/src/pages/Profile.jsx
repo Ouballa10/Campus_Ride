@@ -400,7 +400,12 @@ export default function Profile({
       });
 
       setUploadStep("Synchronisation du profil...");
-      await refreshProfile();
+      try {
+        await refreshProfile();
+      } catch (syncError) {
+        // Profile saved successfully but sync failed (lock race) - not critical
+        console.warn("Profile sync after save:", syncError.message);
+      }
 
       selectedVehiclePhotos.forEach((item) => {
         URL.revokeObjectURL(item.preview);
