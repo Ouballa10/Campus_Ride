@@ -312,7 +312,7 @@ function hasPersistedSession() {
 
 function App() {
   const { isConfigured, loading: authLoading, profile, session } = useAuth();
-  const hasStoredSession = hasPersistedSession();
+  const hasStoredSession = Boolean(session) || hasPersistedSession();
   const [loadingTimedOut, setLoadingTimedOut] = useState(false);
 
   // Force exit loading screen after 3s max to avoid infinite logo

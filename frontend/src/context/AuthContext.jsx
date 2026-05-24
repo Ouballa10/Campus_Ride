@@ -135,7 +135,11 @@ export function AuthProvider({ children }) {
     // Clear local state immediately so UI responds right away
     setSession(null);
     setProfile(null);
-    try { localStorage.removeItem("campusride-profile-cache"); } catch {}
+    // Force clear all auth-related localStorage
+    try {
+      localStorage.removeItem("campusride-profile-cache");
+      localStorage.removeItem("campusride-auth");
+    } catch {}
 
     if (isSupabaseConfigured) {
       try {
