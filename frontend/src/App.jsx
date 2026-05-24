@@ -293,14 +293,33 @@ function isTripOwnedByCurrentUser(trip, user, sessionUserId) {
   );
 }
 
+// Check if there's a persisted session in localStorage (instant, no async)
+function hasPersistedSession() {
+  if (typeof window === "undefined") return false;
+  try {
+    const stored = window.localStorage.getItem("campusride-auth");
+    if (!stored) return false;
+    const parsed = JSON.parse(stored);
+    return Boolean(parsed?.access_token || parsed?.user);
+  } catch {
+    return false;
+  }
+}
+
 function App() {
   const { isConfigured, loading: authLoading, profile, session } = useAuth();
+  const hasStoredSession = hasPersistedSession();
   const [route, setRoute] = useState(() => {
     if (typeof window === "undefined") {
       return "splash";
     }
 
-    return getRouteFromHash(window.location.hash);
+    // If user has a stored session, don't start on splash
+    const hashRoute = getRouteFromHash(window.location.hash);
+    if (hasPersistedSession() && authRoutes.includes(hashRoute)) {
+      return "home";
+    }
+    return hashRoute;
   });
   const [activeMode, setActiveMode] = useState(() => {
     if (typeof window === "undefined") {
@@ -910,13 +929,28 @@ function App() {
   const showNav = !isAuthRoute && !hideNavRoutes.includes(route);
   let screen = null;
 
-  if (route === "splash") {
+  if (route === "splash" && !sessionUserId && !hasStoredSession) {
     screen = <Splash navigate={navigate} />;
-  } else if (authLoading && isConfigured && !isAuthRoute) {
-    // While auth session is being restored, show splash instead of empty data
+  } else if (route === "splash" && (sessionUserId || hasStoredSession)) {
+    // Logged in but somehow on splash — show Home directly
+    screen = (
+      <Home
+        mode={activeMode}
+        navigate={navigate}
+        onModeChange={handleModeChange}
+        onThemeChange={handleThemeChange}
+        onTripSelect={openTripReservation}
+        onViewDriver={openDriverProfile}
+        publishedTrips={appData.publishedTrips}
+        reservations={appData.reservations}
+        theme={theme}
+        tripOptions={discoverableTrips}
+        user={currentUser}
+      />
+    );
+  } else if (authLoading && isConfigured && !isAuthRoute && !hasStoredSession) {
     screen = <Splash navigate={navigate} />;
-  } else if (!sessionUserId && isConfigured && !isAuthRoute) {
-    // Not logged in and trying to access app pages — force login
+  } else if (!sessionUserId && !authLoading && isConfigured && !isAuthRoute) {
     screen = <Login navigate={navigate} />;
   } else if (route === "login") {
     screen = <Login navigate={navigate} />;

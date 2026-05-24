@@ -43,7 +43,7 @@ export default function Login({ navigate }) {
         email: form.email.trim(),
         password: form.password,
       });
-      // Navigation is handled automatically by the auth useEffect in App.jsx
+      navigate("home");
     } catch (submissionError) {
       setError(submissionError.message);
     } finally {

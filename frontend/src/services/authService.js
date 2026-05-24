@@ -120,7 +120,7 @@ async function signIn({ email, password }) {
 async function signInWithGoogle() {
   const client = requireSupabase();
   const redirectTo = typeof window !== "undefined"
-    ? `${window.location.origin}${window.location.pathname}`
+    ? `${window.location.origin}${window.location.pathname}#/home`
     : undefined;
 
   const { data, error } = await client.auth.signInWithOAuth({
