@@ -96,24 +96,25 @@ export default function MyTrajets({
                     </div>
                     {pending.map((r) => (
                       <div className="t-passenger" key={r.id}>
-                        <div className="t-passenger__name">
-                          <strong
-                            onClick={() => onViewPassenger?.({ passengerId: r.passagerId, passenger: r.passenger, passengerAvatar: r.passengerAvatar || "", phone: r.phone, _backRoute: "my-trips" })}
-                            style={{ cursor: "pointer", textDecoration: "underline", color: "#2563eb" }}
-                          >
-                            {r.passenger}
-                          </strong>
-                          {r.message ? <small>"{r.message}"</small> : null}
+                        <div className="t-passenger__name" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                          <div className="t-passenger__avatar" style={{ width: "36px", height: "36px", borderRadius: "50%", overflow: "hidden", background: "var(--primary-subtle)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                            {r.passengerAvatar ? (
+                              <img src={r.passengerAvatar} alt={r.passenger} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                            ) : (
+                              <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--primary)" }}>{(r.passenger || "?")[0]}</span>
+                            )}
+                          </div>
+                          <div>
+                            <strong
+                              onClick={() => onViewPassenger?.({ passengerId: r.passagerId, passenger: r.passenger, passengerAvatar: r.passengerAvatar || "", phone: r.phone, _backRoute: "my-trips" })}
+                              style={{ cursor: "pointer", textDecoration: "underline", color: "#2563eb" }}
+                            >
+                              {r.passenger}
+                            </strong>
+                            {r.message ? <small style={{ display: "block" }}>"{r.message}"</small> : null}
+                          </div>
                         </div>
                         <div className="t-passenger__btns">
-                          <button
-                            className="t-btn t-btn--blue"
-                            type="button"
-                            onClick={() => onViewPassenger?.({ passengerId: r.passagerId, passenger: r.passenger, passengerAvatar: r.passengerAvatar || "", phone: r.phone, _backRoute: "my-trips" })}
-                            title="Voir profil"
-                          >
-                            👤
-                          </button>
                           <button
                             className="t-btn t-btn--green"
                             disabled={busyAction === `a-${r.id}`}
@@ -147,7 +148,20 @@ export default function MyTrajets({
                     </div>
                     {confirmed.map((r) => (
                       <div className="t-passenger t-passenger--confirmed" key={r.id}>
-                        <strong>{r.passenger}</strong>
+                        <div
+                          className="t-passenger__identity"
+                          onClick={() => onViewPassenger?.({ passengerId: r.passagerId, passenger: r.passenger, passengerAvatar: r.passengerAvatar || "", phone: r.phone, _backRoute: "my-trips" })}
+                          style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}
+                        >
+                          <div className="t-passenger__avatar" style={{ width: "36px", height: "36px", borderRadius: "50%", overflow: "hidden", background: "var(--primary-subtle)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                            {r.passengerAvatar ? (
+                              <img src={r.passengerAvatar} alt={r.passenger} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                            ) : (
+                              <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--primary)" }}>{(r.passenger || "?")[0]}</span>
+                            )}
+                          </div>
+                          <strong style={{ color: "#2563eb", textDecoration: "underline" }}>{r.passenger}</strong>
+                        </div>
                         <div className="t-passenger__btns">
                           <button
                             className="t-btn t-btn--chat"
