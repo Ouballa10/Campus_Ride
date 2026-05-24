@@ -73,7 +73,6 @@ export default function TripDetailPage({
           <strong>{freshTrip.destination}</strong>
         </div>
         <div className="td-info__grid">
-          <div><span>📅</span><strong>{freshTrip.date}</strong></div>
           <div><span>🕐</span><strong>{freshTrip.time}</strong></div>
           <div><span>💺</span><strong>{freshTrip.seats}</strong></div>
           <div><span>💰</span><strong>{freshTrip.earningsEstimate || 0} DH</strong></div>

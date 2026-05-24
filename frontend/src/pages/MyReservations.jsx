@@ -117,7 +117,6 @@ export default function MyReservations({
 
                 {/* Info */}
                 <div className="my-res-card__info">
-                  <span>📅 {r.date}</span>
                   <span>🕐 {r.time}</span>
                   <span>💰 {r.price} DH</span>
                 </div>
@@ -168,7 +167,7 @@ export default function MyReservations({
                   <div className="my-res-history-item" key={r.id}>
                     <div>
                       <strong>{shortAddress(r.depart)} → {shortAddress(r.destination)}</strong>
-                      <small>{r.driver} · {r.date}</small>
+                      <small>{r.driver}</small>
                     </div>
                     <span style={{ color: st.color, fontSize: "0.72rem", fontWeight: 700 }}>{st.icon} {st.label}</span>
                   </div>

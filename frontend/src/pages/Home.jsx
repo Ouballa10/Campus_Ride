@@ -21,7 +21,7 @@ export default function Home({
 }) {
   const isDriverMode = mode === "driver";
   const featuredTrips = tripOptions.slice(0, 3);
-  const featuredPublishedTrips = publishedTrips.slice(0, 3);
+  const featuredPublishedTrips = publishedTrips.filter((trip) => trip.status !== "Passe").slice(0, 3);
   const activePublishedTrips = publishedTrips.filter((trip) => trip.status === "Actif").length;
   const confirmedReservations = reservations.filter(
     (reservation) => reservation.status === "Confirmee",
@@ -209,7 +209,7 @@ export default function Home({
                 <div className="list-card__row">
                   <div>
                     <h4>{trip.route}</h4>
-                    <p>{trip.date} - {trip.time}</p>
+                    <p>{trip.time}</p>
                   </div>
                   <span className={getStatusPillClass(trip.status)}>
                     {trip.status}

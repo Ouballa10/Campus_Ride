@@ -32,9 +32,6 @@ function TripResult({ trip, onSelect, onViewDriver }) {
   const timeStr = departureDate
     ? departureDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
     : trip.time || "";
-  const dateStr = departureDate
-    ? departureDate.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })
-    : trip.date || "";
 
   return (
     <article className="find-card" onClick={() => !isUnavailable && onSelect(trip.id)}>
@@ -42,7 +39,6 @@ function TripResult({ trip, onSelect, onViewDriver }) {
       <div className="find-card__header">
         <div className="find-card__time">
           <strong>{timeStr}</strong>
-          <small>{dateStr}</small>
         </div>
         <div className="find-card__price">
           <strong>{trip.price} DH</strong>

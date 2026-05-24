@@ -29,6 +29,10 @@ export default function MyTrajets({
     }
   }
 
+  // Separate active trips from expired (past) ones
+  const activeTrips = publishedTrips.filter((trip) => trip.status !== "Passe");
+  const expiredTrips = publishedTrips.filter((trip) => trip.status === "Passe");
+
   return (
     <div className="screen screen--simple">
       <AppHeader
@@ -45,7 +49,7 @@ export default function MyTrajets({
         <div className={`toast toast--${feedback.tone}`}>{feedback.message}</div>
       ) : null}
 
-      {!publishedTrips.length ? (
+      {!activeTrips.length && !expiredTrips.length ? (
         <div className="empty-box">
           <Icon name="route" size={28} />
           <p>Aucun trajet publie</p>
@@ -55,7 +59,7 @@ export default function MyTrajets({
         </div>
       ) : (
         <div className="card-list">
-          {publishedTrips.map((trip) => {
+          {activeTrips.map((trip) => {
             const reservations = trip.passengerReservations || [];
             const pending = reservations.filter((r) => r.status === "En attente");
             const confirmed = reservations.filter((r) => r.status === "Confirmee");
@@ -69,7 +73,7 @@ export default function MyTrajets({
                   <div className="t-card__dot t-card__dot--start" />
                   <div className="t-card__route-text">
                     <strong>{trip.depart || trip.route}</strong>
-                    <small>{trip.date} · {trip.time}</small>
+                    <small>{trip.time}</small>
                   </div>
                 </div>
                 <div className="t-card__route">
@@ -200,6 +204,44 @@ export default function MyTrajets({
               </div>
             );
           })}
+
+          {/* Expired trips - History section */}
+          {expiredTrips.length > 0 ? (
+            <>
+              <h3 style={{ margin: "20px 0 8px", fontSize: "0.9rem", color: "#6b7280" }}>
+                📋 Historique ({expiredTrips.length})
+              </h3>
+              {expiredTrips.map((trip) => (
+                <div className="t-card" key={trip.id} style={{ opacity: 0.7 }}>
+                  <div className="t-card__route">
+                    <div className="t-card__dot t-card__dot--start" />
+                    <div className="t-card__route-text">
+                      <strong>{trip.depart || trip.route}</strong>
+                      <small>{trip.time}</small>
+                    </div>
+                  </div>
+                  <div className="t-card__route">
+                    <div className="t-card__dot t-card__dot--end" />
+                    <div className="t-card__route-text">
+                      <strong>{trip.destination || ""}</strong>
+                      <small>{trip.seats} places · {trip.earningsEstimate || 0} DH</small>
+                    </div>
+                    <span className="t-badge t-badge--gray">{trip.status}</span>
+                  </div>
+                  <div className="t-card__actions">
+                    <button
+                      className="t-btn t-btn--outline t-btn--outline-red"
+                      disabled={busyAction === `d-${trip.id}`}
+                      type="button"
+                      onClick={() => runAction(`d-${trip.id}`, () => onDeleteTrip(trip.id), "Supprime.")}
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </>
+          ) : null}
         </div>
       )}
     </div>
