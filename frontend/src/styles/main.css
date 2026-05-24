@@ -2564,24 +2564,36 @@ a { color: var(--primary); text-decoration: none; }
 
 /* Sticky CTA for publish page */
 .publish-sticky-cta {
-  position: sticky;
-  bottom: 0;
-  padding: 10px 0 4px;
-  background: linear-gradient(to bottom, transparent 0%, var(--card-bg, #fff) 25%);
-  z-index: 10;
+  position: fixed;
+  bottom: 70px;
+  left: 0;
+  right: 0;
+  padding: 12px 20px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  z-index: 60;
   display: grid;
   gap: 6px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
 }
 
 .publish-sticky-cta__summary {
   text-align: center;
   font-size: 0.78rem;
   color: var(--muted);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .publish-sticky-cta .primary-button {
   width: 100%;
+}
+
+/* Add bottom padding to publish form so content doesn't hide behind fixed CTA */
+.publish-flow {
+  padding-bottom: 120px;
 }
 
 .publish-card--compact {
@@ -10149,10 +10161,6 @@ a:focus-visible {
 }
 
 /* --- PUBLISH FORM POLISH --- */
-.publish-sticky-cta {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
 
 /* --- SMOOTH SCROLL --- */
 .phone-shell__body {
@@ -10823,3 +10831,10 @@ a:focus-visible {
   border-color: #fecaca;
 }
 .td2-action-btn--danger:hover { background: #fef2f2; }
+
+
+/* --- PUBLISH PAGE DARK MODE FIX --- */
+.app-theme--dark .publish-sticky-cta {
+  background: rgba(15, 23, 42, 0.95);
+  border-top-color: rgba(37, 99, 235, 0.15);
+}
