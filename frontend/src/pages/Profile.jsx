@@ -564,11 +564,6 @@ export default function Profile({
         </section>
 
         <form className="profile-editor-card" onSubmit={handleSave}>
-          {(!form.fullName || form.fullName === "CampusRide") && (
-            <div className="toast toast--info" style={{ marginBottom: "16px", textAlign: "center" }}>
-              👋 Complete ton profil pour commencer a utiliser CampusRide !
-            </div>
-          )}
           <div className="section-heading section-heading--compact">
             <div>
               <h3>

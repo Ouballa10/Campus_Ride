@@ -386,10 +386,7 @@ function App() {
     }
 
     if (sessionUserId && authRoutes.includes(route)) {
-      // If profile is incomplete (no name), redirect to profile page to complete it
-      const profileName = appData.currentUser?.name?.trim();
-      const isProfileIncomplete = !profileName || profileName === "CampusRide";
-      navigate(isProfileIncomplete ? "profile" : "home");
+      navigate("home");
       return;
     }
 
@@ -913,8 +910,10 @@ function App() {
   const showNav = !isAuthRoute && !hideNavRoutes.includes(route);
   let screen = null;
 
-  // Don't block the UI - let pages handle their own loading states
   if (route === "splash") {
+    screen = <Splash navigate={navigate} />;
+  } else if (authLoading && isConfigured && !isAuthRoute) {
+    // While auth session is being restored, show splash instead of empty data
     screen = <Splash navigate={navigate} />;
   } else if (route === "login") {
     screen = <Login navigate={navigate} />;
