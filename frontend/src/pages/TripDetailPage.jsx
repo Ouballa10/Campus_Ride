@@ -9,6 +9,7 @@ export default function TripDetailPage({
   onRejectReservation,
   onCloseTrip,
   onDeleteTrip,
+  onViewPassenger,
   trip,
   publishedTrips,
 }) {
@@ -95,11 +96,25 @@ export default function TripDetailPage({
           {pending.map((r) => (
             <div className="td-passenger" key={r.id}>
               <div className="td-passenger__info">
-                <strong>{r.passenger}</strong>
+                <strong
+                  className="td-passenger__name-link"
+                  onClick={() => onViewPassenger?.({ passengerId: r.passagerId, passenger: r.passenger, passengerAvatar: r.passengerAvatar || "", phone: r.phone, _backRoute: "trip-detail" })}
+                  style={{ cursor: "pointer", textDecoration: "underline", color: "#2563eb" }}
+                >
+                  {r.passenger}
+                </strong>
                 <small>{r.phone || r.campus || ""}</small>
                 {r.message ? <p>"{r.message}"</p> : null}
               </div>
               <div className="td-passenger__actions">
+                <button
+                  className="t-btn t-btn--blue"
+                  type="button"
+                  onClick={() => onViewPassenger?.({ passengerId: r.passagerId, passenger: r.passenger, passengerAvatar: r.passengerAvatar || "", phone: r.phone, _backRoute: "trip-detail" })}
+                  title="Voir profil"
+                >
+                  👤
+                </button>
                 <button
                   className="t-btn t-btn--green"
                   disabled={busyAction === `a-${r.id}`}

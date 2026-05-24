@@ -3476,6 +3476,7 @@ a { color: var(--primary); text-decoration: none; }
 .t-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .t-btn--green { background: #10b981; color: white; box-shadow: 0 2px 6px rgba(16,185,129,0.3); }
+.t-btn--blue { background: #2563eb; color: white; box-shadow: 0 2px 6px rgba(37,99,235,0.3); }
 .t-btn--red { background: #ef4444; color: white; box-shadow: 0 2px 6px rgba(239,68,68,0.3); }
 .t-btn--ghost { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
 .t-btn--star { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
@@ -9806,4 +9807,32 @@ a:focus-visible {
   font-size: 0.78rem;
   color: #4b5563;
   line-height: 1.4;
+}
+
+/* Passenger profile stats */
+.dp-stats {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.dp-stats__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 16px;
+  background: #f9fafb;
+  border-radius: 10px;
+  border: 1px solid #f3f4f6;
+}
+
+.dp-stats__item strong {
+  font-size: 1.1rem;
+  color: #1f2937;
+}
+
+.dp-stats__item small {
+  font-size: 0.72rem;
+  color: #6b7280;
 }

@@ -10,6 +10,7 @@ export default function MyTrajets({
   onDeleteTrip,
   onOpenChat,
   onRejectReservation,
+  onViewPassenger,
   publishedTrips,
   user,
 }) {
@@ -96,10 +97,23 @@ export default function MyTrajets({
                     {pending.map((r) => (
                       <div className="t-passenger" key={r.id}>
                         <div className="t-passenger__name">
-                          <strong>{r.passenger}</strong>
+                          <strong
+                            onClick={() => onViewPassenger?.({ passengerId: r.passagerId, passenger: r.passenger, passengerAvatar: r.passengerAvatar || "", phone: r.phone, _backRoute: "my-trips" })}
+                            style={{ cursor: "pointer", textDecoration: "underline", color: "#2563eb" }}
+                          >
+                            {r.passenger}
+                          </strong>
                           {r.message ? <small>"{r.message}"</small> : null}
                         </div>
                         <div className="t-passenger__btns">
+                          <button
+                            className="t-btn t-btn--blue"
+                            type="button"
+                            onClick={() => onViewPassenger?.({ passengerId: r.passagerId, passenger: r.passenger, passengerAvatar: r.passengerAvatar || "", phone: r.phone, _backRoute: "my-trips" })}
+                            title="Voir profil"
+                          >
+                            👤
+                          </button>
                           <button
                             className="t-btn t-btn--green"
                             disabled={busyAction === `a-${r.id}`}

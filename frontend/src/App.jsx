@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import BottomNav from "./components/BottomNav";
+import logo from "./assets/images/logo.png";
 import { useAuth } from "./context/AuthContext";
 import {
   currentUser as defaultCurrentUser,
@@ -15,6 +16,7 @@ import MyTrajets from "./pages/MyTrajets";
 import Notifications from "./pages/Notifications";
 import NotificationDetail from "./pages/NotificationDetail";
 import DriverProfile from "./pages/DriverProfile";
+import PassengerProfile from "./pages/PassengerProfile";
 import TripDetailPage from "./pages/TripDetailPage";
 import Chat from "./pages/Chat";
 import Profile from "./pages/Profile";
@@ -48,6 +50,7 @@ const appRoutes = [
   { route: "notifications", label: "Notifications" },
   { route: "notification-detail", label: "Detail notification" },
   { route: "driver-profile", label: "Profil conducteur" },
+  { route: "passenger-profile", label: "Profil passager" },
   { route: "trip-detail", label: "Detail trajet" },
   { route: "chat", label: "Chat" },
 ];
@@ -337,6 +340,7 @@ function App() {
   const [chatContext, setChatContext] = useState(null);
   const [recentMessages, setRecentMessages] = useState([]);
   const [selectedDriverData, setSelectedDriverData] = useState(null);
+  const [selectedPassengerData, setSelectedPassengerData] = useState(null);
   const [theme, setTheme] = useState(readInitialTheme);
 
   const sessionUserId = session?.user?.id || "";
@@ -662,6 +666,11 @@ function App() {
     navigate("driver-profile");
   }
 
+  function openPassengerProfile(passengerInfo) {
+    setSelectedPassengerData(passengerInfo);
+    navigate("passenger-profile");
+  }
+
   function openChat(context) {
     setChatContext(context);
     navigate("chat");
@@ -931,27 +940,17 @@ function App() {
 
   if (route === "splash" && !sessionUserId && !hasStoredSession) {
     screen = <Splash navigate={navigate} />;
-  } else if (route === "splash" && (sessionUserId || hasStoredSession)) {
-    // Logged in but somehow on splash — show Home directly
-    screen = (
-      <Home
-        mode={activeMode}
-        navigate={navigate}
-        onModeChange={handleModeChange}
-        onThemeChange={handleThemeChange}
-        onTripSelect={openTripReservation}
-        onViewDriver={openDriverProfile}
-        publishedTrips={appData.publishedTrips}
-        reservations={appData.reservations}
-        theme={theme}
-        tripOptions={discoverableTrips}
-        user={currentUser}
-      />
-    );
-  } else if (authLoading && isConfigured && !isAuthRoute && !hasStoredSession) {
-    screen = <Splash navigate={navigate} />;
   } else if (!sessionUserId && !authLoading && isConfigured && !isAuthRoute) {
     screen = <Login navigate={navigate} />;
+  } else if ((authLoading || (hasStoredSession && !profile)) && isConfigured && !isAuthRoute) {
+    // Show branded loading while session + profile are being restored
+    screen = (
+      <div className="screen screen--simple" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "80vh" }}>
+        <div style={{ textAlign: "center" }}>
+          <img src={logo} alt="CampusRide" style={{ width: "120px" }} />
+        </div>
+      </div>
+    );
   } else if (route === "login") {
     screen = <Login navigate={navigate} />;
   } else if (route === "register") {
@@ -1022,6 +1021,7 @@ function App() {
         onDeleteTrip={handleDeleteTrip}
         onOpenChat={openChat}
         onRejectReservation={handleRejectPassengerReservation}
+        onViewPassenger={openPassengerProfile}
         publishedTrips={appData.publishedTrips}
         user={currentUser}
       />
@@ -1052,6 +1052,14 @@ function App() {
         navigate={navigate}
       />
     );
+  } else if (route === "passenger-profile") {
+    screen = (
+      <PassengerProfile
+        passengerData={selectedPassengerData}
+        navigate={navigate}
+        backRoute={selectedPassengerData?._backRoute || "my-trips"}
+      />
+    );
   } else if (route === "trip-detail" && selectedTripDetail) {
     screen = (
       <TripDetailPage
@@ -1060,6 +1068,7 @@ function App() {
         onRejectReservation={handleRejectPassengerReservation}
         onCloseTrip={handleCloseTripReservations}
         onDeleteTrip={handleDeleteTrip}
+        onViewPassenger={openPassengerProfile}
         trip={selectedTripDetail}
         refreshKey={refreshKey}
         publishedTrips={appData.publishedTrips}
