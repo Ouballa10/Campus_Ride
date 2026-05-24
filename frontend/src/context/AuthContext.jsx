@@ -7,7 +7,13 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState(() => {
+    // Load cached profile immediately to avoid blank screen
+    try {
+      const cached = localStorage.getItem("campusride-profile-cache");
+      return cached ? JSON.parse(cached) : null;
+    } catch { return null; }
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,14 +37,25 @@ export function AuthProvider({ children }) {
       setSession(nextSession);
 
       if (nextSession?.user?.id) {
-        try {
-          const nextProfile = await authService.ensureCurrentProfile(nextSession.user);
-
-          if (isActive) {
-            setProfile(nextProfile);
+        // Retry profile load up to 3 times with delay
+        let retries = 3;
+        let loadedProfile = null;
+        while (retries > 0 && !loadedProfile && isActive) {
+          try {
+            loadedProfile = await authService.ensureCurrentProfile(nextSession.user);
+          } catch (error) {
+            retries--;
+            if (retries > 0) {
+              await new Promise((r) => setTimeout(r, 1000));
+            } else {
+              console.error("Profile load failed after retries:", error);
+            }
           }
-        } catch (error) {
-          console.error("Profile load failed:", error);
+        }
+
+        if (isActive && loadedProfile) {
+          setProfile(loadedProfile);
+          try { localStorage.setItem("campusride-profile-cache", JSON.stringify(loadedProfile)); } catch {}
         }
       } else {
         setProfile(null);
@@ -72,6 +89,7 @@ export function AuthProvider({ children }) {
     try {
       const nextProfile = await authService.ensureCurrentProfile(session.user);
       setProfile(nextProfile);
+      try { localStorage.setItem("campusride-profile-cache", JSON.stringify(nextProfile)); } catch {}
       return nextProfile;
     } catch (error) {
       // Suppress lock race condition errors - profile will sync via onAuthStateChange
@@ -117,6 +135,7 @@ export function AuthProvider({ children }) {
     // Clear local state immediately so UI responds right away
     setSession(null);
     setProfile(null);
+    try { localStorage.removeItem("campusride-profile-cache"); } catch {}
 
     if (isSupabaseConfigured) {
       try {

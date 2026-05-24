@@ -447,18 +447,11 @@ function App() {
 
     async function loadSupabaseData() {
       try {
-        // Timeout after 8s to avoid infinite loading
-        const timeout = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Chargement trop long. Verifie ta connexion.")), 8000)
-        );
-
-        const dataFetch = Promise.all([
+        const [availableTrajets, myTrajets, myReservations] = await Promise.all([
           trajetService.listAvailableTrajets(),
           trajetService.listPublishedTrajets(sessionUserId),
           reservationService.listReservations(sessionUserId),
         ]);
-
-        const [availableTrajets, myTrajets, myReservations] = await Promise.race([dataFetch, timeout]);
 
         if (!isActive) {
           return;
@@ -481,7 +474,11 @@ function App() {
         }
 
         console.error("Supabase data sync failed:", error);
-        setDataError(error.message || "Synchronisation Supabase impossible.");
+        // Don't show error banner for lock/timeout issues - data will retry on next refresh
+        const isLockError = (error.message || "").toLowerCase().includes("lock");
+        if (!isLockError) {
+          setDataError(error.message || "Synchronisation Supabase impossible.");
+        }
         setAppData({
           currentUser: buildCurrentUser(profile, {
             reservationsCount: 0,
