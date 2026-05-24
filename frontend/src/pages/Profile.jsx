@@ -139,8 +139,9 @@ export default function Profile({
   };
 
   const isSavingRef = useRef(false);
+  const isEditingRef = useRef(false);
   useEffect(() => {
-    if (!isSavingRef.current) {
+    if (!isSavingRef.current && !isEditingRef.current) {
       setForm(buildProfileForm(profile, user, mode));
     }
   }, [mode, profile, user]);
@@ -189,6 +190,7 @@ export default function Profile({
 
   function updateField(event) {
     const { name, value } = event.target;
+    isEditingRef.current = true;
     setForm((currentForm) => ({
       ...currentForm,
       [name]: value,
@@ -431,6 +433,7 @@ export default function Profile({
       });
     } finally {
       isSavingRef.current = false;
+      isEditingRef.current = false;
       setIsSaving(false);
       setUploadStep("");
     }
