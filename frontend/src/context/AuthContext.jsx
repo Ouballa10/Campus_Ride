@@ -24,6 +24,12 @@ export function AuthProvider({ children }) {
       return () => { isActive = false; };
     }
 
+    // Clean up OAuth ?code= from URL after processing
+    if (typeof window !== "undefined" && window.location.search.includes("code=")) {
+      const cleanUrl = window.location.origin + window.location.pathname + window.location.hash;
+      window.history.replaceState({}, "", cleanUrl);
+    }
+
     // Use onAuthStateChange as the single source of truth for session.
     // This avoids the lock race condition that happens when getSession()
     // and onAuthStateChange both try to refresh the token simultaneously.

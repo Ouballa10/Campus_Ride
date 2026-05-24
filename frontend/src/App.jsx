@@ -967,10 +967,12 @@ function App() {
   const showNav = !isAuthRoute && !hideNavRoutes.includes(route);
   let screen = null;
 
-  if (route === "splash" && !sessionUserId && !hasStoredSession) {
+  if (route === "splash") {
     screen = <Splash navigate={navigate} />;
-  } else if (!sessionUserId && !authLoading && isConfigured && !isAuthRoute) {
+  } else if (route === "login" || (!sessionUserId && !authLoading && isConfigured && !isAuthRoute)) {
     screen = <Login navigate={navigate} />;
+  } else if (route === "register") {
+    screen = <Register navigate={navigate} />;
   } else if ((authLoading || (hasStoredSession && !profile)) && isConfigured && !isAuthRoute && !loadingTimedOut) {
     // Show branded loading while session + profile are being restored (max 3s)
     screen = (
@@ -980,10 +982,6 @@ function App() {
         </div>
       </div>
     );
-  } else if (route === "login") {
-    screen = <Login navigate={navigate} />;
-  } else if (route === "register") {
-    screen = <Register navigate={navigate} />;
   } else if (route === "home") {
     screen = (
       <Home
