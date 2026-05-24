@@ -1401,6 +1401,19 @@ a { color: var(--primary); text-decoration: none; }
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(8px);
   text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+}
+
+.home-hero-card__stats > div:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.home-hero-card__stats > div:active {
+  transform: scale(0.95);
 }
 
 .home-hero-card__stats strong {

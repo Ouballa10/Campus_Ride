@@ -83,15 +83,15 @@ export default function Home({
           </p>
 
           <div className="home-hero-card__stats">
-            <div>
+            <div className="home-hero-card__stat" onClick={() => navigate(isDriverMode ? "my-trips" : "search")} role="button" tabIndex={0}>
               <strong>{isDriverMode ? publishedTrips.length : tripOptions.length}</strong>
               <span>{isDriverMode ? "annonces" : "trajets ouverts"}</span>
             </div>
-            <div>
+            <div className="home-hero-card__stat" onClick={() => navigate(isDriverMode ? "my-trips" : "my-reservations")} role="button" tabIndex={0}>
               <strong>{isDriverMode ? activePublishedTrips : reservations.length}</strong>
               <span>{isDriverMode ? "actifs" : "reservations"}</span>
             </div>
-            <div>
+            <div className="home-hero-card__stat" onClick={() => navigate(isDriverMode ? "my-trips" : "my-reservations")} role="button" tabIndex={0}>
               <strong>{isDriverMode ? passengerCount : confirmedReservations}</strong>
               <span>{isDriverMode ? "passagers" : "confirmees"}</span>
             </div>
