@@ -238,6 +238,7 @@ export function mapTrajetToCard(trajet, driverProfile = {}) {
     routeLabel: `${trajet.depart} - ${trajet.destination}`,
     conducteurId: trajet.conducteur_id || "",
     departureAt: trajet.departure_at,
+    createdAt: trajet.created_at || "",
     durationMinutes: toNumber(trajet.duration_minutes, 0),
     time: formatTimeWindow(trajet.departure_at, trajet.duration_minutes),
     driver: driverName,

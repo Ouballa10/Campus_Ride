@@ -8,6 +8,19 @@ function shortAddress(addr = "") {
   return short.length > 30 ? short.slice(0, 30) + "..." : short;
 }
 
+function formatTimeAgo(date) {
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) return "A l'instant";
+  if (diffMin < 60) return `Il y a ${diffMin} min`;
+  const diffH = Math.floor(diffMin / 60);
+  if (diffH < 24) return `Il y a ${diffH}h`;
+  const diffD = Math.floor(diffH / 24);
+  if (diffD === 1) return "Hier";
+  return `Il y a ${diffD}j`;
+}
+
 const initialFilters = {
   depart: "",
   destination: "",
@@ -32,13 +45,18 @@ function TripResult({ trip, onSelect, onViewDriver }) {
   const timeStr = departureDate
     ? departureDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
     : trip.time || "";
+  const dateStr = departureDate
+    ? departureDate.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" })
+    : "";
+  const publishedAgo = trip.createdAt ? formatTimeAgo(new Date(trip.createdAt)) : "";
 
   return (
     <article className="find-card" onClick={() => !isUnavailable && onSelect(trip.id)}>
-      {/* Time + Price header */}
+      {/* Time + Date + Price header */}
       <div className="find-card__header">
         <div className="find-card__time">
           <strong>{timeStr}</strong>
+          {dateStr && <span style={{ fontSize: "0.75rem", color: "#6b7280", marginLeft: "6px" }}>{dateStr}</span>}
         </div>
         <div className="find-card__price">
           <strong>{trip.price} DH</strong>
@@ -106,6 +124,13 @@ function TripResult({ trip, onSelect, onViewDriver }) {
           <span>{trip.pickup}</span>
         </div>
       ) : null}
+
+      {/* Published time */}
+      {publishedAgo && (
+        <div className="find-card__published" style={{ fontSize: "0.7rem", color: "#9ca3af", padding: "4px 16px 8px", textAlign: "right" }}>
+          Publie {publishedAgo.toLowerCase()}
+        </div>
+      )}
     </article>
   );
 }
