@@ -42,19 +42,21 @@ function saveReadIds(ids) {
 }
 
 // Persist notification history so items don't disappear on data refresh
-function getSavedNotifs() {
+// Separate storage per mode (driver vs passenger)
+function getSavedNotifs(currentMode) {
   try {
-    return JSON.parse(localStorage.getItem("campusride-notif-history") || "[]");
+    const key = `campusride-notif-history-${currentMode}`;
+    return JSON.parse(localStorage.getItem(key) || "[]");
   } catch {
     return [];
   }
 }
 
-function saveNotifHistory(items) {
+function saveNotifHistory(items, currentMode) {
   try {
-    // Keep last 100
+    const key = `campusride-notif-history-${currentMode}`;
     const arr = items.slice(0, 100);
-    localStorage.setItem("campusride-notif-history", JSON.stringify(arr));
+    localStorage.setItem(key, JSON.stringify(arr));
   } catch { /* ignore */ }
 }
 
@@ -67,12 +69,13 @@ export default function Notifications({
   recentMessages = [],
 }) {
   const [readIds, setReadIds] = useState(getReadIds);
-  const savedHistoryRef = useRef(getSavedNotifs());
+  const savedHistoryRef = useRef(getSavedNotifs(mode));
 
-  // Sync from localStorage on mount
+  // Sync from localStorage on mount and mode change
   useEffect(() => {
     setReadIds(getReadIds());
-  }, []);
+    savedHistoryRef.current = getSavedNotifs(mode);
+  }, [mode]);
 
   const items = useMemo(() => {
     const messageItems = recentMessages.map((msg) => ({
@@ -149,9 +152,9 @@ export default function Notifications({
 
     const result = allItems.slice(0, 50);
 
-    // Persist to localStorage (no state update to avoid loop)
+    // Persist to localStorage per mode (no state update to avoid loop)
     savedHistoryRef.current = result;
-    saveNotifHistory(result);
+    saveNotifHistory(result, mode);
 
     return result;
   }, [mode, publishedTrips, reservations, recentMessages]);
