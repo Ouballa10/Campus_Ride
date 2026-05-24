@@ -1869,6 +1869,39 @@ a { color: var(--primary); text-decoration: none; }
   font-size: 0.72rem;
 }
 
+/* Mode switch button */
+.profile-mode-switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-md);
+  background: var(--primary-subtle);
+  color: var(--primary-deep);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.profile-mode-switch span {
+  flex: 1;
+  text-align: left;
+  font-size: 0.88rem;
+}
+
+.profile-mode-switch:hover {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+.profile-mode-switch:active {
+  transform: scale(0.97);
+}
+
 .profile-editor-card {
   display: grid;
   gap: 16px;

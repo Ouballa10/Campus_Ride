@@ -179,8 +179,8 @@ export default function Profile({
     Boolean(profile?.role) && profile.role !== getRoleFromMode(mode);
   const visibleProfileLinks = profileLinks.filter((link) =>
     isDriverMode
-      ? ["trips", "publish", "search", "notifications"].includes(link.id)
-      : ["reservations", "search", "trips", "notifications"].includes(link.id),
+      ? ["trips", "publish", "notifications"].includes(link.id)
+      : ["reservations", "search", "notifications"].includes(link.id),
   );
   const formDirty =
     JSON.stringify(form) !== JSON.stringify(buildProfileForm(profile, user, mode)) ||
@@ -447,8 +447,8 @@ export default function Profile({
   return (
     <div className="screen screen--profile">
       <AppHeader
-        title="Mon profil"
-        subtitle="Compte, vehicule et preferences"
+        title={isDriverMode ? "Profil conducteur" : "Mon profil"}
+        subtitle={isDriverMode ? "Garage, vehicule et coordonnees" : "Compte et preferences"}
         leftIcon="arrow-left"
         rightSlot={(
           <AppMenu
@@ -468,11 +468,11 @@ export default function Profile({
           <div className="profile-editor-hero__header">
             <div>
               <span className="eyebrow">Compte</span>
-              <h2>{isDriverMode ? "Profil driver premium" : "Profil passager"}</h2>
+              <h2>{isDriverMode ? "Espace conducteur" : "Espace passager"}</h2>
             </div>
             <span className="profile-editor-badge">
               <Icon name={isDriverMode ? "car" : "user"} size={16} />
-              {isDriverMode ? "Mode driver" : "Mode passager"}
+              {isDriverMode ? "Conducteur" : "Passager"}
             </span>
           </div>
 
@@ -560,6 +560,17 @@ export default function Profile({
               <span>avis</span>
             </div>
           </div>
+
+          {/* Mode switch button */}
+          <button
+            className="profile-mode-switch"
+            type="button"
+            onClick={() => onModeChange(isDriverMode ? "passenger" : "driver")}
+          >
+            <Icon name={isDriverMode ? "user" : "car"} size={16} />
+            <span>Passer en mode {isDriverMode ? "passager" : "conducteur"}</span>
+            <Icon name="chevron-right" size={14} />
+          </button>
 
         </section>
 
@@ -831,8 +842,8 @@ export default function Profile({
               </>
             ) : (
               <div className="message-box message-box--soft profile-editor-field--wide">
-                <strong>Mode passager actif</strong>
-                <p>Ton garage driver reste sauvegarde et revient quand tu changes de mode.</p>
+                <strong>🚗 Tu as aussi un espace conducteur</strong>
+                <p>Ton garage driver (vehicule, permis, photos) reste sauvegarde. Clique sur "Passer en mode conducteur" pour y acceder et le modifier.</p>
               </div>
             )}
           </div>
@@ -864,7 +875,7 @@ export default function Profile({
           <div className="section-heading section-heading--compact">
             <div>
               <h3>Mon espace</h3>
-              <p>Accede rapidement a tes trajets et activites</p>
+              <p>{isDriverMode ? "Gere tes trajets et tes passagers" : "Accede a tes trajets et activites"}</p>
             </div>
           </div>
 
