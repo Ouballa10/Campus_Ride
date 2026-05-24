@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import AppHeader from "../components/AppHeader";
+import ImageLightbox from "../components/ImageLightbox";
 import { Icon, Stars } from "../components/Icons";
 import { useAuth } from "../context/AuthContext";
 import { profileService } from "../services/profileService";
@@ -111,6 +112,7 @@ export default function Profile({
   const [feedback, setFeedback] = useState({ message: "", tone: "" });
   const [isSaving, setIsSaving] = useState(false);
   const [uploadStep, setUploadStep] = useState("");
+  const [lightboxSrc, setLightboxSrc] = useState("");
 
   const displayUser = user || {
     bio: "",
@@ -475,7 +477,7 @@ export default function Profile({
 
           <div className="profile-editor-identity">
             <div className="profile-photo-block">
-              <div className="profile-photo-frame">
+              <div className="profile-photo-frame" onClick={() => avatarSource && setLightboxSrc(avatarSource)} style={avatarSource ? { cursor: "zoom-in" } : {}}>
                 {avatarSource ? (
                   <img
                     alt={form.fullName || displayUser.name}
@@ -800,7 +802,7 @@ export default function Profile({
                   <div className="vehicle-photo-grid">
                     {form.vehiclePhotos.map((photoUrl, index) => (
                       <div className="vehicle-photo-tile" key={photoUrl}>
-                        <img alt={`Vehicule ${index + 1}`} src={photoUrl} />
+                        <img alt={`Vehicule ${index + 1}`} src={photoUrl} onClick={() => setLightboxSrc(photoUrl)} style={{ cursor: "zoom-in" }} />
                         <button
                           aria-label="Retirer cette photo"
                           type="button"
@@ -813,7 +815,7 @@ export default function Profile({
 
                     {selectedVehiclePhotos.map((item, index) => (
                       <div className="vehicle-photo-tile vehicle-photo-tile--pending" key={item.preview}>
-                        <img alt={`Nouvelle photo vehicule ${index + 1}`} src={item.preview} />
+                        <img alt={`Nouvelle photo vehicule ${index + 1}`} src={item.preview} onClick={() => setLightboxSrc(item.preview)} style={{ cursor: "zoom-in" }} />
                         <button
                           aria-label="Retirer cette photo"
                           type="button"
@@ -907,6 +909,14 @@ export default function Profile({
           </div>
         )}
       </div>
+
+      {lightboxSrc && (
+        <ImageLightbox
+          src={lightboxSrc}
+          alt="Photo agrandie"
+          onClose={() => setLightboxSrc("")}
+        />
+      )}
     </div>
   );
 }

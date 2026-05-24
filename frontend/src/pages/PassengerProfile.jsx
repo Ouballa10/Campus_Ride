@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AppHeader from "../components/AppHeader";
+import ImageLightbox from "../components/ImageLightbox";
 import { Icon, Stars } from "../components/Icons";
 import { useAuth } from "../context/AuthContext";
 import { supabase, isSupabaseConfigured } from "../services/supabaseClient";
@@ -19,6 +20,7 @@ export default function PassengerProfile({ passengerData, navigate, backRoute })
   const [passengerProfile, setPassengerProfile] = useState(null);
   const [tripCount, setTripCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [lightboxSrc, setLightboxSrc] = useState("");
 
   const passengerId = passengerData?.passengerId || "";
 
@@ -82,7 +84,7 @@ export default function PassengerProfile({ passengerData, navigate, backRoute })
 
       {/* Profile card */}
       <div className="dp-card">
-        <div className="dp-card__avatar">
+        <div className="dp-card__avatar" onClick={() => avatar && setLightboxSrc(avatar)} style={avatar ? { cursor: "zoom-in" } : {}}>
           {avatar ? <img alt={name} src={avatar} /> : <span>{initials}</span>}
         </div>
         <h2 className="dp-card__name">{name}</h2>
@@ -132,6 +134,10 @@ export default function PassengerProfile({ passengerData, navigate, backRoute })
       </div>
 
       {loading ? <p style={{ textAlign: "center", color: "#9ca3af", fontSize: "0.8rem" }}>Chargement...</p> : null}
+
+      {lightboxSrc && (
+        <ImageLightbox src={lightboxSrc} alt={name} onClose={() => setLightboxSrc("")} />
+      )}
     </div>
   );
 }

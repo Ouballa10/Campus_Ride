@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AppHeader from "../components/AppHeader";
+import ImageLightbox from "../components/ImageLightbox";
 import { Icon, Stars } from "../components/Icons";
 import { useAuth } from "../context/AuthContext";
 import { supabase, isSupabaseConfigured } from "../services/supabaseClient";
@@ -36,6 +37,7 @@ export default function DriverProfile({ driverData, navigate }) {
   const [driverProfile, setDriverProfile] = useState(null);
   const [evaluations, setEvaluations] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [lightboxSrc, setLightboxSrc] = useState("");
 
   const conducteurId = driverData?.conducteurId || "";
 
@@ -97,7 +99,7 @@ export default function DriverProfile({ driverData, navigate }) {
 
       {/* Profile card */}
       <div className="dp-card">
-        <div className="dp-card__avatar">
+        <div className="dp-card__avatar" onClick={() => avatar && setLightboxSrc(avatar)} style={avatar ? { cursor: "zoom-in" } : {}}>
           {avatar ? <img alt={name} src={avatar} /> : <span>{initials}</span>}
         </div>
         <h2 className="dp-card__name">{name}</h2>
@@ -128,7 +130,7 @@ export default function DriverProfile({ driverData, navigate }) {
           {vehiclePhotos.length > 0 ? (
             <div className="dp-vehicle-photos">
               {vehiclePhotos.map((url, i) => (
-                <img key={url} alt={`Vehicule ${i + 1}`} src={url} />
+                <img key={url} alt={`Vehicule ${i + 1}`} src={url} onClick={() => setLightboxSrc(url)} style={{ cursor: "zoom-in" }} />
               ))}
             </div>
           ) : null}
@@ -168,6 +170,10 @@ export default function DriverProfile({ driverData, navigate }) {
       </div>
 
       {loading ? <p style={{ textAlign: "center", color: "#9ca3af", fontSize: "0.8rem" }}>Chargement...</p> : null}
+
+      {lightboxSrc && (
+        <ImageLightbox src={lightboxSrc} alt={name} onClose={() => setLightboxSrc("")} />
+      )}
     </div>
   );
 }
