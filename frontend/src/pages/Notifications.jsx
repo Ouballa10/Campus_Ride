@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import AppHeader from "../components/AppHeader";
 import { Icon } from "../components/Icons";
 
@@ -41,6 +41,23 @@ function saveReadIds(ids) {
   } catch { /* ignore */ }
 }
 
+// Persist notification history so items don't disappear on data refresh
+function getSavedNotifs() {
+  try {
+    return JSON.parse(localStorage.getItem("campusride-notif-history") || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function saveNotifHistory(items) {
+  try {
+    // Keep last 100
+    const arr = items.slice(0, 100);
+    localStorage.setItem("campusride-notif-history", JSON.stringify(arr));
+  } catch { /* ignore */ }
+}
+
 export default function Notifications({
   mode = "passenger",
   navigate,
@@ -50,6 +67,7 @@ export default function Notifications({
   recentMessages = [],
 }) {
   const [readIds, setReadIds] = useState(getReadIds);
+  const savedHistoryRef = useRef(getSavedNotifs());
 
   // Sync from localStorage on mount
   useEffect(() => {
@@ -84,12 +102,13 @@ export default function Notifications({
           : "📋 Reservation mise a jour",
       route: `${reservation.depart} → ${reservation.destination}`,
       driver: reservation.driver,
-      time: reservation.time,
+      time: timeAgo(reservation.createdAt || reservation.dateReservation),
       status: reservation.status,
       tone: getNotificationTone(reservation.status),
       reservationId: reservation.id,
       otherName: reservation.driver,
       tripRoute: `${reservation.depart} → ${reservation.destination}`,
+      createdAt: reservation.createdAt || reservation.dateReservation || "",
     }));
 
     const driverItems = publishedTrips.flatMap((trip) =>
@@ -103,17 +122,38 @@ export default function Notifications({
             : "📋 Demande traitee",
         route: trip.route || `${trip.depart} → ${trip.destination}`,
         passenger: reservation.passenger,
-        time: trip.time || "",
+        time: timeAgo(reservation.createdAt || reservation.dateReservation),
         status: reservation.status,
         tone: getNotificationTone(reservation.status),
         reservationId: reservation.id,
         otherName: reservation.passenger,
         tripRoute: trip.route || `${trip.depart} → ${trip.destination}`,
+        createdAt: reservation.createdAt || reservation.dateReservation || "",
       })),
     );
 
     const reservationItems = mode === "driver" ? driverItems : passengerItems;
-    return [...messageItems, ...reservationItems].slice(0, 50);
+    const currentItems = [...messageItems, ...reservationItems];
+
+    // Merge with saved history: keep old items that are no longer in current data
+    const currentIds = new Set(currentItems.map((item) => item.id));
+    const oldItems = savedHistoryRef.current.filter((item) => !currentIds.has(item.id));
+    const allItems = [...currentItems, ...oldItems];
+
+    // Sort by most recent first
+    allItems.sort((a, b) => {
+      const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return dateB - dateA;
+    });
+
+    const result = allItems.slice(0, 50);
+
+    // Persist to localStorage (no state update to avoid loop)
+    savedHistoryRef.current = result;
+    saveNotifHistory(result);
+
+    return result;
   }, [mode, publishedTrips, reservations, recentMessages]);
 
   const unreadCount = items.filter((item) => !readIds.has(item.id)).length;
