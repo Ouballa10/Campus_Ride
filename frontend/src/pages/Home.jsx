@@ -1,7 +1,6 @@
 import React from "react";
 import logo from "../assets/images/logo.png";
 import AppHeader from "../components/AppHeader";
-import AppMenu from "../components/AppMenu";
 import { Icon } from "../components/Icons";
 import TrajetCard from "../components/TrajetCard";
 import { getStatusPillClass } from "../utils/statusUi";
@@ -40,16 +39,6 @@ export default function Home({
       <AppHeader
         title="Accueil"
         subtitle={`${user.name} - ${isDriverMode ? "driver" : "passager"}`}
-        leftSlot={(
-          <AppMenu
-            mode={mode}
-            navigate={navigate}
-            user={user}
-            onModeChange={onModeChange}
-            onThemeChange={onThemeChange}
-            theme={theme}
-          />
-        )}
       />
 
       <section className="home-hero-card">

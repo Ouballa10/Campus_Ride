@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import BottomNav from "./components/BottomNav";
 import logo from "./assets/images/logo.png";
 import { useAuth } from "./context/AuthContext";
+import { MenuProvider } from "./context/MenuContext";
 import {
   currentUser as defaultCurrentUser,
   profileLinks,
@@ -1122,7 +1123,17 @@ function App() {
     );
   }
 
+  const menuContextValue = {
+    mode: activeMode,
+    navigate,
+    onModeChange: handleModeChange,
+    onThemeChange: handleThemeChange,
+    theme,
+    user: currentUser,
+  };
+
   return (
+    <MenuProvider value={menuContextValue}>
     <div className={`app-shell app-theme--${theme}`}>
       <section className="site-stage site-stage--single">
         <div className="stage-orb stage-orb--one" />
@@ -1157,6 +1168,7 @@ function App() {
         </div>
       </section>
     </div>
+    </MenuProvider>
   );
 }
 

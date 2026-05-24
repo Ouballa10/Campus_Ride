@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import AppHeader from "../components/AppHeader";
-import AppMenu from "../components/AppMenu";
 import { Icon, Stars } from "../components/Icons";
 import { useAuth } from "../context/AuthContext";
 import { profileService } from "../services/profileService";
@@ -450,16 +449,6 @@ export default function Profile({
         title={isDriverMode ? "Profil conducteur" : "Mon profil"}
         subtitle={isDriverMode ? "Garage, vehicule et coordonnees" : "Compte et preferences"}
         leftIcon="arrow-left"
-        rightSlot={(
-          <AppMenu
-            mode={mode}
-            navigate={navigate}
-            user={displayUser}
-            onModeChange={onModeChange}
-            onThemeChange={onThemeChange}
-            theme={theme}
-          />
-        )}
         onLeftClick={() => navigate("home")}
       />
 
