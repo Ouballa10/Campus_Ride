@@ -44,6 +44,13 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showMap, setShowMap] = useState(false);
 
+  // Check if profile is complete enough to publish
+  const missingFields = [];
+  if (!user?.name || user.name === "CampusRide") missingFields.push("Nom complet");
+  if (!user?.phone) missingFields.push("Telephone");
+  if (!user?.vehicle?.make && !user?.vehicle?.model) missingFields.push("Vehicule (marque/modele)");
+  const profileIncomplete = missingFields.length > 0;
+
   const totalPotential = useMemo(
     () => (Number(form.price) || 0) * (Number(form.seats) || 0),
     [form.price, form.seats],
@@ -163,6 +170,41 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  if (profileIncomplete) {
+    return (
+      <div className="screen screen--publish">
+        <AppHeader
+          title="Publier un trajet"
+          subtitle="Profil incomplet"
+          leftIcon="arrow-left"
+          onLeftClick={() => navigate("home")}
+        />
+        <div style={{ padding: "32px 20px", textAlign: "center" }}>
+          <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🚫</div>
+          <h3 style={{ marginBottom: "8px", color: "#1f2937" }}>Complete ton profil d'abord</h3>
+          <p style={{ color: "#6b7280", marginBottom: "16px", fontSize: "0.9rem" }}>
+            Pour publier un trajet, les passagers ont besoin de savoir qui tu es. Il te manque :
+          </p>
+          <ul style={{ listStyle: "none", padding: 0, marginBottom: "24px" }}>
+            {missingFields.map((field) => (
+              <li key={field} style={{ color: "#ef4444", fontSize: "0.9rem", marginBottom: "6px" }}>
+                <strong>• {field}</strong>
+              </li>
+            ))}
+          </ul>
+          <button
+            className="primary-button"
+            type="button"
+            onClick={() => navigate("profile")}
+            style={{ width: "100%", maxWidth: "300px" }}
+          >
+            Completer mon profil
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
