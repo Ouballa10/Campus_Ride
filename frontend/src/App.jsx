@@ -386,7 +386,10 @@ function App() {
     }
 
     if (sessionUserId && authRoutes.includes(route)) {
-      navigate("home");
+      // If profile is incomplete (no name), redirect to profile page to complete it
+      const profileName = appData.currentUser?.name?.trim();
+      const isProfileIncomplete = !profileName || profileName === "CampusRide";
+      navigate(isProfileIncomplete ? "profile" : "home");
       return;
     }
 
