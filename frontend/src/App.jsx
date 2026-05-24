@@ -312,6 +312,14 @@ function hasPersistedSession() {
 function App() {
   const { isConfigured, loading: authLoading, profile, session } = useAuth();
   const hasStoredSession = hasPersistedSession();
+  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
+
+  // Force exit loading screen after 3s max to avoid infinite logo
+  useEffect(() => {
+    const timer = setTimeout(() => setLoadingTimedOut(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const [route, setRoute] = useState(() => {
     if (typeof window === "undefined") {
       return "splash";
@@ -438,11 +446,18 @@ function App() {
 
     async function loadSupabaseData() {
       try {
-        const [availableTrajets, myTrajets, myReservations] = await Promise.all([
+        // Timeout after 3s to avoid infinite loading
+        const timeout = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Chargement trop long (>3s). Verifie ta connexion.")), 3000)
+        );
+
+        const dataFetch = Promise.all([
           trajetService.listAvailableTrajets(),
           trajetService.listPublishedTrajets(sessionUserId),
           reservationService.listReservations(sessionUserId),
         ]);
+
+        const [availableTrajets, myTrajets, myReservations] = await Promise.race([dataFetch, timeout]);
 
         if (!isActive) {
           return;
@@ -942,8 +957,8 @@ function App() {
     screen = <Splash navigate={navigate} />;
   } else if (!sessionUserId && !authLoading && isConfigured && !isAuthRoute) {
     screen = <Login navigate={navigate} />;
-  } else if ((authLoading || (hasStoredSession && !profile)) && isConfigured && !isAuthRoute) {
-    // Show branded loading while session + profile are being restored
+  } else if ((authLoading || (hasStoredSession && !profile)) && isConfigured && !isAuthRoute && !loadingTimedOut) {
+    // Show branded loading while session + profile are being restored (max 3s)
     screen = (
       <div className="screen screen--simple" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "80vh" }}>
         <div style={{ textAlign: "center" }}>

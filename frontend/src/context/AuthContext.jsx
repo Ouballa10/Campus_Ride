@@ -52,7 +52,7 @@ export function AuthProvider({ children }) {
     // Fallback: if onAuthStateChange doesn't fire within 3s (e.g. no session),
     // stop loading to unblock the UI.
     const timeout = setTimeout(() => {
-      if (isActive && loading) {
+      if (isActive) {
         setLoading(false);
       }
     }, 3000);
