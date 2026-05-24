@@ -915,6 +915,9 @@ function App() {
   } else if (authLoading && isConfigured && !isAuthRoute) {
     // While auth session is being restored, show splash instead of empty data
     screen = <Splash navigate={navigate} />;
+  } else if (!sessionUserId && isConfigured && !isAuthRoute) {
+    // Not logged in and trying to access app pages — force login
+    screen = <Login navigate={navigate} />;
   } else if (route === "login") {
     screen = <Login navigate={navigate} />;
   } else if (route === "register") {
