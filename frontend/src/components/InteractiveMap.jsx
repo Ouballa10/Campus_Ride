@@ -19,7 +19,25 @@ async function reverseGeocode(lat, lng) {
       `${NOMINATIM_URL}/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
     );
     const data = await res.json();
-    return data.display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+    // Build a short, readable address from address parts
+    if (data.address) {
+      const a = data.address;
+      const parts = [
+        a.road || a.pedestrian || a.neighbourhood || a.suburb || "",
+        a.suburb || a.neighbourhood || a.city_district || "",
+        a.city || a.town || a.village || "",
+      ].filter(Boolean);
+      // Remove duplicates
+      const unique = [...new Set(parts)];
+      if (unique.length > 0) {
+        return unique.slice(0, 3).join(", ");
+      }
+    }
+    // Fallback: take first 2 parts of display_name
+    if (data.display_name) {
+      return data.display_name.split(",").slice(0, 2).map(s => s.trim()).join(", ");
+    }
+    return `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
   } catch {
     return `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
   }
@@ -272,7 +290,7 @@ export default function InteractiveMap({
   function selectDepartSuggestion(place) {
     const lat = parseFloat(place.lat);
     const lng = parseFloat(place.lon);
-    const name = place.display_name;
+    const name = place.display_name.split(",").slice(0, 3).map(s => s.trim()).join(", ");
 
     setDepartQuery(name);
     setDepartSuggestions([]);
@@ -287,7 +305,7 @@ export default function InteractiveMap({
   function selectDestSuggestion(place) {
     const lat = parseFloat(place.lat);
     const lng = parseFloat(place.lon);
-    const name = place.display_name;
+    const name = place.display_name.split(",").slice(0, 3).map(s => s.trim()).join(", ");
 
     setDestQuery(name);
     setDestSuggestions([]);

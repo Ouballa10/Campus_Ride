@@ -73,6 +73,16 @@ export default function TripDetailPage({
           <span className="td-info__label">Destination</span>
           <strong>{freshTrip.destination}</strong>
         </div>
+        {freshTrip.departureAt && (
+          <div className="td-info__row">
+            <span className="td-info__label">Date de depart</span>
+            <strong>
+              {new Date(freshTrip.departureAt).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
+              {" a "}
+              {new Date(freshTrip.departureAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+            </strong>
+          </div>
+        )}
         <div className="td-info__grid">
           <div><span>🕐</span><strong>{freshTrip.time}</strong></div>
           <div><span>💺</span><strong>{freshTrip.seats}</strong></div>

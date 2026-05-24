@@ -725,6 +725,12 @@ function App() {
       throw new Error("Choisis d'abord un trajet avant de reserver.");
     }
 
+    // Check profile completeness for passenger
+    const currentUser = appData.currentUser;
+    if (!currentUser?.name || currentUser.name === "CampusRide" || !currentUser?.phone) {
+      throw new Error("Complete ton profil (nom et telephone) avant de reserver. Va dans Profil pour mettre a jour tes infos.");
+    }
+
     if (reservedTripIds.includes(selectedTripOption.id)) {
       throw new Error("Ce trajet est deja present dans tes reservations.");
     }
