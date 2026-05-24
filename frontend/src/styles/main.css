@@ -7872,6 +7872,18 @@ a:focus-visible {
   border-radius: inherit;
 }
 
+/* Hide green tree edges on sides */
+.splash-poster::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(to right, #e8f2ff 0%, transparent 8%),
+    linear-gradient(to left, #e8f2ff 0%, transparent 8%);
+}
+
 .splash-poster__content {
   position: relative;
   z-index: 2;
