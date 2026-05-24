@@ -9,12 +9,12 @@
 :root {
   color-scheme: light;
   
-  /* Primary palette - Indigo/Violet luxury */
+  /* Primary palette - Refined Indigo/Violet */
   --primary: #6366f1;
-  --primary-deep: #4338ca;
+  --primary-deep: #4f46e5;
   --primary-light: #a5b4fc;
   --primary-subtle: #eef2ff;
-  --primary-glow: rgba(99, 102, 241, 0.15);
+  --primary-glow: rgba(99, 102, 241, 0.18);
   
   /* Accent - Violet */
   --accent: #8b5cf6;
@@ -38,44 +38,44 @@
   --red-deep: #dc2626;
   --red-subtle: #fef2f2;
   
-  /* Neutrals */
-  --text: #1e1b4b;
-  --text-secondary: #3730a3;
+  /* Neutrals - Better contrast */
+  --text: #111827;
+  --text-secondary: #4338ca;
   --muted: #6b7280;
-  --border: rgba(99, 102, 241, 0.12);
-  --surface: rgba(255, 255, 255, 0.85);
-  --surface-elevated: rgba(255, 255, 255, 0.95);
+  --border: rgba(99, 102, 241, 0.10);
+  --surface: rgba(255, 255, 255, 0.92);
+  --surface-elevated: #ffffff;
   
   /* Legacy aliases for compatibility */
   --blue: #6366f1;
   --blue-deep: #4338ca;
   
-  /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(99, 102, 241, 0.08);
-  --shadow-md: 0 8px 24px rgba(99, 102, 241, 0.12);
-  --shadow-lg: 0 16px 48px rgba(99, 102, 241, 0.16);
-  --shadow-xl: 0 24px 64px rgba(99, 102, 241, 0.2);
-  --shadow-glow: 0 0 32px rgba(99, 102, 241, 0.25);
+  /* Shadows - More refined */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(99, 102, 241, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(99, 102, 241, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.06), 0 16px 48px rgba(99, 102, 241, 0.10);
+  --shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.08), 0 24px 64px rgba(99, 102, 241, 0.12);
+  --shadow-glow: 0 0 32px rgba(99, 102, 241, 0.20);
   --shadow: var(--shadow-lg);
   --phone-shadow: var(--shadow-xl);
   
   /* Glass effects */
-  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-bg: rgba(255, 255, 255, 0.78);
   --glass-border: rgba(255, 255, 255, 0.6);
   --glass-blur: blur(20px);
   
   /* Radius */
   --radius-sm: 12px;
   --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-xl: 32px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
   --radius-full: 999px;
   
-  /* Transitions */
+  /* Transitions - Smoother */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --transition-fast: 0.15s var(--ease-out);
-  --transition-normal: 0.3s var(--ease-out);
+  --transition-fast: 0.2s var(--ease-out);
+  --transition-normal: 0.35s var(--ease-out);
   --transition-slow: 0.5s var(--ease-out);
   
   /* Typography */
@@ -9882,4 +9882,295 @@ a:focus-visible {
 .dp-stats__item small {
   font-size: 0.72rem;
   color: #6b7280;
+}
+
+
+/* ============================================================
+   PREMIUM DESIGN POLISH - EVENT READY
+   ============================================================ */
+
+/* --- MICRO-INTERACTIONS --- */
+
+/* All interactive elements get smooth press feedback */
+.primary-button,
+.t-btn,
+.find-card__cta,
+.publish-submit,
+.menu-card,
+.notif-item,
+.find-card,
+.driver-trip-card,
+.reservation-pro-card {
+  transition: transform 0.2s var(--ease-spring), box-shadow 0.2s var(--ease-out), opacity 0.2s;
+}
+
+.primary-button:active,
+.t-btn:active,
+.find-card__cta:active,
+.publish-submit:active {
+  transform: scale(0.96);
+}
+
+.menu-card:active,
+.notif-item:active,
+.find-card:active,
+.driver-trip-card:active,
+.reservation-pro-card:active {
+  transform: scale(0.98);
+}
+
+/* Buttons glow on hover/focus */
+.primary-button:not(:disabled):hover,
+.primary-button:not(:disabled):focus-visible {
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3), 0 0 0 3px rgba(99, 102, 241, 0.1);
+  transform: translateY(-1px);
+}
+
+/* --- CARD ELEVATION --- */
+.find-card,
+.driver-trip-card,
+.reservation-pro-card,
+.publish-card,
+.profile-editor-hero,
+.profile-editor-card,
+.td-info,
+.td-section {
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.3s var(--ease-out), transform 0.2s var(--ease-spring);
+}
+
+.find-card:hover,
+.driver-trip-card:hover,
+.reservation-pro-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* --- TYPOGRAPHY REFINEMENT --- */
+.app-header__copy h2 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.app-header__copy p {
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+
+/* Section headings */
+.section-heading h3,
+.td-section h3 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Card titles */
+.find-card__header strong,
+.driver-trip-card strong,
+.notif-item strong {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Muted text */
+.find-card__meta,
+.notif-item__meta,
+.notif-item__route {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* --- PAGE TRANSITIONS --- */
+.screen {
+  animation: screenFadeIn 0.3s var(--ease-out) both;
+}
+
+@keyframes screenFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- SPLASH SCREEN POLISH --- */
+.splash-poster__content {
+  animation: splashContentIn 0.8s var(--ease-out) 0.2s both;
+}
+
+@keyframes splashContentIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.splash-poster__headline {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.splash-poster__copy {
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+/* Splash dots - more visible */
+.splash-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  transition: all 0.3s var(--ease-spring);
+}
+
+.splash-dot--active {
+  width: 24px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Splash features stagger animation */
+.splash-poster__feat {
+  animation: featSlideUp 0.5s var(--ease-out) both;
+}
+
+@keyframes featSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- BOTTOM NAV POLISH --- */
+.bottom-nav {
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+}
+
+.bottom-nav__button {
+  transition: transform 0.2s var(--ease-spring), color 0.2s;
+}
+
+.bottom-nav__button:active {
+  transform: scale(0.85);
+}
+
+.bottom-nav__button--active .bottom-nav__icon {
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+/* --- PRIMARY BUTTON GRADIENT --- */
+.primary-button {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border: none;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.primary-button:disabled {
+  background: linear-gradient(135deg, #a5b4fc 0%, #c4b5fd 100%);
+  box-shadow: none;
+}
+
+/* --- NOTIFICATION ITEMS --- */
+.notif-item--unread {
+  background: linear-gradient(135deg, var(--primary-subtle), var(--accent-subtle));
+  border-left: 3px solid var(--primary);
+}
+
+.notif-item__dot {
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.3); }
+}
+
+/* --- HOME HERO CARD --- */
+.home-hero-card {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #6366f1 100%);
+  box-shadow: 0 12px 32px rgba(79, 70, 229, 0.3);
+}
+
+/* --- LOADING STATES --- */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.loading-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
+}
+
+/* --- SEARCH CARDS POLISH --- */
+.find-card {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.find-card__header {
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+.find-card__cta {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border: none;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.find-card__cta--disabled {
+  background: #e5e7eb;
+  box-shadow: none;
+  color: #9ca3af;
+}
+
+/* --- PUBLISH FORM POLISH --- */
+.publish-sticky-cta {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* --- SMOOTH SCROLL --- */
+.phone-shell__body {
+  scroll-behavior: smooth;
+}
+
+/* --- FOCUS STATES (Accessibility) --- */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* --- APP HEADER SOLID BG (no content bleed-through) --- */
+.app-header {
+  background: #ffffff !important;
+}
+
+.app-theme--dark .app-header {
+  background: #0f0a2e !important;
 }
