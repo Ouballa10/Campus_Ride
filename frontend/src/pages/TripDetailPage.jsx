@@ -3,6 +3,11 @@ import AppHeader from "../components/AppHeader";
 import { Icon } from "../components/Icons";
 import { isReservationHistory } from "../utils/statusUi";
 
+function shortAddr(addr = "") {
+  const parts = addr.split(",");
+  return parts[0]?.trim().slice(0, 30) || addr.slice(0, 30);
+}
+
 export default function TripDetailPage({
   navigate,
   onConfirmReservation,
@@ -16,17 +21,12 @@ export default function TripDetailPage({
   const [busyAction, setBusyAction] = useState("");
   const [feedback, setFeedback] = useState({ message: "", tone: "" });
 
-  // Get fresh trip data from publishedTrips (in case it was updated)
   const freshTrip = publishedTrips?.find((t) => t.id === trip?.id) || trip;
 
   if (!freshTrip) {
     return (
       <div className="screen screen--simple">
-        <AppHeader
-          title="Trajet"
-          leftIcon="arrow-left"
-          onLeftClick={() => navigate("my-trips")}
-        />
+        <AppHeader title="Trajet" leftIcon="arrow-left" onLeftClick={() => navigate("my-trips")} />
         <div className="empty-box">
           <Icon name="route" size={28} />
           <p>Trajet introuvable</p>
@@ -40,6 +40,13 @@ export default function TripDetailPage({
   const confirmed = reservations.filter((r) => r.status === "Confirmee");
   const history = reservations.filter((r) => isReservationHistory(r.status));
   const isClosed = ["Ferme", "Passe", "Terminee"].includes(freshTrip.status);
+  const departureDate = freshTrip.departureAt ? new Date(freshTrip.departureAt) : null;
+  const dateStr = departureDate
+    ? departureDate.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
+    : "";
+  const timeStr = departureDate
+    ? departureDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
+    : freshTrip.time || "";
 
   async function runAction(key, action, msg) {
     try {
@@ -57,158 +64,163 @@ export default function TripDetailPage({
   return (
     <div className="screen screen--simple">
       <AppHeader
-        title={freshTrip.depart || "Trajet"}
-        subtitle={`→ ${freshTrip.destination || ""}`}
+        title="Detail trajet"
+        subtitle={`${shortAddr(freshTrip.depart)} → ${shortAddr(freshTrip.destination)}`}
         leftIcon="arrow-left"
         onLeftClick={() => navigate(freshTrip._backRoute || "my-trips")}
       />
 
-      {/* Trip info card */}
-      <div className="td-info">
-        <div className="td-info__row">
-          <span className="td-info__label">Depart</span>
-          <strong>{freshTrip.depart || freshTrip.route}</strong>
+      {/* Route card */}
+      <div className="td2-route-card">
+        <div className="td2-route">
+          <div className="td2-route__line">
+            <span className="td2-route__dot td2-route__dot--start" />
+            <span className="td2-route__connector" />
+            <span className="td2-route__dot td2-route__dot--end" />
+          </div>
+          <div className="td2-route__names">
+            <div>
+              <small className="td2-label">Depart</small>
+              <strong>{shortAddr(freshTrip.depart || freshTrip.route)}</strong>
+            </div>
+            <div>
+              <small className="td2-label">Destination</small>
+              <strong>{shortAddr(freshTrip.destination)}</strong>
+            </div>
+          </div>
         </div>
-        <div className="td-info__row">
-          <span className="td-info__label">Destination</span>
-          <strong>{freshTrip.destination}</strong>
-        </div>
-        {freshTrip.departureAt && (
-          <div className="td-info__row">
-            <span className="td-info__label">Date de depart</span>
-            <strong>
-              {new Date(freshTrip.departureAt).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
-              {" a "}
-              {new Date(freshTrip.departureAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
-            </strong>
+
+        {/* Date & time */}
+        {(dateStr || timeStr) && (
+          <div className="td2-datetime">
+            <Icon name="calendar" size={16} />
+            <span>{dateStr}{dateStr && timeStr ? " a " : ""}{timeStr}</span>
           </div>
         )}
-        <div className="td-info__grid">
-          <div><span>🕐</span><strong>{freshTrip.time}</strong></div>
-          <div><span>💺</span><strong>{freshTrip.seats}</strong></div>
-          <div><span>💰</span><strong>{freshTrip.earningsEstimate || 0} DH</strong></div>
+
+        {/* Stats */}
+        <div className="td2-stats">
+          <div className="td2-stat">
+            <span className="td2-stat__icon">💺</span>
+            <strong>{freshTrip.seats || "0"}</strong>
+            <small>places</small>
+          </div>
+          <div className="td2-stat">
+            <span className="td2-stat__icon">💰</span>
+            <strong>{freshTrip.earningsEstimate || freshTrip.price || 0} DH</strong>
+            <small>revenus</small>
+          </div>
+          <div className="td2-stat">
+            <span className="td2-stat__icon">👥</span>
+            <strong>{confirmed.length + pending.length}</strong>
+            <small>demandes</small>
+          </div>
         </div>
-        <div className="td-info__status">
-          <span className={`t-badge t-badge--${freshTrip.status === "Actif" ? "green" : freshTrip.status === "Ferme" ? "gray" : "blue"}`}>
+
+        {/* Status */}
+        <div className="td2-status-row">
+          <span className={`mt-badge mt-badge--${freshTrip.status === "Actif" ? "green" : "gray"}`}>
             {freshTrip.status}
           </span>
         </div>
       </div>
 
-      {feedback.message ? (
+      {feedback.message && (
         <div className={`toast toast--${feedback.tone}`}>{feedback.message}</div>
-      ) : null}
+      )}
 
       {/* Pending requests */}
-      {pending.length > 0 ? (
-        <div className="td-section td-section--orange">
-          <h3>🟡 Demandes en attente ({pending.length})</h3>
+      {pending.length > 0 && (
+        <div className="td2-section">
+          <div className="td2-section__header td2-section__header--orange">
+            <span className="td2-section__badge" style={{ background: "#f59e0b" }}>{pending.length}</span>
+            <h4>Demande{pending.length > 1 ? "s" : ""} en attente</h4>
+          </div>
           {pending.map((r) => (
-            <div className="td-passenger" key={r.id}>
-              <div className="td-passenger__info">
-                <strong
-                  className="td-passenger__name-link"
-                  onClick={() => onViewPassenger?.({ passengerId: r.passagerId, passenger: r.passenger, passengerAvatar: r.passengerAvatar || "", phone: r.phone, _backRoute: "trip-detail" })}
-                  style={{ cursor: "pointer", textDecoration: "underline", color: "#2563eb" }}
-                >
-                  {r.passenger}
-                </strong>
-                <small>{r.phone || r.campus || ""}</small>
-                {r.message ? <p>"{r.message}"</p> : null}
+            <div className="td2-passenger" key={r.id}>
+              <div className="td2-passenger__left" onClick={() => onViewPassenger?.({ passengerId: r.passagerId, passenger: r.passenger, passengerAvatar: r.passengerAvatar || "", phone: r.phone, _backRoute: "trip-detail" })}>
+                <div className="mt-avatar">
+                  {r.passengerAvatar ? <img src={r.passengerAvatar} alt="" /> : <span>{(r.passenger || "?")[0]}</span>}
+                </div>
+                <div>
+                  <strong>{r.passenger}</strong>
+                  {r.phone && <small>{r.phone}</small>}
+                  {r.message && <small className="td2-msg">"{r.message}"</small>}
+                </div>
               </div>
-              <div className="td-passenger__actions">
-                <button
-                  className="t-btn t-btn--blue"
-                  type="button"
-                  onClick={() => onViewPassenger?.({ passengerId: r.passagerId, passenger: r.passenger, passengerAvatar: r.passengerAvatar || "", phone: r.phone, _backRoute: "trip-detail" })}
-                  title="Voir profil"
-                >
-                  👤
-                </button>
-                <button
-                  className="t-btn t-btn--green"
-                  disabled={busyAction === `a-${r.id}`}
-                  type="button"
-                  onClick={() => runAction(`a-${r.id}`, () => onConfirmReservation(r.id), "Accepte !")}
-                >
-                  ✓ Accepter
-                </button>
-                <button
-                  className="t-btn t-btn--red"
-                  disabled={busyAction === `r-${r.id}`}
-                  type="button"
-                  onClick={() => runAction(`r-${r.id}`, () => onRejectReservation(r.id), "Refuse.")}
-                >
-                  ✕ Refuser
-                </button>
-                {r.phone ? (
-                  <a className="t-btn t-btn--ghost" href={`tel:${r.phone}`}>📞</a>
-                ) : null}
+              <div className="td2-passenger__actions">
+                <button className="mt-action-btn mt-action-btn--accept" disabled={busyAction === `a-${r.id}`} onClick={() => runAction(`a-${r.id}`, () => onConfirmReservation(r.id), "Accepte !")}>✓</button>
+                <button className="mt-action-btn mt-action-btn--reject" disabled={busyAction === `r-${r.id}`} onClick={() => runAction(`r-${r.id}`, () => onRejectReservation(r.id), "Refuse.")}>✕</button>
+                {r.phone && <a className="mt-action-btn mt-action-btn--call" href={`tel:${r.phone}`}>📞</a>}
               </div>
             </div>
           ))}
         </div>
-      ) : null}
+      )}
 
-      {/* Confirmed */}
-      {confirmed.length > 0 ? (
-        <div className="td-section td-section--green">
-          <h3>🟢 Passagers confirmes ({confirmed.length})</h3>
+      {/* Confirmed passengers */}
+      {confirmed.length > 0 && (
+        <div className="td2-section">
+          <div className="td2-section__header td2-section__header--green">
+            <span className="td2-section__badge" style={{ background: "#059669" }}>{confirmed.length}</span>
+            <h4>Passager{confirmed.length > 1 ? "s" : ""} confirme{confirmed.length > 1 ? "s" : ""}</h4>
+          </div>
           {confirmed.map((r) => (
-            <div className="td-passenger td-passenger--confirmed" key={r.id}>
-              <div className="td-passenger__info">
-                <strong>{r.passenger}</strong>
-                <small>{r.phone || r.campus || ""}</small>
+            <div className="td2-passenger" key={r.id}>
+              <div className="td2-passenger__left" onClick={() => onViewPassenger?.({ passengerId: r.passagerId, passenger: r.passenger, passengerAvatar: r.passengerAvatar || "", phone: r.phone, _backRoute: "trip-detail" })}>
+                <div className="mt-avatar">
+                  {r.passengerAvatar ? <img src={r.passengerAvatar} alt="" /> : <span>{(r.passenger || "?")[0]}</span>}
+                </div>
+                <div>
+                  <strong>{r.passenger}</strong>
+                  {r.phone && <small>{r.phone}</small>}
+                </div>
               </div>
-              {r.phone ? (
-                <a className="t-btn t-btn--ghost" href={`tel:${r.phone}`}>📞</a>
-              ) : null}
+              <div className="td2-passenger__actions">
+                {r.phone && <a className="mt-action-btn mt-action-btn--call" href={`tel:${r.phone}`}>📞</a>}
+              </div>
             </div>
           ))}
         </div>
-      ) : null}
+      )}
 
       {/* History */}
-      {history.length > 0 ? (
-        <div className="td-section td-section--gray">
-          <h3>⚪ Historique ({history.length})</h3>
+      {history.length > 0 && (
+        <div className="td2-section">
+          <div className="td2-section__header td2-section__header--gray">
+            <h4>Historique ({history.length})</h4>
+          </div>
           {history.map((r) => (
-            <div className="td-passenger td-passenger--muted" key={r.id}>
-              <div className="td-passenger__info">
+            <div className="td2-passenger td2-passenger--muted" key={r.id}>
+              <div className="td2-passenger__left">
+                <div className="mt-avatar" style={{ opacity: 0.5 }}>
+                  <span>{(r.passenger || "?")[0]}</span>
+                </div>
                 <strong>{r.passenger}</strong>
               </div>
-              <small>{r.status}</small>
+              <span className="td2-history-status">{r.status}</span>
             </div>
           ))}
         </div>
-      ) : null}
+      )}
 
-      {/* Empty */}
-      {!reservations.length ? (
-        <div className="empty-box" style={{ padding: "30px 20px" }}>
+      {/* Empty state */}
+      {!reservations.length && (
+        <div className="td2-empty">
           <Icon name="user" size={24} />
           <p>Aucune demande pour ce trajet</p>
+          <small>Les passagers verront ton trajet dans la recherche</small>
         </div>
-      ) : null}
+      )}
 
       {/* Actions */}
-      <div className="td-actions">
-        {!isClosed ? (
-          <button
-            className="t-btn t-btn--outline"
-            disabled={busyAction === `c-${freshTrip.id}`}
-            type="button"
-            onClick={() => runAction(`c-${freshTrip.id}`, () => onCloseTrip(freshTrip.id), "Ferme.")}
-          >
+      <div className="td2-actions">
+        {!isClosed && (
+          <button className="td2-action-btn" disabled={busyAction === `c-${freshTrip.id}`} onClick={() => runAction(`c-${freshTrip.id}`, () => onCloseTrip(freshTrip.id), "Ferme.")}>
             Fermer les reservations
           </button>
-        ) : null}
-        <button
-          className="t-btn t-btn--outline t-btn--outline-red"
-          disabled={busyAction === `d-${freshTrip.id}`}
-          type="button"
-          onClick={() => runAction(`d-${freshTrip.id}`, () => onDeleteTrip(freshTrip.id), "Supprime.")}
-        >
+        )}
+        <button className="td2-action-btn td2-action-btn--danger" disabled={busyAction === `d-${freshTrip.id}`} onClick={() => runAction(`d-${freshTrip.id}`, () => onDeleteTrip(freshTrip.id), "Supprime.")}>
           Supprimer ce trajet
         </button>
       </div>
