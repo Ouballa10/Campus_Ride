@@ -21,15 +21,9 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    // Clean up OAuth ?code= from URL
-    if (typeof window !== "undefined" && window.location.search.includes("code=")) {
-      const cleanUrl = window.location.origin + window.location.pathname + window.location.hash;
-      window.history.replaceState({}, "", cleanUrl);
-    }
-
     let isActive = true;
 
-    // 1. Get initial session
+    // 1. Get initial session (Supabase will auto-detect ?code= in URL via detectSessionInUrl)
     supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
       if (!isActive) return;
       setSession(initialSession);
@@ -38,8 +32,19 @@ export function AuthProvider({ children }) {
       } else {
         setLoading(false);
       }
+
+      // Clean up OAuth ?code= from URL AFTER session is resolved
+      if (typeof window !== "undefined" && window.location.search.includes("code=")) {
+        const cleanUrl = window.location.origin + window.location.pathname + window.location.hash;
+        window.history.replaceState({}, "", cleanUrl);
+      }
     }).catch(() => {
       if (isActive) setLoading(false);
+      // Clean up URL even on error
+      if (typeof window !== "undefined" && window.location.search.includes("code=")) {
+        const cleanUrl = window.location.origin + window.location.pathname + window.location.hash;
+        window.history.replaceState({}, "", cleanUrl);
+      }
     });
 
     // 2. Listen for auth changes (login, logout, token refresh)
@@ -53,6 +58,12 @@ export function AuthProvider({ children }) {
         setLoading(false);
         try { localStorage.removeItem("campusride-profile-cache"); } catch {}
         return;
+      }
+
+      // Clean up OAuth code from URL after successful sign in
+      if (event === "SIGNED_IN" && typeof window !== "undefined" && window.location.search.includes("code=")) {
+        const cleanUrl = window.location.origin + window.location.pathname + (window.location.hash || "#/home");
+        window.history.replaceState({}, "", cleanUrl);
       }
 
       if (nextSession?.user?.id) {
@@ -76,10 +87,10 @@ export function AuthProvider({ children }) {
       if (isActive) setLoading(false);
     }
 
-    // Fallback timeout — never stay loading more than 4s
+    // Fallback timeout — never stay loading more than 8s
     const timeout = setTimeout(() => {
       if (isActive) setLoading(false);
-    }, 4000);
+    }, 8000);
 
     return () => {
       isActive = false;

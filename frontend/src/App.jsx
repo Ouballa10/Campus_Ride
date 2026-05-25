@@ -322,9 +322,9 @@ function App() {
       window.location.hash.includes("access_token=");
   });
 
-  // Force exit loading screen after 3s max to avoid infinite logo
+  // Force exit loading screen after 6s max to avoid infinite logo
   useEffect(() => {
-    const timer = setTimeout(() => setLoadingTimedOut(true), 3000);
+    const timer = setTimeout(() => setLoadingTimedOut(true), 6000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -381,8 +381,13 @@ function App() {
       }
     }
 
+    // Don't set hash to splash if returning from OAuth - set to home instead
     if (!window.location.hash) {
-      window.location.hash = "#/splash";
+      if (isOAuthReturn) {
+        window.location.hash = "#/home";
+      } else {
+        window.location.hash = "#/splash";
+      }
     }
 
     window.addEventListener("hashchange", handleHashChange);

@@ -119,8 +119,9 @@ async function signIn({ email, password }) {
 
 async function signInWithGoogle() {
   const client = requireSupabase();
+  // Use just the origin + pathname as redirect (hash fragments may be stripped by OAuth providers)
   const redirectTo = typeof window !== "undefined"
-    ? `${window.location.origin}${window.location.pathname}#/home`
+    ? `${window.location.origin}${window.location.pathname}`
     : undefined;
 
   const { data, error } = await client.auth.signInWithOAuth({
