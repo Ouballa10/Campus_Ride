@@ -1,6 +1,6 @@
 # CampusRide
 
-Project structure for a university carpooling platform.
+Project structure for a university carpooling platform
 
 ## Stack
 - Frontend: React
@@ -11,4 +11,4 @@ Project structure for a university carpooling platform.
 1. Configure the database
 2. Build backend API
 3. Build frontend pages
-4. Connect frontend to backend
+4. Connect frontend  backend
