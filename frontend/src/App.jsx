@@ -417,13 +417,9 @@ function App() {
       return;
     }
 
+    // After login, redirect to home if on auth page
     if (sessionUserId && authRoutes.includes(route)) {
       navigate("home");
-      return;
-    }
-
-    if (!sessionUserId && !authRoutes.includes(route)) {
-      navigate("splash");
     }
   }, [authLoading, isConfigured, route, sessionUserId]);
 
@@ -967,14 +963,14 @@ function App() {
   const showNav = !isAuthRoute && !hideNavRoutes.includes(route);
   let screen = null;
 
-  if (route === "splash") {
-    screen = <Splash navigate={navigate} />;
-  } else if (route === "login" || (!sessionUserId && !authLoading && isConfigured && !isAuthRoute)) {
-    screen = <Login navigate={navigate} />;
-  } else if (route === "register") {
-    screen = <Register navigate={navigate} />;
-  } else if ((authLoading || (hasStoredSession && !profile)) && isConfigured && !isAuthRoute && !loadingTimedOut) {
-    // Show branded loading while session + profile are being restored (max 3s)
+  // ROUTING LOGIC — simple and clear:
+  // 1. Not logged in? Show auth pages only
+  // 2. Logged in? Show app pages only
+  const isLoggedIn = Boolean(sessionUserId);
+  const isStillLoading = authLoading && isConfigured;
+
+  if (isStillLoading && !isLoggedIn && hasStoredSession && !loadingTimedOut) {
+    // Restoring session — show loading briefly
     screen = (
       <div className="screen screen--simple" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "80vh" }}>
         <div style={{ textAlign: "center" }}>
@@ -982,6 +978,15 @@ function App() {
         </div>
       </div>
     );
+  } else if (!isLoggedIn) {
+    // NOT LOGGED IN — only show splash/login/register
+    if (route === "register") {
+      screen = <Register navigate={navigate} />;
+    } else if (route === "login") {
+      screen = <Login navigate={navigate} />;
+    } else {
+      screen = <Splash navigate={navigate} />;
+    }
   } else if (route === "home") {
     screen = (
       <Home

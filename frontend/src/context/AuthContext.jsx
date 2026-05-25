@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { authService } from "../services/authService";
-import { isSupabaseConfigured } from "../services/supabaseClient";
+import { isSupabaseConfigured, supabase } from "../services/supabaseClient";
 import { buildCurrentUser } from "../utils/appDataMappers";
 
 const AuthContext = createContext(null);
@@ -8,7 +8,6 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(() => {
-    // Load cached profile immediately to avoid blank screen
     try {
       const cached = localStorage.getItem("campusride-profile-cache");
       return cached ? JSON.parse(cached) : null;
@@ -17,68 +16,70 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let isActive = true;
-
-    if (!isSupabaseConfigured) {
+    if (!isSupabaseConfigured || !supabase) {
       setLoading(false);
-      return () => { isActive = false; };
+      return;
     }
 
-    // Clean up OAuth ?code= from URL after processing
+    // Clean up OAuth ?code= from URL
     if (typeof window !== "undefined" && window.location.search.includes("code=")) {
       const cleanUrl = window.location.origin + window.location.pathname + window.location.hash;
       window.history.replaceState({}, "", cleanUrl);
     }
 
-    // Use onAuthStateChange as the single source of truth for session.
-    // This avoids the lock race condition that happens when getSession()
-    // and onAuthStateChange both try to refresh the token simultaneously.
-    const {
-      data: { subscription },
-    } = authService.onAuthStateChange(async (event, nextSession) => {
-      if (!isActive) {
-        return;
+    let isActive = true;
+
+    // 1. Get initial session
+    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+      if (!isActive) return;
+      setSession(initialSession);
+      if (initialSession?.user?.id) {
+        loadProfile(initialSession.user);
+      } else {
+        setLoading(false);
       }
+    }).catch(() => {
+      if (isActive) setLoading(false);
+    });
+
+    // 2. Listen for auth changes (login, logout, token refresh)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      if (!isActive) return;
 
       setSession(nextSession);
 
-      if (nextSession?.user?.id) {
-        // Retry profile load up to 3 times with delay
-        let retries = 3;
-        let loadedProfile = null;
-        while (retries > 0 && !loadedProfile && isActive) {
-          try {
-            loadedProfile = await authService.ensureCurrentProfile(nextSession.user);
-          } catch (error) {
-            retries--;
-            if (retries > 0) {
-              await new Promise((r) => setTimeout(r, 1000));
-            } else {
-              console.error("Profile load failed after retries:", error);
-            }
-          }
-        }
-
-        if (isActive && loadedProfile) {
-          setProfile(loadedProfile);
-          try { localStorage.setItem("campusride-profile-cache", JSON.stringify(loadedProfile)); } catch {}
-        }
-      } else {
+      if (event === "SIGNED_OUT") {
         setProfile(null);
+        setLoading(false);
+        try { localStorage.removeItem("campusride-profile-cache"); } catch {}
+        return;
       }
 
-      if (isActive) {
+      if (nextSession?.user?.id) {
+        loadProfile(nextSession.user);
+      } else {
         setLoading(false);
       }
     });
 
-    // Fallback: if onAuthStateChange doesn't fire within 3s (e.g. no session),
-    // stop loading to unblock the UI.
-    const timeout = setTimeout(() => {
-      if (isActive) {
-        setLoading(false);
+    async function loadProfile(user) {
+      try {
+        const p = await authService.ensureCurrentProfile(user);
+        if (isActive && p) {
+          setProfile(p);
+          try { localStorage.setItem("campusride-profile-cache", JSON.stringify(p)); } catch {}
+        }
+      } catch (err) {
+        console.warn("Profile load error:", err.message);
+        // If we have cached profile, use it
       }
-    }, 3000);
+      if (isActive) setLoading(false);
+    }
+
+    // Fallback timeout — never stay loading more than 4s
+    const timeout = setTimeout(() => {
+      if (isActive) setLoading(false);
+    }, 4000);
 
     return () => {
       isActive = false;
@@ -88,35 +89,29 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function refreshProfile() {
-    if (!session?.user?.id || !isSupabaseConfigured) {
-      return null;
-    }
-
+    if (!session?.user?.id || !isSupabaseConfigured) return null;
     try {
-      const nextProfile = await authService.ensureCurrentProfile(session.user);
-      setProfile(nextProfile);
-      try { localStorage.setItem("campusride-profile-cache", JSON.stringify(nextProfile)); } catch {}
-      return nextProfile;
-    } catch (error) {
-      // Suppress lock race condition errors - profile will sync via onAuthStateChange
-      if (error?.message?.includes("lock") || error?.message?.includes("Lock")) {
-        console.warn("Auth lock race (harmless):", error.message);
-        return profile; // Return current profile, don't clear it
+      const p = await authService.ensureCurrentProfile(session.user);
+      if (p) {
+        setProfile(p);
+        try { localStorage.setItem("campusride-profile-cache", JSON.stringify(p)); } catch {}
       }
-      throw error;
+      return p;
+    } catch (err) {
+      console.warn("refreshProfile error:", err.message);
+      return profile;
     }
   }
 
   async function signIn(credentials) {
     const data = await authService.signIn(credentials);
     setSession(data.session);
-
     if (data.session?.user?.id) {
-      const nextProfile = await authService.ensureCurrentProfile(data.session.user);
-      setProfile(nextProfile);
-      return { ...data, profile: nextProfile };
+      const p = await authService.ensureCurrentProfile(data.session.user);
+      setProfile(p);
+      if (p) try { localStorage.setItem("campusride-profile-cache", JSON.stringify(p)); } catch {}
+      return { ...data, profile: p };
     }
-
     return { ...data, profile: null };
   }
 
@@ -126,35 +121,26 @@ export function AuthProvider({ children }) {
 
   async function signUp(payload) {
     const data = await authService.signUp(payload);
-
     if (data.session?.user?.id) {
       setSession(data.session);
-      const nextProfile = await authService.ensureCurrentProfile(data.session.user, payload);
-      setProfile(nextProfile);
-      return { ...data, profile: nextProfile };
+      const p = await authService.ensureCurrentProfile(data.session.user, payload);
+      setProfile(p);
+      if (p) try { localStorage.setItem("campusride-profile-cache", JSON.stringify(p)); } catch {}
+      return { ...data, profile: p };
     }
-
     return { ...data, profile: null };
   }
 
   async function signOut() {
-    // Clear local state immediately so UI responds right away
     setSession(null);
     setProfile(null);
-    // Force clear all auth-related localStorage
     try {
       localStorage.removeItem("campusride-profile-cache");
       localStorage.removeItem("campusride-auth");
     } catch {}
-
     if (isSupabaseConfigured) {
-      try {
-        await authService.signOut();
-      } catch (error) {
-        console.error("Supabase sign out failed:", error);
-      }
+      try { await authService.signOut(); } catch {}
     }
-
     return { error: null };
   }
 
@@ -177,10 +163,6 @@ export function AuthProvider({ children }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider.");
-  }
-
+  if (!context) throw new Error("useAuth must be used within an AuthProvider.");
   return context;
 }
