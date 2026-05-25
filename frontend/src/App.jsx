@@ -315,6 +315,13 @@ function App() {
   const hasStoredSession = Boolean(session) || hasPersistedSession();
   const [loadingTimedOut, setLoadingTimedOut] = useState(false);
 
+  // Detect if we're returning from an OAuth redirect (Google login) - capture once
+  const [isOAuthReturn] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.location.search.includes("code=") ||
+      window.location.hash.includes("access_token=");
+  });
+
   // Force exit loading screen after 3s max to avoid infinite logo
   useEffect(() => {
     const timer = setTimeout(() => setLoadingTimedOut(true), 3000);
@@ -324,6 +331,11 @@ function App() {
   const [route, setRoute] = useState(() => {
     if (typeof window === "undefined") {
       return "splash";
+    }
+
+    // If returning from OAuth redirect, go straight to home (session will be picked up)
+    if (isOAuthReturn) {
+      return "home";
     }
 
     // If user has a stored session, don't start on splash
@@ -960,7 +972,6 @@ function App() {
   const isAuthRoute = authRoutes.includes(route);
   const isSplashRoute = route === "splash";
   const hideNavRoutes = ["chat", "trip-detail", "notification-detail", "driver-profile"];
-  const showNav = !isAuthRoute && !hideNavRoutes.includes(route);
   let screen = null;
 
   // ROUTING LOGIC — simple and clear:
@@ -969,8 +980,15 @@ function App() {
   const isLoggedIn = Boolean(sessionUserId);
   const isStillLoading = authLoading && isConfigured;
 
-  if (isStillLoading && !isLoggedIn && hasStoredSession && !loadingTimedOut) {
-    // Restoring session — show loading briefly
+  // Detect OAuth return: if we came from Google OAuth, show loading until session resolves
+  const isWaitingForOAuth = !isLoggedIn && isConfigured && !loadingTimedOut && (
+    isOAuthReturn || (hasStoredSession && isStillLoading)
+  );
+
+  const showNav = !isAuthRoute && !hideNavRoutes.includes(route) && isLoggedIn && !isWaitingForOAuth;
+
+  if (isWaitingForOAuth) {
+    // Restoring session or processing OAuth — show loading briefly
     screen = (
       <div className="screen screen--simple" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "80vh" }}>
         <div style={{ textAlign: "center" }}>

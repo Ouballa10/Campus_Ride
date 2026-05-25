@@ -10838,3 +10838,89 @@ a:focus-visible {
   background: rgba(15, 23, 42, 0.95);
   border-top-color: rgba(37, 99, 235, 0.15);
 }
+
+
+/* ============================================================
+   PREMIUM POLISH - FINAL TOUCHES
+   ============================================================ */
+
+/* Smooth page transitions */
+.screen {
+  animation: pageIn 0.4s var(--ease-out);
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Premium card hover states */
+.trip-card,
+.driver-trip-card,
+.publish-card,
+.publish-preview {
+  transition: all 0.3s var(--ease-out);
+}
+
+.trip-card:hover,
+.driver-trip-card:hover {
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.15);
+}
+
+/* Smooth focus rings */
+*:focus-visible {
+  outline: 2px solid rgba(99, 102, 241, 0.5);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Premium selection color */
+::selection {
+  background: rgba(99, 102, 241, 0.2);
+  color: #1e1b4b;
+}
+
+/* Smooth image loading */
+img {
+  transition: opacity 0.3s ease;
+}
+
+/* Enhanced dark mode transitions */
+.app-shell,
+.phone-shell,
+.phone-shell__body,
+.bottom-nav,
+.app-header {
+  transition: background 0.4s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Smooth avatar interactions */
+.avatar-badge--clickable {
+  cursor: pointer;
+  transition: all 0.3s var(--ease-spring);
+}
+
+.avatar-badge--clickable:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2);
+}
+
+.avatar-badge--clickable:active {
+  transform: scale(0.95);
+}
+
+/* Smooth input transitions */
+input, textarea, select {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+/* Premium toast/banner animations */
+.sync-banner {
+  animation: slideDown 0.4s var(--ease-out);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
