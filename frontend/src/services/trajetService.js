@@ -115,7 +115,7 @@ async function listAvailableTrajets() {
     .select("*")
     .gt("places_disponibles", 0)
     .gte("departure_at", now.toISOString())
-    .order("departure_at", { ascending: true })
+    .order("created_at", { ascending: false })
     .limit(50);
 
   if (error) {

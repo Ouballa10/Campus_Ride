@@ -616,10 +616,17 @@ function App() {
   }, [canUseSupabaseData, sessionUserId]);
 
   const currentUser = applyModeToUser(appData.currentUser, activeMode);
-  const discoverableTrips = appData.tripOptions.filter(
-    (trip) => !isTripOwnedByCurrentUser(trip, currentUser, sessionUserId)
-      && trip.seats > 0,
-  );
+  const discoverableTrips = appData.tripOptions
+    .filter(
+      (trip) => !isTripOwnedByCurrentUser(trip, currentUser, sessionUserId)
+        && trip.seats > 0,
+    )
+    .sort((a, b) => {
+      // Sort by creation date: newest first (last published on top)
+      const dateA = a.createdAt ? new Date(a.createdAt) : a.departureAt ? new Date(a.departureAt) : new Date(0);
+      const dateB = b.createdAt ? new Date(b.createdAt) : b.departureAt ? new Date(b.departureAt) : new Date(0);
+      return dateB - dateA;
+    });
 
   const notificationCount = recentMessages.length + (activeMode === "driver"
     ? appData.publishedTrips.reduce(
