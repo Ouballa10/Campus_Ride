@@ -39,7 +39,7 @@ function matchesTrip(trip, filters) {
   return matchesDepart && matchesDestination;
 }
 
-function TripResult({ trip, onSelect, onViewDriver }) {
+function TripResult({ trip, onSelect, onViewDriver, isReserved }) {
   const isUnavailable = trip.seats <= 0;
   const departureDate = trip.departureAt ? new Date(trip.departureAt) : null;
   const timeStr = departureDate
@@ -108,12 +108,12 @@ function TripResult({ trip, onSelect, onViewDriver }) {
           </span>
         </div>
         <button
-          className={`find-card__cta ${isUnavailable ? "find-card__cta--disabled" : ""}`}
+          className={`find-card__cta ${isUnavailable || isReserved ? "find-card__cta--disabled" : ""}`}
           type="button"
-          disabled={isUnavailable}
+          disabled={isUnavailable || isReserved}
           onClick={(e) => { e.stopPropagation(); onSelect(trip.id); }}
         >
-          {isUnavailable ? "Complet" : "Reserver"}
+          {isReserved ? "✓ Reserve" : isUnavailable ? "Complet" : "Reserver"}
         </button>
       </div>
 
@@ -135,7 +135,7 @@ function TripResult({ trip, onSelect, onViewDriver }) {
   );
 }
 
-export default function SearchTrajet({ navigate, onTripSelect, onViewDriver, tripOptions }) {
+export default function SearchTrajet({ navigate, onOpenChat, onTripSelect, onViewDriver, reservedTripIds = [], tripOptions }) {
   const [filters, setFilters] = useState(initialFilters);
   const [showFilters, setShowFilters] = useState(false);
   const filteredTrips = tripOptions.filter((trip) => matchesTrip(trip, filters));
@@ -195,6 +195,7 @@ export default function SearchTrajet({ navigate, onTripSelect, onViewDriver, tri
             <TripResult
               key={trip.id}
               trip={trip}
+              isReserved={reservedTripIds.includes(trip.id)}
               onSelect={onTripSelect}
               onViewDriver={onViewDriver}
             />

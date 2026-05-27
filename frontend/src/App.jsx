@@ -1037,8 +1037,10 @@ function App() {
     screen = (
       <SearchTrajet
         navigate={navigate}
+        onOpenChat={openChat}
         onTripSelect={openTripReservation}
         onViewDriver={openDriverProfile}
+        reservedTripIds={reservedTripIds}
         tripOptions={discoverableTrips}
       />
     );
@@ -1054,6 +1056,7 @@ function App() {
     screen = (
       <Reservation
         navigate={navigate}
+        onOpenChat={openChat}
         onReserve={handleReserve}
         onTripSelect={openTripReservation}
         onViewDriver={openDriverProfile}

@@ -11,6 +11,7 @@ function shortAddress(addr = "") {
 
 export default function Reservation({
   navigate,
+  onOpenChat,
   onReserve,
   onTripSelect,
   onViewDriver,
@@ -151,14 +152,40 @@ export default function Reservation({
       ) : null}
 
       {/* CTA */}
-      <button
-        className="res-cta"
-        disabled={blocked || isSubmitting}
-        type="button"
-        onClick={handleReserve}
-      >
-        {alreadyReserved ? "✓ Deja reserve" : isUnavailable ? "Complet" : isSubmitting ? "Envoi..." : "Envoyer la demande"}
-      </button>
+      {alreadyReserved ? (
+        <div style={{ display: "grid", gap: "10px" }}>
+          <button
+            className="res-cta"
+            disabled
+            type="button"
+            style={{ background: "#e5e7eb", color: "#6b7280", boxShadow: "none" }}
+          >
+            ✓ Deja reserve
+          </button>
+          <button
+            className="res-cta"
+            type="button"
+            style={{ background: "linear-gradient(135deg, #1d4ed8, #2563eb)" }}
+            onClick={() => onOpenChat?.({
+              trajetId: selectedTrip.id,
+              conducteurId: selectedTrip.conducteurId,
+              otherName: selectedTrip.driver,
+              otherAvatar: selectedTrip.driverAvatar || "",
+            })}
+          >
+            💬 Contacter le conducteur
+          </button>
+        </div>
+      ) : (
+        <button
+          className="res-cta"
+          disabled={blocked || isSubmitting}
+          type="button"
+          onClick={handleReserve}
+        >
+          {isUnavailable ? "Complet" : isSubmitting ? "Envoi..." : "Envoyer la demande"}
+        </button>
+      )}
 
       {/* Alternatives */}
       {alternatives.length > 0 ? (
