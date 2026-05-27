@@ -4599,6 +4599,14 @@ a { color: var(--primary); text-decoration: none; }
   text-overflow: ellipsis;
 }
 
+.notif-item__subtitle {
+  font-size: 0.75rem;
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .notif-item__meta {
   font-size: 0.7rem;
   color: #9ca3af;
