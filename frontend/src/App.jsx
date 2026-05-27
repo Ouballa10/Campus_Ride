@@ -1060,6 +1060,7 @@ function App() {
         onReserve={handleReserve}
         onTripSelect={openTripReservation}
         onViewDriver={openDriverProfile}
+        reservations={appData.reservations}
         reservedTripIds={reservedTripIds}
         selectedTrip={selectedTrip}
         tripOptions={discoverableTrips}

@@ -16,6 +16,7 @@ export default function Reservation({
   onTripSelect,
   onViewDriver,
   reservedTripIds,
+  reservations = [],
   selectedTrip,
   tripOptions,
 }) {
@@ -166,12 +167,17 @@ export default function Reservation({
             className="res-cta"
             type="button"
             style={{ background: "linear-gradient(135deg, #1d4ed8, #2563eb)" }}
-            onClick={() => onOpenChat?.({
-              trajetId: selectedTrip.id,
-              conducteurId: selectedTrip.conducteurId,
-              otherName: selectedTrip.driver,
-              otherAvatar: selectedTrip.driverAvatar || "",
-            })}
+            onClick={() => {
+              const matchedReservation = reservations.find((r) => r.trajetId === selectedTrip.id);
+              onOpenChat?.({
+                reservationId: matchedReservation?.id || "",
+                otherName: selectedTrip.driver,
+                otherAvatar: selectedTrip.driverAvatar || "",
+                conducteurId: selectedTrip.conducteurId || "",
+                tripRoute: `${shortAddress(selectedTrip.depart)} → ${shortAddress(selectedTrip.destination)}`,
+                backRoute: "reservation",
+              });
+            }}
           >
             💬 Contacter le conducteur
           </button>
