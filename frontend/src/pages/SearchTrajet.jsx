@@ -142,7 +142,7 @@ export default function SearchTrajet({ navigate, onOpenChat, onTripSelect, onVie
   const hasFilters = Boolean(filters.depart || filters.destination);
 
   return (
-    <div className="screen screen--simple">
+    <div className="screen screen--simple page-enter">
       <AppHeader
         title="Trouver un trajet"
         subtitle={`${filteredTrips.length} disponible${filteredTrips.length > 1 ? "s" : ""}`}
@@ -184,21 +184,24 @@ export default function SearchTrajet({ navigate, onOpenChat, onTripSelect, onVie
 
       {/* Results */}
       {!filteredTrips.length ? (
-        <div className="empty-box">
-          <Icon name="search" size={28} />
-          <p>Aucun trajet trouve</p>
-          <small style={{ color: "#9ca3af" }}>Essaie un autre depart ou destination</small>
+        <div className="empty-state">
+          <div className="empty-state__icon">
+            <Icon name="search" size={32} />
+          </div>
+          <h3 className="empty-state__title">Aucun trajet trouve</h3>
+          <p className="empty-state__desc">Essaie un autre depart ou destination pour decouvrir les trajets disponibles.</p>
         </div>
       ) : (
         <div className="find-results">
-          {filteredTrips.map((trip) => (
-            <TripResult
-              key={trip.id}
-              trip={trip}
-              isReserved={reservedTripIds.includes(trip.id)}
-              onSelect={onTripSelect}
-              onViewDriver={onViewDriver}
-            />
+          {filteredTrips.map((trip, index) => (
+            <div className="card-animate" key={trip.id} style={{ animationDelay: `${index * 0.06}s` }}>
+              <TripResult
+                trip={trip}
+                isReserved={reservedTripIds.includes(trip.id)}
+                onSelect={onTripSelect}
+                onViewDriver={onViewDriver}
+              />
+            </div>
           ))}
         </div>
       )}

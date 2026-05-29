@@ -454,7 +454,7 @@ export default function Profile({
   }
 
   return (
-    <div className="screen screen--profile">
+    <div className="screen screen--profile page-enter">
       <AppHeader
         title={isDriverMode ? "Profil conducteur" : "Mon profil"}
         subtitle={isDriverMode ? "Garage, vehicule et coordonnees" : "Compte et preferences"}

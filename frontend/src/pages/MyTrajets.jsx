@@ -39,7 +39,7 @@ export default function MyTrajets({
   const expiredTrips = publishedTrips.filter((trip) => trip.status === "Passe");
 
   return (
-    <div className="screen screen--simple">
+    <div className="screen screen--simple page-enter">
       <AppHeader
         title="Mes trajets"
         subtitle="Espace conducteur"
