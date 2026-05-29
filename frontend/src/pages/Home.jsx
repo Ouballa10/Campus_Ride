@@ -60,7 +60,7 @@ export default function Home({
 
   return (
     <div className="screen screen--home page-enter">
-      {/* ===== HEADER: Menu (left) | Logo (center) | Avatar (right) ===== */}
+      {/* ===== TOP HEADER ===== */}
       <header className="home-topbar">
         <div className="home-topbar__left">
           <AppMenu {...menuContextForHeader} />
@@ -80,9 +80,8 @@ export default function Home({
       </header>
 
       {/* ===== GREETING ===== */}
-      <div className="home-greeting-simple">
-        <p className="home-greeting-simple__hello">{getGreeting()} 👋</p>
-        <h2 className="home-greeting-simple__name">{firstName}</h2>
+      <div className="home-greeting-bar">
+        <span>{getGreeting()}, {firstName} 👋</span>
       </div>
 
       {/* ===== HERO CARD ===== */}
@@ -95,7 +94,6 @@ export default function Home({
 
         <div className="home-hero-v2__content">
           <div className="home-hero-v2__top-row">
-            <img src={logo} alt="CampusRide" className="home-hero-v2__logo" />
             <span className="home-hero-v2__badge">
               <span className="home-hero-v2__badge-dot" />
               {isDriverMode ? "Conducteur" : "Passager"}

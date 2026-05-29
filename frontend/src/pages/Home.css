@@ -3,13 +3,18 @@
    Navy Blue (#0a1628) + Electric Blue (#2563eb) + Sky (#60a5fa)
    ============================================================ */
 
-/* ===== TOPBAR (Menu | Logo | Avatar) ===== */
+.screen--home {
+  gap: 20px;
+  padding-bottom: 24px;
+}
+
+/* ===== TOPBAR (Menu | Logo+Name | Avatar) ===== */
 .home-topbar {
   display: grid;
-  grid-template-columns: 44px 1fr 44px;
+  grid-template-columns: 56px 1fr 56px;
   align-items: center;
   gap: 12px;
-  padding: 6px 0 10px;
+  padding: 8px 0 4px;
 }
 
 .home-topbar__left {
@@ -17,22 +22,47 @@
   align-items: center;
 }
 
+.home-topbar__left .icon-button,
+.home-topbar__left .app-menu__trigger .icon-button {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+}
+
+.home-topbar__left .icon-button svg,
+.home-topbar__left .app-menu__trigger .icon-button svg {
+  width: 24px;
+  height: 24px;
+}
+
 .home-topbar__center {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 8px;
 }
 
 .home-topbar__logo {
-  height: 160px;
+  height: 200px;
   width: auto;
-  max-width: 240px;
-  border-radius: 0;
   object-fit: contain;
   padding: 0;
   border: none;
   box-shadow: none;
   background: transparent;
+  border-radius: 0;
+}
+
+.home-topbar__brand-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0a1628;
+  letter-spacing: -0.02em;
+}
+
+.home-topbar__brand-name strong {
+  font-weight: 900;
+  color: #2563eb;
 }
 
 .home-topbar__right {
@@ -42,9 +72,9 @@
 }
 
 .home-topbar__avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
   display: grid;
   place-items: center;
   background: linear-gradient(135deg, #0a1628, #1a3f7a);
@@ -180,39 +210,33 @@
   animation: pulse-online 2s ease-in-out infinite;
 }
 
-/* ===== GREETING SIMPLE ===== */
-.home-greeting-simple {
-  display: grid;
-  gap: 2px;
-  padding: 0 2px 4px;
+/* ===== GREETING BAR (above hero) ===== */
+.home-greeting-bar {
+  padding: 2px 0 4px;
 }
 
-.home-greeting-simple__hello {
-  margin: 0;
-  font-size: 0.8rem;
-  color: var(--muted);
-  font-weight: 500;
+.home-greeting-bar span {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a3f7a;
+  letter-spacing: -0.01em;
 }
 
-.home-greeting-simple__name {
-  margin: 0;
-  font-size: 1.3rem;
-  font-weight: 900;
-  color: var(--text);
-  letter-spacing: -0.03em;
+.app-theme--dark .home-greeting-bar span {
+  color: #93c5fd;
 }
 
 /* ===== HERO CARD V2 ===== */
 .home-hero-v2 {
   position: relative;
-  padding: 28px 24px 24px;
-  border-radius: 28px;
+  padding: 18px 18px 16px;
+  border-radius: 20px;
   background: linear-gradient(160deg, #0a1628 0%, #0f2040 30%, #162d54 60%, #1a3f7a 100%);
   color: #ffffff;
   overflow: hidden;
   box-shadow:
-    0 24px 64px rgba(10, 22, 40, 0.45),
-    0 8px 20px rgba(10, 22, 40, 0.25),
+    0 12px 36px rgba(10, 22, 40, 0.35),
+    0 4px 12px rgba(10, 22, 40, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
@@ -293,24 +317,13 @@
   position: relative;
   z-index: 1;
   display: grid;
-  gap: 16px;
+  gap: 10px;
 }
 
 .home-hero-v2__top-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-}
-
-.home-hero-v2__logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  object-fit: contain;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 5px;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .home-hero-v2__badge {
@@ -339,7 +352,7 @@
 
 .home-hero-v2__title {
   margin: 0;
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   font-weight: 900;
   letter-spacing: -0.04em;
   line-height: 1.15;
@@ -354,17 +367,17 @@
 
 .home-hero-v2__desc {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.6);
-  line-height: 1.5;
-  max-width: 280px;
+  line-height: 1.4;
+  max-width: 260px;
 }
 
 /* Stats pills */
 .home-hero-v2__stats {
   display: flex;
   gap: 8px;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .home-stat-pill {
@@ -372,10 +385,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
-  padding: 12px 8px 10px;
+  gap: 2px;
+  padding: 8px 6px 6px;
   border: none;
-  border-radius: 14px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(6px);
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -390,7 +403,7 @@
 }
 
 .home-stat-pill strong {
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-weight: 900;
   letter-spacing: -0.02em;
   background: linear-gradient(180deg, #ffffff, #93c5fd);
@@ -418,10 +431,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 16px 8px 14px;
+  gap: 6px;
+  padding: 14px 6px 12px;
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: 16px;
   background: var(--surface-elevated);
   cursor: pointer;
   transition: all 0.25s ease;
@@ -434,11 +447,11 @@
 }
 
 .home-qaction__icon-wrap {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   display: grid;
   place-items: center;
-  border-radius: 14px;
+  border-radius: 12px;
   transition: all 0.2s ease;
 }
 
@@ -485,7 +498,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px 16px;
+  padding: 12px 14px;
   border-radius: 16px;
   transition: all 0.2s ease;
 }
@@ -812,9 +825,16 @@
 }
 
 /* ===== DARK MODE ===== */
+.app-theme--dark .home-topbar__brand-name {
+  color: #f1f5f9;
+}
+
+.app-theme--dark .home-topbar__brand-name strong {
+  color: #60a5fa;
+}
+
 .app-theme--dark .home-topbar__logo {
-  background: rgba(37, 99, 235, 0.1);
-  border-color: rgba(37, 99, 235, 0.15);
+  filter: brightness(1.1);
 }
 
 .app-theme--dark .home-topbar__avatar {
