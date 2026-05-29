@@ -560,13 +560,15 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .app-menu__brand img {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
+  width: 100px;
+  height: 100px;
+  border-radius: 0;
   object-fit: contain;
-  background: white;
-  padding: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  position: relative;
+  top: 2px;
 }
 
 .app-menu__brand strong {
