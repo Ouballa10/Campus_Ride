@@ -34,8 +34,9 @@ const TripDetailPage = lazy(() => import("./pages/TripDetailPage"));
 function PageLoader() {
   return (
     <div className="screen screen--simple" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
-      <div style={{ textAlign: "center", opacity: 0.6 }}>
-        <img src={logo} alt="CampusRide" style={{ width: "60px" }} />
+      <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+        <img src={logo} alt="CampusRide" style={{ width: "48px", opacity: 0.6 }} />
+        <div className="refresh-indicator__spinner" />
       </div>
     </div>
   );

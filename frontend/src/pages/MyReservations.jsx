@@ -68,7 +68,7 @@ export default function MyReservations({
   }
 
   return (
-    <div className="screen screen--simple">
+    <div className="screen screen--simple page-enter">
       <AppHeader
         title="Mes reservations"
         subtitle={`${grouped.active.length} active${grouped.active.length > 1 ? "s" : ""}`}

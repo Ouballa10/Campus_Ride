@@ -218,7 +218,7 @@ export default function Notifications({
   }
 
   return (
-    <div className="screen screen--simple">
+    <div className="screen screen--simple page-enter">
       <AppHeader
         title="Notifications"
         subtitle={unreadCount > 0 ? `${unreadCount} nouvelle${unreadCount > 1 ? "s" : ""}` : "A jour"}
