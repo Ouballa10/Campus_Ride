@@ -171,6 +171,31 @@ async function signUp({ email, password, fullName, phone, role = "passager" }) {
   return data;
 }
 
+async function resetPasswordForEmail(email) {
+  const client = requireSupabase();
+  const redirectTo = typeof window !== "undefined"
+    ? `${window.location.origin}${window.location.pathname}#/reset-password`
+    : undefined;
+
+  const { error } = await client.auth.resetPasswordForEmail(
+    normalizeEmail(email),
+    { redirectTo },
+  );
+
+  if (error) {
+    throw formatSupabaseError(error, "Impossible d'envoyer le lien de réinitialisation.");
+  }
+}
+
+async function updatePassword(newPassword) {
+  const client = requireSupabase();
+  const { error } = await client.auth.updateUser({ password: newPassword });
+
+  if (error) {
+    throw formatSupabaseError(error, "Impossible de mettre à jour le mot de passe.");
+  }
+}
+
 async function signOut() {
   const client = requireSupabase();
 
@@ -217,8 +242,10 @@ export const authService = {
   getCurrentProfile,
   getSession,
   onAuthStateChange,
+  resetPasswordForEmail,
   signIn,
   signInWithGoogle,
   signOut,
   signUp,
+  updatePassword,
 };

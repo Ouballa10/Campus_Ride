@@ -14,7 +14,7 @@ const initialForm = {
 };
 
 export default function Register({ navigate }) {
-  const { isConfigured, signInWithGoogle, signUp } = useAuth();
+  const { isConfigured, signIn, signInWithGoogle, signUp } = useAuth();
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -68,9 +68,21 @@ export default function Register({ navigate }) {
         return;
       }
 
-      setSuccess(
-        "Compte cree. Verifie ton email pour confirmer ton inscription avant de te connecter.",
-      );
+      // No session = email confirmation required by Supabase
+      // Try to sign in directly (works if confirm email is disabled in Supabase)
+      try {
+        await signIn({
+          email: form.email.trim(),
+          password: form.password,
+        });
+        navigate("home");
+        return;
+      } catch {
+        // If sign in fails, just redirect to login
+      }
+
+      setSuccess("Compte cree ! Connecte-toi maintenant.");
+      setTimeout(() => navigate("login"), 1500);
     } catch (submissionError) {
       setError(submissionError.message);
     } finally {

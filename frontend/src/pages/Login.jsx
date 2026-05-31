@@ -138,7 +138,7 @@ export default function Login({ navigate }) {
                 <input type="checkbox" />
                 <span>Se souvenir de moi</span>
               </label>
-              <button type="button" className="login-page__forgot">
+              <button type="button" className="login-page__forgot" onClick={() => navigate("forgot-password")}>
                 Mot de passe oublié ?
               </button>
             </div>

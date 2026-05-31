@@ -15,6 +15,7 @@ import { isTripOwnedByCurrentUser } from "./utils/tripHelpers";
 // Lazy-loaded pages for code splitting
 const Chat = lazy(() => import("./pages/Chat"));
 const DriverProfile = lazy(() => import("./pages/DriverProfile"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
 const MyReservations = lazy(() => import("./pages/MyReservations"));
@@ -26,6 +27,7 @@ const Profile = lazy(() => import("./pages/Profile"));
 const PublishTrajet = lazy(() => import("./pages/PublishTrajet"));
 const Register = lazy(() => import("./pages/Register"));
 const Reservation = lazy(() => import("./pages/Reservation"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const SearchTrajet = lazy(() => import("./pages/SearchTrajet"));
 const Splash = lazy(() => import("./pages/Splash"));
 const TripDetailPage = lazy(() => import("./pages/TripDetailPage"));
@@ -261,7 +263,7 @@ function AppContent() {
   // Redirect logic
   useEffect(() => {
     if (authLoading || !isConfigured) return;
-    const authRoutes = ["splash", "login", "register", ""];
+    const authRoutes = ["splash", "login", "register", "forgot-password", ""];
     if (sessionUserId && authRoutes.includes(currentPath)) {
       navigate("/home", { replace: true });
     }
@@ -273,7 +275,7 @@ function AppContent() {
     isOAuthReturn || (hasStoredSession && authLoading)
   );
 
-  const authRoutes = ["splash", "login", "register", ""];
+  const authRoutes = ["splash", "login", "register", "forgot-password", "reset-password", ""];
   const isAuthRoute = authRoutes.includes(currentPath);
   const hideNavRoutes = ["chat", "trip-detail", "notification-detail", "driver-profile"];
   const showNav = !isAuthRoute && !hideNavRoutes.includes(currentPath) && isLoggedIn && !isWaitingForOAuth;
@@ -326,6 +328,8 @@ function AppContent() {
                   <Routes>
                     <Route path="/login" element={<Login navigate={appNavigate} />} />
                     <Route path="/register" element={<Register navigate={appNavigate} />} />
+                    <Route path="/forgot-password" element={<ForgotPassword navigate={appNavigate} />} />
+                    <Route path="/reset-password" element={<ResetPassword navigate={appNavigate} />} />
                     <Route path="*" element={<Splash navigate={appNavigate} />} />
                   </Routes>
                 </Suspense>
@@ -485,6 +489,9 @@ function AppContent() {
                       }
                     }}
                   />
+                } />
+                <Route path="/reset-password" element={
+                  <ResetPassword navigate={appNavigate} />
                 } />
                 <Route path="*" element={<Navigate to="/home" replace />} />
               </Routes>
