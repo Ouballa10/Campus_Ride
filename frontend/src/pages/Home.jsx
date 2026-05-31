@@ -9,8 +9,32 @@ import "./Home.css";
 function getGreeting() {
   const hour = new Date().getHours();
   if (hour < 12) return "Bonjour";
-  if (hour < 18) return "Bon apres-midi";
+  if (hour < 18) return "Bon après-midi";
   return "Bonsoir";
+}
+
+function getTodayDate() {
+  return new Date().toLocaleDateString("fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
+}
+
+function getCountdown(departureAt) {
+  if (!departureAt) return null;
+  const now = new Date();
+  const dep = new Date(departureAt);
+  const diffMs = dep - now;
+  if (diffMs <= 0) return null;
+  const diffH = Math.floor(diffMs / 3600000);
+  const diffM = Math.floor((diffMs % 3600000) / 60000);
+  if (diffH > 24) {
+    const days = Math.floor(diffH / 24);
+    return `Dans ${days}j`;
+  }
+  if (diffH > 0) return `Dans ${diffH}h${diffM > 0 ? diffM : ""}`;
+  return `Dans ${diffM} min`;
 }
 
 export default function Home({
@@ -28,8 +52,12 @@ export default function Home({
 }) {
   const isDriverMode = mode === "driver";
   const featuredTrips = tripOptions.slice(0, 3);
-  const featuredPublishedTrips = publishedTrips.filter((trip) => trip.status !== "Passe").slice(0, 3);
-  const activePublishedTrips = publishedTrips.filter((trip) => trip.status === "Actif").length;
+  const featuredPublishedTrips = publishedTrips
+    .filter((trip) => trip.status !== "Passe")
+    .slice(0, 3);
+  const activePublishedTrips = publishedTrips.filter(
+    (trip) => trip.status === "Actif",
+  ).length;
   const confirmedReservations = reservations.filter(
     (reservation) => reservation.status === "Confirmee",
   ).length;
@@ -45,7 +73,8 @@ export default function Home({
     0,
   );
   const totalEarnings = publishedTrips.reduce(
-    (sum, trip) => sum + (trip.earningsEstimate || 0), 0,
+    (sum, trip) => sum + (trip.earningsEstimate || 0),
+    0,
   );
   const firstName = user.name?.split(" ")[0] || "CampusRider";
 
@@ -69,145 +98,241 @@ export default function Home({
           <img src={logo} alt="CampusRide" className="home-topbar__logo" />
         </div>
         <div className="home-topbar__right">
-          <div className="home-topbar__avatar" onClick={() => navigate("profile")} role="button" tabIndex={0} aria-label="Mon profil">
+          <button
+            className="home-topbar__notif"
+            type="button"
+            onClick={() => navigate("notifications")}
+            aria-label="Notifications"
+          >
+            <Icon name="bell" size={20} />
+            {pendingReservations > 0 && (
+              <span className="home-topbar__notif-badge">{pendingReservations}</span>
+            )}
+          </button>
+          <div
+            className="home-topbar__avatar"
+            onClick={() => navigate("profile")}
+            role="button"
+            tabIndex={0}
+            aria-label="Mon profil"
+          >
             {user.photo ? (
               <img src={user.photo} alt={user.name} />
             ) : (
-              <span>{user.initials || "CR"}</span>
+              <span className="home-topbar__avatar-initials">
+                {user.initials || "CR"}
+              </span>
             )}
+            <span className="home-topbar__online-dot" aria-hidden="true" />
           </div>
         </div>
       </header>
 
       {/* ===== GREETING ===== */}
-      <div className="home-greeting-bar">
-        <span>{getGreeting()}, {firstName} 👋</span>
-      </div>
+      <section className="home-greeting">
+        <div className="home-greeting__text">
+          <p className="home-greeting__hello">{getGreeting()}</p>
+          <h2 className="home-greeting__name">{firstName} 👋</h2>
+        </div>
+        <span className="home-greeting__date">{getTodayDate()}</span>
+      </section>
 
       {/* ===== HERO CARD ===== */}
-      <section className="home-hero-v2">
-        {/* Animated background elements */}
-        <div className="home-hero-v2__shimmer" aria-hidden="true" />
-        <div className="home-hero-v2__orb home-hero-v2__orb--1" aria-hidden="true" />
-        <div className="home-hero-v2__orb home-hero-v2__orb--2" aria-hidden="true" />
-        <div className="home-hero-v2__grid-pattern" aria-hidden="true" />
+      <section className="home-hero">
+        <div className="home-hero__bg" aria-hidden="true">
+          <div className="home-hero__orb home-hero__orb--1" />
+          <div className="home-hero__orb home-hero__orb--2" />
+          <div className="home-hero__orb home-hero__orb--3" />
+          <div className="home-hero__shimmer" />
+          <div className="home-hero__pattern" />
+        </div>
 
-        <div className="home-hero-v2__content">
-          <div className="home-hero-v2__top-row">
-            <span className="home-hero-v2__badge">
-              <span className="home-hero-v2__badge-dot" />
-              {isDriverMode ? "Conducteur" : "Passager"}
-            </span>
-          </div>
+        <div className="home-hero__content">
+          <span className="home-hero__badge">
+            <span className="home-hero__badge-dot" />
+            {isDriverMode ? "Conducteur" : "Passager"}
+          </span>
 
-          <h2 className="home-hero-v2__title">
-            {isDriverMode
-              ? <>Gerez vos<br /><span>trajets</span></>
-              : <>Trouvez votre<br /><span>trajet ideal</span></>}
+          <h2 className="home-hero__title">
+            {isDriverMode ? (
+              <>
+                Gérez vos <span>trajets</span>
+              </>
+            ) : (
+              <>
+                Trouvez votre <span>trajet idéal</span>
+              </>
+            )}
           </h2>
 
-          <p className="home-hero-v2__desc">
+          <p className="home-hero__desc">
             {isDriverMode
-              ? "Publiez, confirmez et suivez vos passagers en temps reel."
-              : "Reservez en un clic, voyagez en toute serenite."}
+              ? "Publiez et suivez vos passagers en temps réel."
+              : "Réservez en un clic, voyagez sereinement."}
           </p>
 
-          {/* Stats */}
-          <div className="home-hero-v2__stats">
-            <button className="home-stat-pill" type="button" onClick={() => navigate(isDriverMode ? "my-trips" : "search")}>
-              <strong>{isDriverMode ? publishedTrips.length : tripOptions.length}</strong>
+          <div className="home-hero__stats">
+            <button
+              className="home-hero__stat"
+              type="button"
+              onClick={() =>
+                navigate(isDriverMode ? "my-trips" : "search")
+              }
+            >
+              <strong>
+                {isDriverMode ? publishedTrips.length : tripOptions.length}
+              </strong>
               <span>{isDriverMode ? "Trajets" : "Offres"}</span>
             </button>
-            <button className="home-stat-pill" type="button" onClick={() => navigate(isDriverMode ? "my-trips" : "my-reservations")}>
-              <strong>{isDriverMode ? passengerCount : reservations.length}</strong>
-              <span>{isDriverMode ? "Passagers" : "Reserv."}</span>
+            <span className="home-hero__stat-divider" />
+            <button
+              className="home-hero__stat"
+              type="button"
+              onClick={() =>
+                navigate(isDriverMode ? "my-trips" : "my-reservations")
+              }
+            >
+              <strong>
+                {isDriverMode ? passengerCount : reservations.length}
+              </strong>
+              <span>{isDriverMode ? "Passagers" : "Réserv."}</span>
             </button>
-            <button className="home-stat-pill" type="button" onClick={() => navigate(isDriverMode ? "my-trips" : "my-reservations")}>
-              <strong>{isDriverMode ? activePublishedTrips : confirmedReservations}</strong>
-              <span>{isDriverMode ? "Actifs" : "Confirm."}</span>
+            <span className="home-hero__stat-divider" />
+            <button
+              className="home-hero__stat"
+              type="button"
+              onClick={() =>
+                navigate(isDriverMode ? "my-trips" : "my-reservations")
+              }
+            >
+              <strong>
+                {isDriverMode ? activePublishedTrips : confirmedReservations}
+              </strong>
+              <span>{isDriverMode ? "Actifs" : "Confirmés"}</span>
             </button>
           </div>
+
+          <button
+            className="home-hero__cta"
+            type="button"
+            onClick={() => navigate(isDriverMode ? "publish" : "search")}
+          >
+            <Icon name={isDriverMode ? "plus" : "search"} size={18} />
+            <span>
+              {isDriverMode ? "Publier un trajet" : "Chercher un trajet"}
+            </span>
+          </button>
         </div>
       </section>
 
-      {/* ===== QUICK ACTIONS GRID ===== */}
-      <div className="home-actions-grid">
-        <button
-          className="home-qaction home-qaction--find"
-          type="button"
-          onClick={() => navigate(isDriverMode ? "publish" : "search")}
-        >
-          <div className="home-qaction__icon-wrap">
-            <Icon name={isDriverMode ? "plus" : "search"} size={22} />
-          </div>
-          <strong>{isDriverMode ? "Publier" : "Chercher"}</strong>
-          <span>{isDriverMode ? "Nouveau trajet" : "Un trajet"}</span>
-        </button>
+      {/* ===== QUICK ACTIONS ===== */}
+      <section className="home-actions">
+        <h3 className="home-actions__title">Accès rapide</h3>
+        <div className="home-actions__grid">
+          <button
+            className="home-action-card"
+            type="button"
+            onClick={() => navigate(isDriverMode ? "publish" : "search")}
+          >
+            <div className="home-action-card__icon home-action-card__icon--primary">
+              <Icon name={isDriverMode ? "plus" : "search"} size={22} />
+            </div>
+            <div className="home-action-card__info">
+              <strong>{isDriverMode ? "Publier" : "Chercher"}</strong>
+              <span>
+                {isDriverMode ? "Nouveau trajet" : "Trouver un trajet"}
+              </span>
+            </div>
+          </button>
 
-        <button
-          className="home-qaction home-qaction--trips"
-          type="button"
-          onClick={() => navigate(isDriverMode ? "my-trips" : "my-reservations")}
-        >
-          <div className="home-qaction__icon-wrap">
-            <Icon name={isDriverMode ? "route" : "bookmark"} size={22} />
-          </div>
-          <strong>{isDriverMode ? "Annonces" : "Reserv."}</strong>
-          <span>{isDriverMode ? "Mes trajets" : "Mes trajets"}</span>
-        </button>
+          <button
+            className="home-action-card"
+            type="button"
+            onClick={() =>
+              navigate(isDriverMode ? "my-trips" : "my-reservations")
+            }
+          >
+            <div className="home-action-card__icon home-action-card__icon--secondary">
+              <Icon name={isDriverMode ? "route" : "bookmark"} size={22} />
+            </div>
+            <div className="home-action-card__info">
+              <strong>{isDriverMode ? "Annonces" : "Réservations"}</strong>
+              <span>
+                {isDriverMode ? "Gérer mes trajets" : "Mes réservations"}
+              </span>
+            </div>
+          </button>
 
-        <button
-          className="home-qaction home-qaction--profile"
-          type="button"
-          onClick={() => navigate("profile")}
-        >
-          <div className="home-qaction__icon-wrap">
-            <Icon name="user" size={22} />
-          </div>
-          <strong>Profil</strong>
-          <span>Mon compte</span>
-        </button>
+          <button
+            className="home-action-card"
+            type="button"
+            onClick={() => navigate("profile")}
+          >
+            <div className="home-action-card__icon home-action-card__icon--accent">
+              <Icon name="user" size={22} />
+            </div>
+            <div className="home-action-card__info">
+              <strong>Profil</strong>
+              <span>Mon compte</span>
+            </div>
+          </button>
 
-        <button
-          className="home-qaction home-qaction--notif"
-          type="button"
-          onClick={() => navigate("notifications")}
-        >
-          <div className="home-qaction__icon-wrap">
-            <Icon name="bell" size={22} />
-          </div>
-          <strong>Alertes</strong>
-          <span>Notifications</span>
-        </button>
-      </div>
+          <button
+            className="home-action-card"
+            type="button"
+            onClick={() => navigate("notifications")}
+          >
+            <div className="home-action-card__icon home-action-card__icon--muted">
+              <Icon name="bell" size={22} />
+            </div>
+            <div className="home-action-card__info">
+              <strong>Alertes</strong>
+              <span>Notifications</span>
+            </div>
+          </button>
+        </div>
+      </section>
 
       {/* ===== CONTEXTUAL BANNER ===== */}
       {isDriverMode && totalEarnings > 0 && (
-        <div className="home-banner home-banner--earnings card-animate">
+        <div className="home-banner home-banner--blue card-animate">
           <div className="home-banner__icon">
-            <Icon name="ticket" size={20} />
+            <Icon name="ticket" size={22} />
           </div>
           <div className="home-banner__body">
-            <span>Revenus estimes</span>
+            <span>Revenus estimés</span>
             <strong>{totalEarnings} DH</strong>
           </div>
-          <button className="home-banner__cta" type="button" onClick={() => navigate("my-trips")}>
-            Voir <Icon name="arrow-right" size={12} />
+          <button
+            className="home-banner__cta"
+            type="button"
+            onClick={() => navigate("my-trips")}
+          >
+            Voir
+            <Icon name="arrow-right" size={13} />
           </button>
         </div>
       )}
 
       {!isDriverMode && pendingReservations > 0 && (
-        <div className="home-banner home-banner--pending card-animate">
-          <div className="home-banner__icon home-banner__icon--warning">
-            <Icon name="clock" size={20} />
+        <div className="home-banner home-banner--orange card-animate">
+          <div className="home-banner__icon home-banner__icon--orange">
+            <Icon name="clock" size={22} />
           </div>
           <div className="home-banner__body">
             <span>En attente</span>
-            <strong>{pendingReservations} reservation{pendingReservations > 1 ? "s" : ""}</strong>
+            <strong>
+              {pendingReservations} réservation
+              {pendingReservations > 1 ? "s" : ""}
+            </strong>
           </div>
-          <button className="home-banner__cta home-banner__cta--warning" type="button" onClick={() => navigate("my-reservations")}>
-            Voir <Icon name="arrow-right" size={12} />
+          <button
+            className="home-banner__cta home-banner__cta--orange"
+            type="button"
+            onClick={() => navigate("my-reservations")}
+          >
+            Voir
+            <Icon name="arrow-right" size={13} />
           </button>
         </div>
       )}
@@ -217,44 +342,48 @@ export default function Home({
         <div className="home-section__header">
           <div>
             <h3 className="home-section__title">
-              {isDriverMode ? "Mes annonces" : "Trajets recents"}
+              {isDriverMode ? "Mes annonces" : "Trajets récents"}
             </h3>
             <p className="home-section__subtitle">
               {isDriverMode
-                ? "Tes prochains departs"
-                : "Publies recemment pres du campus"}
+                ? "Tes prochains départs"
+                : "Publiés récemment près du campus"}
             </p>
           </div>
           <button
-            className="home-section__link"
+            className="home-section__see-all"
             type="button"
             onClick={() => navigate(isDriverMode ? "my-trips" : "search")}
           >
-            Tout
-            <Icon name="arrow-right" size={13} />
+            Tout voir
+            <Icon name="arrow-right" size={14} />
           </button>
         </div>
 
         {/* Empty states */}
         {!isDriverMode && !featuredTrips.length && (
           <div className="home-empty">
-            <div className="home-empty__visual">
-              <Icon name="car" size={32} />
+            <div className="home-empty__icon">
+              <Icon name="car" size={40} />
             </div>
             <strong>Aucun trajet disponible</strong>
-            <p>Les conducteurs n'ont pas encore publie. Reviens bientot.</p>
+            <p>Les conducteurs n'ont pas encore publié.</p>
           </div>
         )}
 
         {isDriverMode && !featuredPublishedTrips.length && (
           <div className="home-empty">
-            <div className="home-empty__visual">
-              <Icon name="route" size={32} />
+            <div className="home-empty__icon">
+              <Icon name="route" size={40} />
             </div>
             <strong>Aucune annonce</strong>
             <p>Publie ton premier trajet pour commencer.</p>
-            <button className="home-empty__cta" type="button" onClick={() => navigate("publish")}>
-              <Icon name="plus" size={15} />
+            <button
+              className="home-empty__cta"
+              type="button"
+              onClick={() => navigate("publish")}
+            >
+              <Icon name="plus" size={16} />
               Publier
             </button>
           </div>
@@ -264,9 +393,13 @@ export default function Home({
         {!isDriverMode && featuredTrips.length > 0 && (
           <div className="home-trips-list">
             {featuredTrips.map((trip, index) => (
-              <div className="card-animate" key={trip.id} style={{ animationDelay: `${index * 0.1}s` }}>
+              <div
+                className="card-animate"
+                key={trip.id}
+                style={{ animationDelay: `${index * 0.08}s` }}
+              >
                 <TrajetCard
-                  ctaLabel="Reserver"
+                  ctaLabel="Réserver"
                   trip={trip}
                   onClick={() => onTripSelect(trip.id)}
                   onViewDriver={onViewDriver}
@@ -279,50 +412,67 @@ export default function Home({
         {/* Trip cards - Driver mode */}
         {isDriverMode && featuredPublishedTrips.length > 0 && (
           <div className="home-trips-list">
-            {featuredPublishedTrips.map((trip, index) => (
-              <article className="home-driver-card card-animate" key={trip.id} style={{ animationDelay: `${index * 0.1}s` }}>
-                <div className="home-driver-card__top">
-                  <div className="home-driver-card__route">
-                    <div className="home-driver-card__route-icon">
-                      <Icon name="route" size={14} />
+            {featuredPublishedTrips.map((trip, index) => {
+              const countdown = getCountdown(trip.departureAt);
+              return (
+                <article
+                  className="home-driver-card card-animate"
+                  key={trip.id}
+                  style={{ animationDelay: `${index * 0.08}s` }}
+                >
+                  <div
+                    className="home-driver-card__accent"
+                    data-status={trip.status?.toLowerCase()}
+                  />
+                  <div className="home-driver-card__top">
+                    <div className="home-driver-card__route">
+                      <div className="home-driver-card__route-icon">
+                        <Icon name="route" size={16} />
+                      </div>
+                      <h4>{trip.route}</h4>
                     </div>
-                    <h4>{trip.route}</h4>
+                    <span className={getStatusPillClass(trip.status)}>
+                      {trip.status}
+                    </span>
                   </div>
-                  <span className={getStatusPillClass(trip.status)}>
-                    {trip.status}
-                  </span>
-                </div>
 
-                <div className="home-driver-card__details">
-                  <div className="home-driver-card__chip">
-                    <Icon name="clock" size={12} />
-                    {trip.time}
+                  <div className="home-driver-card__meta">
+                    {countdown && (
+                      <span className="home-driver-card__tag home-driver-card__tag--live">
+                        {countdown}
+                      </span>
+                    )}
+                    <span className="home-driver-card__tag">
+                      <Icon name="clock" size={13} />
+                      {trip.time}
+                    </span>
+                    <span className="home-driver-card__tag">
+                      <Icon name="seat" size={13} />
+                      {trip.seats} places
+                    </span>
+                    <span className="home-driver-card__tag home-driver-card__tag--price">
+                      {trip.price} DH
+                    </span>
                   </div>
-                  <div className="home-driver-card__chip">
-                    <Icon name="seat" size={12} />
-                    {trip.seats}
-                  </div>
-                  <div className="home-driver-card__chip home-driver-card__chip--price">
-                    {trip.price} DH
-                  </div>
-                </div>
 
-                <div className="home-driver-card__footer">
-                  <span className="home-driver-card__passengers">
-                    <Icon name="user" size={13} />
-                    {trip.passengers}
-                  </span>
-                  <button
-                    className="home-driver-card__cta"
-                    type="button"
-                    onClick={() => navigate("my-trips")}
-                  >
-                    Gerer
-                    <Icon name="arrow-right" size={12} />
-                  </button>
-                </div>
-              </article>
-            ))}
+                  <div className="home-driver-card__bottom">
+                    <span className="home-driver-card__passengers">
+                      <Icon name="user" size={14} />
+                      {trip.passengers} passager
+                      {(trip.passengers || 0) > 1 ? "s" : ""}
+                    </span>
+                    <button
+                      className="home-driver-card__btn"
+                      type="button"
+                      onClick={() => navigate("my-trips")}
+                    >
+                      Gérer
+                      <Icon name="arrow-right" size={13} />
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         )}
       </section>
