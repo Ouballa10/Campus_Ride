@@ -128,13 +128,17 @@ export default function Home({
         </div>
       </header>
 
-      {/* ===== GREETING ===== */}
-      <section className="home-greeting">
-        <div className="home-greeting__text">
-          <p className="home-greeting__hello">{getGreeting()}</p>
-          <h2 className="home-greeting__name">{firstName} 👋</h2>
+      {/* ===== GREETING CARD ===== */}
+      <section className="home-greeting-card">
+        <div className="home-greeting-card__content">
+          <span className="home-greeting-card__date">{getTodayDate()}</span>
+          <h2 className="home-greeting-card__name">{getGreeting()}, {firstName} 👋</h2>
+          <p className="home-greeting-card__subtitle">
+            {isDriverMode
+              ? "Prêt à publier un trajet aujourd'hui ?"
+              : "Trouvez votre prochain trajet facilement."}
+          </p>
         </div>
-        <span className="home-greeting__date">{getTodayDate()}</span>
       </section>
 
       {/* ===== HERO CARD ===== */}
@@ -227,8 +231,25 @@ export default function Home({
 
       {/* ===== QUICK ACTIONS ===== */}
       <section className="home-actions">
-        <h3 className="home-actions__title">Accès rapide</h3>
+        <h3 className="home-actions__title">
+          <span className="home-actions__title-bar" />
+          Actions rapides
+        </h3>
         <div className="home-actions__grid">
+          <button
+            className="home-action-card"
+            type="button"
+            onClick={() => navigate("profile")}
+          >
+            <div className="home-action-card__icon home-action-card__icon--accent">
+              <Icon name="user" size={22} />
+            </div>
+            <div className="home-action-card__info">
+              <strong>Mon profil</strong>
+              <span>Mon compte</span>
+            </div>
+          </button>
+
           <button
             className="home-action-card"
             type="button"
@@ -239,41 +260,7 @@ export default function Home({
             </div>
             <div className="home-action-card__info">
               <strong>{isDriverMode ? "Publier" : "Chercher"}</strong>
-              <span>
-                {isDriverMode ? "Nouveau trajet" : "Trouver un trajet"}
-              </span>
-            </div>
-          </button>
-
-          <button
-            className="home-action-card"
-            type="button"
-            onClick={() =>
-              navigate(isDriverMode ? "my-trips" : "my-reservations")
-            }
-          >
-            <div className="home-action-card__icon home-action-card__icon--secondary">
-              <Icon name={isDriverMode ? "route" : "bookmark"} size={22} />
-            </div>
-            <div className="home-action-card__info">
-              <strong>{isDriverMode ? "Annonces" : "Réservations"}</strong>
-              <span>
-                {isDriverMode ? "Gérer mes trajets" : "Mes réservations"}
-              </span>
-            </div>
-          </button>
-
-          <button
-            className="home-action-card"
-            type="button"
-            onClick={() => navigate("profile")}
-          >
-            <div className="home-action-card__icon home-action-card__icon--accent">
-              <Icon name="user" size={22} />
-            </div>
-            <div className="home-action-card__info">
-              <strong>Profil</strong>
-              <span>Mon compte</span>
+              <span>{isDriverMode ? "Nouveau trajet" : "Trouver un trajet"}</span>
             </div>
           </button>
 
@@ -288,6 +275,20 @@ export default function Home({
             <div className="home-action-card__info">
               <strong>Alertes</strong>
               <span>Notifications</span>
+            </div>
+          </button>
+
+          <button
+            className="home-action-card"
+            type="button"
+            onClick={() => navigate(isDriverMode ? "my-trips" : "my-reservations")}
+          >
+            <div className="home-action-card__icon home-action-card__icon--secondary">
+              <Icon name={isDriverMode ? "route" : "bookmark"} size={22} />
+            </div>
+            <div className="home-action-card__info">
+              <strong>{isDriverMode ? "Annonces" : "Réservations"}</strong>
+              <span>{isDriverMode ? "Gérer mes trajets" : "Mes réservations"}</span>
             </div>
           </button>
         </div>
@@ -342,6 +343,7 @@ export default function Home({
         <div className="home-section__header">
           <div>
             <h3 className="home-section__title">
+              <span className="home-section__title-bar" />
               {isDriverMode ? "Mes annonces" : "Trajets récents"}
             </h3>
             <p className="home-section__subtitle">
