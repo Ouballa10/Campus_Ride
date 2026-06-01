@@ -214,7 +214,7 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
     <div className="screen screen--publish">
       <AppHeader
         title="Publier un trajet"
-        subtitle="Cree une offre claire, rapide et reservable"
+        subtitle="Créez une offre claire et réservable"
         leftIcon="arrow-left"
         onLeftClick={() => navigate("home")}
       />
@@ -248,19 +248,21 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
             )}
           </section>
 
-          {/* Route fields (manual input still works) */}
+          {/* Route fields */}
           <section className="publish-card publish-card--route">
             <div className="publish-card__header">
               <div>
-                <span className="eyebrow">Nouvelle course</span>
-                <h3>Itineraire</h3>
+                <span className="eyebrow">Itinéraire</span>
+                <h3>D'où à où ?</h3>
               </div>
-              <span className="publish-live-badge">Visible apres publication</span>
+              <span className="publish-live-badge">
+                <Icon name="check-badge" size={12} /> Visible après publication
+              </span>
             </div>
 
             <div className="publish-route-fields">
               <label className="publish-field publish-field--wide">
-                <span>Point de depart</span>
+                <span>Point de départ</span>
                 <div className="publish-field__control">
                   <Icon name="location" size={18} />
                   <input
@@ -294,7 +296,7 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
                 <Icon name="bookmark" size={18} />
                 <input
                   name="pickupNote"
-                  placeholder="Porte principale, parking, cafe proche..."
+                  placeholder="Porte principale, parking, café proche..."
                   type="text"
                   value={form.pickupNote}
                   onChange={updateField}
@@ -303,11 +305,12 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
             </label>
           </section>
 
+          {/* Schedule & Seats */}
           <section className="publish-card">
             <div className="publish-card__header">
               <div>
-                <span className="eyebrow">Disponibilite</span>
-                <h3>Horaire et places</h3>
+                <span className="eyebrow">Disponibilité</span>
+                <h3>Horaire & places</h3>
               </div>
             </div>
 
@@ -406,7 +409,7 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
             </div>
 
             <label className="publish-field publish-field--wide">
-              <span>Duree estimee</span>
+              <span>Durée estimée (min)</span>
               <div className="publish-field__control">
                 <Icon name="clock" size={18} />
                 <input
@@ -422,13 +425,14 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
             </label>
           </section>
 
+          {/* Description */}
           <section className="publish-card publish-card--compact">
             <label className="publish-field publish-field--wide">
               <span>Description (optionnel)</span>
               <textarea
                 name="description"
-                placeholder="Ex: Je pars a l'heure, petit bagage accepte, trajet direct vers le campus."
-                rows="2"
+                placeholder="Ex: Je pars à l'heure, petit bagage accepté, trajet direct vers le campus."
+                rows="3"
                 value={form.description}
                 onChange={updateField}
               />
@@ -444,7 +448,9 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
 
         <div className="publish-sticky-cta">
           <div className="publish-sticky-cta__summary">
-            <span>{form.seats} place(s) · {form.price} DH/place · {totalPotential} DH max</span>
+            <span><Icon name="seat" size={14} /> {form.seats} place(s)</span>
+            <span><Icon name="ticket" size={14} /> {form.price} DH/place</span>
+            <span><strong>{totalPotential} DH</strong> max</span>
           </div>
           <button className="primary-button publish-submit" disabled={isSubmitting} type="submit">
             {isSubmitting ? "Publication..." : "Publier maintenant"}

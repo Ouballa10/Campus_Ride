@@ -160,16 +160,32 @@ export default function MyReservations({
           {/* History */}
           {grouped.history.length > 0 ? (
             <div className="my-res-history">
-              <h4>Historique ({grouped.history.length})</h4>
+              <div className="my-res-history__header">
+                <div className="my-res-history__title-bar" />
+                <h4>Historique</h4>
+                <span className="my-res-history__count">{grouped.history.length}</span>
+              </div>
               {grouped.history.map((r) => {
                 const st = statusConfig(r.status);
                 return (
                   <div className="my-res-history-item" key={r.id}>
-                    <div>
-                      <strong>{shortAddress(r.depart)} → {shortAddress(r.destination)}</strong>
-                      <small>{r.driver}</small>
+                    <div className="my-res-history-item__route">
+                      <div className="my-res-history-item__dots">
+                        <span className="my-res-history-dot my-res-history-dot--start" />
+                        <span className="my-res-history-line" />
+                        <span className="my-res-history-dot my-res-history-dot--end" />
+                      </div>
+                      <div className="my-res-history-item__text">
+                        <strong>{shortAddress(r.depart)}</strong>
+                        <strong>{shortAddress(r.destination)}</strong>
+                      </div>
                     </div>
-                    <span style={{ color: st.color, fontSize: "0.72rem", fontWeight: 700 }}>{st.icon} {st.label}</span>
+                    <div className="my-res-history-item__meta">
+                      <span className="my-res-history-item__driver">{r.driver}</span>
+                      <span className="my-res-history-item__status" style={{ background: st.bg, color: st.color, borderColor: st.border }}>
+                        {st.icon} {st.label}
+                      </span>
+                    </div>
                   </div>
                 );
               })}
