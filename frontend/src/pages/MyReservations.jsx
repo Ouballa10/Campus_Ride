@@ -167,6 +167,7 @@ export default function MyReservations({
               </div>
               {grouped.history.map((r) => {
                 const st = statusConfig(r.status);
+                const canRate = r.status === "Terminee" || r.status === "Confirmee";
                 return (
                   <div className="my-res-history-item" key={r.id}>
                     <div className="my-res-history-item__route">
@@ -185,6 +186,15 @@ export default function MyReservations({
                       <span className="my-res-history-item__status" style={{ background: st.bg, color: st.color, borderColor: st.border }}>
                         {st.icon} {st.label}
                       </span>
+                      {canRate ? (
+                        <button
+                          className="my-res-btn my-res-btn--rate"
+                          type="button"
+                          onClick={() => setRatingTarget(r)}
+                        >
+                          ⭐
+                        </button>
+                      ) : null}
                     </div>
                   </div>
                 );
