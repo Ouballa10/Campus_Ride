@@ -12,7 +12,7 @@ export default function TrajetCard({ trip, ctaLabel = "Reserver", onClick, onVie
           <p>{trip.time}</p>
         </div>
 
-        <span className="pill pill--price">{trip.price} DH</span>
+        <span className="pill pill--price">{trip.price} DH<small>/place</small></span>
       </div>
 
       <div className="trip-card__middle">

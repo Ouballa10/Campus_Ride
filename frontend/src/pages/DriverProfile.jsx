@@ -89,32 +89,45 @@ export default function DriverProfile({ driverData, navigate }) {
   }
 
   return (
-    <div className="screen screen--simple">
-      <AppHeader
-        title="Profil"
-        subtitle={name}
-        leftIcon="arrow-left"
-        onLeftClick={() => navigate("search")}
-      />
-
-      {/* Profile card */}
-      <div className="dp-card">
-        <div className="dp-card__avatar" onClick={() => avatar && setLightboxSrc(avatar)} style={avatar ? { cursor: "zoom-in" } : {}}>
+    <div className="screen screen--simple dp-page">
+      {/* Hero banner + Avatar */}
+      <div className="dp-hero">
+        <div className="dp-hero__banner">
+          <button className="dp-hero__back" type="button" onClick={() => navigate("search")}>
+            <Icon name="arrow-left" size={18} />
+          </button>
+        </div>
+        <div className="dp-hero__avatar" onClick={() => avatar && setLightboxSrc(avatar)} style={avatar ? { cursor: "zoom-in" } : {}}>
           {avatar ? <img alt={name} src={avatar} /> : <span>{initials}</span>}
         </div>
-        <h2 className="dp-card__name">{name}</h2>
-        <span className="dp-card__role">Conducteur campus</span>
-        <div className="dp-card__rating">
+        <h2 className="dp-hero__name">{name}</h2>
+        <span className="dp-hero__role">
+          <Icon name="check-badge" size={13} /> Conducteur vérifié
+        </span>
+        {campus ? <span className="dp-hero__campus"><Icon name="location" size={12} /> {campus}</span> : null}
+      </div>
+
+      {/* Stats */}
+      <div className="dp-stats">
+        <div className="dp-stats__item">
+          <strong>{rating > 0 ? rating.toFixed(1) : "—"}</strong>
+          <span>Note</span>
           <Stars value={rating} />
-          <span>{rating > 0 ? rating.toFixed(1) : "Pas encore note"} · {evaluations.length} avis</span>
         </div>
-        {campus ? <span className="dp-card__campus">📍 {campus}</span> : null}
+        <div className="dp-stats__divider" />
+        <div className="dp-stats__item">
+          <strong>{evaluations.length}</strong>
+          <span>Avis</span>
+        </div>
       </div>
 
       {/* Bio */}
       {bio ? (
         <div className="dp-section">
-          <h4>A propos</h4>
+          <h4>
+            <span className="dp-section__icon dp-section__icon--blue"><Icon name="user" size={15} /></span>
+            A propos
+          </h4>
           <p>{bio}</p>
         </div>
       ) : null}
@@ -122,15 +135,25 @@ export default function DriverProfile({ driverData, navigate }) {
       {/* Vehicle */}
       {car ? (
         <div className="dp-section">
-          <h4>🚗 Vehicule</h4>
-          <div className="dp-vehicle-info">
-            <span><strong>{car}</strong></span>
-            {vehiclePlate ? <span>Plaque: {vehiclePlate}</span> : null}
+          <h4>
+            <span className="dp-section__icon dp-section__icon--cyan"><Icon name="car" size={15} /></span>
+            Véhicule
+          </h4>
+          <div className="dp-vehicle-card">
+            {vehiclePhotos.length > 0 ? (
+              <div className="dp-vehicle-card__photo" onClick={() => setLightboxSrc(vehiclePhotos[0])}>
+                <img src={vehiclePhotos[0]} alt="Véhicule" />
+              </div>
+            ) : null}
+            <div className="dp-vehicle-card__details">
+              <strong>{car}</strong>
+              {vehiclePlate ? <span className="dp-vehicle-card__plate">{vehiclePlate}</span> : null}
+            </div>
           </div>
-          {vehiclePhotos.length > 0 ? (
-            <div className="dp-vehicle-photos">
-              {vehiclePhotos.map((url, i) => (
-                <img key={url} alt={`Vehicule ${i + 1}`} src={url} onClick={() => setLightboxSrc(url)} style={{ cursor: "zoom-in" }} />
+          {vehiclePhotos.length > 1 ? (
+            <div className="dp-vehicle-gallery">
+              {vehiclePhotos.slice(1).map((url, i) => (
+                <img key={url} alt={`Véhicule ${i + 2}`} src={url} onClick={() => setLightboxSrc(url)} style={{ cursor: "zoom-in" }} />
               ))}
             </div>
           ) : null}
@@ -139,19 +162,25 @@ export default function DriverProfile({ driverData, navigate }) {
 
       {/* Contact */}
       <div className="dp-section">
-        <h4>📞 Contact</h4>
+        <h4>
+          <span className="dp-section__icon dp-section__icon--green"><Icon name="phone" size={15} /></span>
+          Contact
+        </h4>
         {phone ? (
           <a className="dp-call-btn" href={`tel:${phone}`}>
-            Appeler {phone}
+            <Icon name="phone" size={15} /> Appeler {phone}
           </a>
         ) : (
-          <span style={{ color: "#9ca3af", fontSize: "0.82rem" }}>Telephone non renseigne</span>
+          <span style={{ color: "#94a3b8", fontSize: "0.82rem" }}>Téléphone non renseigné</span>
         )}
       </div>
 
       {/* Evaluations */}
       <div className="dp-section">
-        <h4>⭐ Avis des passagers ({evaluations.length})</h4>
+        <h4>
+          <span className="dp-section__icon dp-section__icon--amber"><Icon name="star" size={15} /></span>
+          Avis des passagers ({evaluations.length})
+        </h4>
         {!evaluations.length ? (
           <p style={{ color: "#9ca3af", fontSize: "0.82rem" }}>Aucun avis pour le moment</p>
         ) : (

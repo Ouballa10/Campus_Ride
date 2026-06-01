@@ -522,16 +522,31 @@ export default function Profile({
 
         {/* ===== COMPLETION ===== */}
         <div className="pf-progress">
-          <div className="pf-progress__top">
-            <div>
-              <span>Profil complété</span>
-              <p className="pf-progress__hint">Complétez vos informations pour une meilleure expérience de covoiturage.</p>
+          <div className="pf-progress__circle">
+            <svg viewBox="0 0 36 36" className="pf-progress__svg">
+              <path
+                className="pf-progress__circle-bg"
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+              />
+              <path
+                className="pf-progress__circle-fill"
+                strokeDasharray={`${Math.round(((form.fullName ? 1 : 0) + (form.email ? 1 : 0) + (form.phone ? 1 : 0) + (form.campus ? 1 : 0) + (avatarSource ? 1 : 0)) / 5 * 100)}, 100`}
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+              />
+            </svg>
+            <span className="pf-progress__circle-text">{Math.round(((form.fullName ? 1 : 0) + (form.email ? 1 : 0) + (form.phone ? 1 : 0) + (form.campus ? 1 : 0) + (avatarSource ? 1 : 0)) / 5 * 100)}%</span>
+          </div>
+          <div className="pf-progress__content">
+            <strong className="pf-progress__title">Complétude du profil</strong>
+            <p className="pf-progress__hint">Plus votre profil est complet, plus vous êtes en sécurité.</p>
+            <div className="pf-progress__bar">
+              <div className="pf-progress__fill" style={{ width: `${Math.round(((form.fullName ? 1 : 0) + (form.email ? 1 : 0) + (form.phone ? 1 : 0) + (form.campus ? 1 : 0) + (avatarSource ? 1 : 0)) / 5 * 100)}%` }} />
             </div>
-            <strong>{Math.round(((form.fullName ? 1 : 0) + (form.email ? 1 : 0) + (form.phone ? 1 : 0) + (form.campus ? 1 : 0) + (avatarSource ? 1 : 0)) / 5 * 100)}%</strong>
+            <span className="pf-progress__percent">{Math.round(((form.fullName ? 1 : 0) + (form.email ? 1 : 0) + (form.phone ? 1 : 0) + (form.campus ? 1 : 0) + (avatarSource ? 1 : 0)) / 5 * 100)}%</span>
           </div>
-          <div className="pf-progress__bar">
-            <div className="pf-progress__fill" style={{ width: `${Math.round(((form.fullName ? 1 : 0) + (form.email ? 1 : 0) + (form.phone ? 1 : 0) + (form.campus ? 1 : 0) + (avatarSource ? 1 : 0)) / 5 * 100)}%` }} />
-          </div>
+          <button className="pf-progress__btn" type="button" onClick={() => navigate("edit-profile")}>
+            Compléter ›
+          </button>
         </div>
 
         {/* ===== SETTINGS LINKS ===== */}

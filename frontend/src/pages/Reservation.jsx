@@ -166,7 +166,7 @@ export default function Reservation({
           <button
             className="res-cta"
             type="button"
-            style={{ background: "linear-gradient(135deg, #1d4ed8, #2563eb)" }}
+            style={{ background: "linear-gradient(135deg, #0ea5e9, #0284c7)" }}
             onClick={() => {
               const matchedReservation = reservations.find((r) => r.trajetId === selectedTrip.id);
               onOpenChat?.({
