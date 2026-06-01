@@ -6,6 +6,7 @@
 /* ===== LAYOUT ===== */
 .screen--home {
   gap: 18px;
+  padding-top: 0;
   padding-bottom: 32px;
 }
 

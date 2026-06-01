@@ -268,6 +268,7 @@ a { color: var(--primary); text-decoration: none; }
   display: flex;
   flex-direction: column;
   gap: 20px;
+  padding-top: 75px;
 }
 
 .screen--records {
@@ -326,11 +327,14 @@ a { color: var(--primary); text-decoration: none; }
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 12px;
-  padding: 8px 0 14px;
-  position: sticky;
+  padding: 8px 16px 14px;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 50;
   background: #ffffff;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
 }
 
 .app-header__copy {
@@ -514,6 +518,7 @@ a { color: var(--primary); text-decoration: none; }
   inset: 0;
   z-index: 9999;
   display: flex;
+  align-items: flex-start;
   animation: fadeIn 0.2s var(--ease-out);
 }
 
@@ -531,14 +536,13 @@ a { color: var(--primary); text-decoration: none; }
   position: relative;
   z-index: 1;
   width: min(300px, 82vw);
-  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 0;
-  padding: 0;
+  padding: 0 0 24px;
   background: #ffffff;
-  box-shadow: 12px 0 40px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
+  border-radius: 0 0 20px 0;
+  box-shadow: 8px 4px 30px rgba(0, 0, 0, 0.12);
   overflow-x: hidden;
   animation: slideInLeft 0.3s var(--ease-out);
 }
@@ -684,7 +688,7 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .app-menu__mode-card {
-  padding: 4px 0 8px;
+  padding: 4px 20px 8px;
 }
 
 .app-menu__toggle {
@@ -803,8 +807,8 @@ a { color: var(--primary); text-decoration: none; }
   grid-template-columns: 1fr 1fr;
   gap: 4px;
   padding: 4px;
-  border-radius: var(--radius-md);
-  background: rgba(99, 102, 241, 0.08);
+  border-radius: 14px;
+  background: rgba(14, 165, 233, 0.08);
 }
 
 .mode-switch__thumb {
@@ -813,9 +817,9 @@ a { color: var(--primary); text-decoration: none; }
   left: 4px;
   width: calc(50% - 4px);
   height: calc(100% - 8px);
-  border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, #1d4ed8, #2563eb);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.3);
   transition: transform 0.4s var(--ease-spring);
 }
 
@@ -11436,248 +11440,270 @@ a:focus-visible {
 /* ============================================================
    MY TRAJETS - PROFESSIONAL REDESIGN
    ============================================================ */
-.mt-stats {
+.mt-content {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  padding: 4px 0;
+  gap: 18px;
+}
+
+.mt-stats {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 10px !important;
 }
 .mt-stats__item {
-  text-align: center;
-  padding: 12px 8px;
-  border-radius: var(--radius-md);
-  background: var(--primary-subtle);
+  text-align: center !important;
+  padding: 18px 8px !important;
+  border-radius: 16px !important;
+  background: linear-gradient(135deg, #f0f9ff, #ffffff) !important;
+  box-shadow: 0 2px 12px rgba(14, 165, 233, 0.06) !important;
+  border: 1px solid #e0f2fe !important;
 }
 .mt-stats__item strong {
-  display: block;
-  font-size: 1.1rem;
-  color: var(--primary-deep);
-  font-weight: 700;
+  display: block !important;
+  font-size: 1.3rem !important;
+  color: #0369a1 !important;
+  font-weight: 900 !important;
 }
 .mt-stats__item span {
-  font-size: 0.7rem;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-size: 0.68rem !important;
+  color: #64748b !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  font-weight: 600 !important;
 }
 
 .mt-card {
-  background: var(--surface-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  display: grid;
-  gap: 12px;
-  box-shadow: var(--shadow-sm);
+  background: #ffffff !important;
+  border: 1.5px solid #e0f2fe !important;
+  border-radius: 22px !important;
+  padding: 22px !important;
+  display: grid !important;
+  gap: 18px !important;
+  box-shadow: 0 4px 20px rgba(14, 165, 233, 0.05) !important;
 }
 
 .mt-card__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
 }
 .mt-card__route-info {
-  display: flex;
-  gap: 10px;
-  flex: 1;
+  display: flex !important;
+  gap: 12px !important;
+  flex: 1 !important;
 }
 .mt-card__route-line {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding-top: 4px;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 2px !important;
+  padding-top: 4px !important;
 }
 .mt-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
 }
-.mt-dot--blue { background: var(--primary); }
-.mt-dot--green { background: var(--green); }
+.mt-dot--blue { background: #0ea5e9 !important; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12) !important; }
+.mt-dot--green { background: #059669 !important; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12) !important; }
 .mt-line {
-  width: 2px;
-  height: 20px;
-  background: linear-gradient(to bottom, var(--primary), var(--green));
-  border-radius: 2px;
+  width: 2.5px !important;
+  height: 20px !important;
+  background: linear-gradient(to bottom, #0ea5e9, #059669) !important;
+  border-radius: 2px !important;
 }
 .mt-card__route-names {
-  display: grid;
-  gap: 14px;
+  display: grid !important;
+  gap: 14px !important;
 }
 .mt-card__route-names strong {
-  font-size: 0.88rem;
-  color: var(--text);
+  font-size: 0.92rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
 }
 
 .mt-badge {
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  flex-shrink: 0;
+  padding: 5px 12px !important;
+  border-radius: 8px !important;
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
+  flex-shrink: 0 !important;
 }
-.mt-badge--green { background: #ecfdf5; color: #059669; }
-.mt-badge--gray { background: #f3f4f6; color: #6b7280; }
+.mt-badge--green { background: #ecfdf5 !important; color: #059669 !important; }
+.mt-badge--gray { background: #f1f5f9 !important; color: #64748b !important; }
 
 .mt-card__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  font-size: 0.78rem;
-  color: var(--muted);
-  padding: 8px 12px;
-  background: var(--surface);
-  border-radius: var(--radius-sm);
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  font-size: 0.78rem !important;
+  color: #64748b !important;
+  font-weight: 600 !important;
+  padding: 12px 16px !important;
+  background: #f0f9ff !important;
+  border-radius: 14px !important;
+  border: 1px solid #e0f2fe !important;
+}
+
+.mt-card__meta span {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
 }
 
 .mt-section {
-  border-radius: var(--radius-md);
-  padding: 12px;
-  display: grid;
-  gap: 8px;
+  border-radius: 16px !important;
+  padding: 16px !important;
+  display: grid !important;
+  gap: 10px !important;
 }
-.mt-section--pending { background: #fffbeb; border: 1px solid #fde68a; }
-.mt-section--confirmed { background: #ecfdf5; border: 1px solid #a7f3d0; }
+.mt-section--pending { background: #fffbeb !important; border: 1.5px solid #fde68a !important; }
+.mt-section--confirmed { background: #ecfdf5 !important; border: 1.5px solid #a7f3d0 !important; }
 
 .mt-section__title {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
 }
 .mt-section__badge {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #fff;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+  color: #fff !important;
 }
-.mt-section__badge--orange { background: #f59e0b; }
-.mt-section__badge--green { background: #059669; }
+.mt-section__badge--orange { background: #f59e0b !important; }
+.mt-section__badge--green { background: #059669 !important; }
 
 .mt-passenger {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 8px;
-  border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.7);
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  padding: 12px !important;
+  border-radius: 14px !important;
+  background: rgba(255,255,255,0.85) !important;
 }
 .mt-passenger__left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  flex: 1;
-  min-width: 0;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  cursor: pointer !important;
+  flex: 1 !important;
+  min-width: 0 !important;
 }
 .mt-passenger__left strong {
-  font-size: 0.85rem;
-  color: var(--primary-deep);
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
 }
 .mt-passenger__left small {
-  display: block;
-  font-size: 0.72rem;
-  color: var(--muted);
-  margin-top: 2px;
+  display: block !important;
+  font-size: 0.72rem !important;
+  color: #64748b !important;
+  margin-top: 2px !important;
 }
 .mt-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: var(--primary-subtle);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 2px solid #fff;
-  box-shadow: var(--shadow-sm);
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  background: #f0f9ff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  border: 2px solid #fff !important;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.1) !important;
 }
-.mt-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.mt-avatar span { font-size: 0.82rem; font-weight: 700; color: var(--primary); }
+.mt-avatar img { width: 100% !important; height: 100% !important; object-fit: cover !important; }
+.mt-avatar span { font-size: 0.82rem !important; font-weight: 700 !important; color: #0ea5e9 !important; }
 
 .mt-passenger__actions {
-  display: flex;
-  gap: 6px;
+  display: flex !important;
+  gap: 8px !important;
 }
 .mt-action-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 10px !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.9rem !important;
+  cursor: pointer !important;
+  transition: transform 0.15s !important;
 }
-.mt-action-btn:active { transform: scale(0.9); }
-.mt-action-btn--accept { background: #ecfdf5; color: #059669; }
-.mt-action-btn--accept:hover { box-shadow: 0 2px 8px rgba(5,150,105,0.3); }
-.mt-action-btn--reject { background: #fef2f2; color: #dc2626; }
-.mt-action-btn--reject:hover { box-shadow: 0 2px 8px rgba(220,38,38,0.3); }
-.mt-action-btn--chat { background: var(--primary-subtle); color: var(--primary); }
-.mt-action-btn--call { background: #ecfdf5; color: #059669; text-decoration: none; }
+.mt-action-btn:active { transform: scale(0.9) !important; }
+.mt-action-btn--accept { background: #ecfdf5 !important; color: #059669 !important; }
+.mt-action-btn--reject { background: #fef2f2 !important; color: #dc2626 !important; }
+.mt-action-btn--chat { background: #f0f9ff !important; color: #0ea5e9 !important; }
+.mt-action-btn--call { background: #ecfdf5 !important; color: #059669 !important; text-decoration: none !important; }
 
 .mt-empty {
-  text-align: center;
-  padding: 16px;
-  color: var(--muted);
-  font-size: 0.82rem;
-  background: var(--surface);
-  border-radius: var(--radius-sm);
+  text-align: center !important;
+  padding: 24px !important;
+  color: #94a3b8 !important;
+  font-size: 0.82rem !important;
+  background: #f8fafc !important;
+  border-radius: 14px !important;
 }
 
 .mt-card__footer {
-  display: flex;
-  gap: 8px;
-  padding-top: 4px;
-  border-top: 1px solid var(--border);
+  display: flex !important;
+  gap: 10px !important;
+  padding-top: 10px !important;
+  border-top: 1px solid #f1f5f9 !important;
 }
 .mt-footer-btn {
-  flex: 1;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: var(--surface);
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--text);
-  cursor: pointer;
-  transition: all 0.15s;
+  flex: 1 !important;
+  padding: 11px 14px !important;
+  border-radius: 12px !important;
+  border: 1.5px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  color: #334155 !important;
+  cursor: pointer !important;
+  transition: all 0.15s !important;
 }
-.mt-footer-btn:active { transform: scale(0.97); }
-.mt-footer-btn--danger { color: #dc2626; border-color: #fecaca; }
-.mt-footer-btn--danger:hover { background: #fef2f2; }
-.mt-footer-btn--sm { flex: none; padding: 6px 10px; }
+.mt-footer-btn:active { transform: scale(0.97) !important; }
+.mt-footer-btn--danger { color: #dc2626 !important; border-color: #fecaca !important; }
+.mt-footer-btn--danger:active { background: #fef2f2 !important; }
+.mt-footer-btn--sm { flex: none !important; padding: 8px 12px !important; }
 
-.mt-history { display: grid; gap: 8px; }
-.mt-history__title { font-size: 0.85rem; color: var(--muted); margin: 0; }
-.mt-history-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  opacity: 0.7;
+.mt-history { display: grid !important; gap: 10px !important; margin-top: 4px !important; }
+.mt-history__title {
+  font-size: 0.9rem !important;
+  font-weight: 800 !important;
+  color: #0c4a6e !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
 }
-.mt-history-item strong { font-size: 0.8rem; display: block; }
-.mt-history-item small { font-size: 0.7rem; color: var(--muted); }
+.mt-history-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 14px 16px !important;
+  border-radius: 14px !important;
+  background: #f0f9ff !important;
+  border: 1.5px solid #e0f2fe !important;
+}
+.mt-history-item strong { font-size: 0.82rem !important; display: block !important; color: #0c4a6e !important; }
+.mt-history-item small { font-size: 0.72rem !important; color: #0ea5e9 !important; font-weight: 500 !important; }
 
 /* ============================================================
    MY RESERVATIONS - PROFESSIONAL REDESIGN
