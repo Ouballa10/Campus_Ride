@@ -109,40 +109,37 @@ export default function Register({ navigate }) {
 
   return (
     <div className="screen screen--auth">
-      <button
-        className="auth-back"
-        type="button"
-        onClick={() => navigate("splash")}
-      >
-        <Icon name="arrow-left" size={18} />
-        <span>Retour</span>
-      </button>
-
-      <div className="auth-card">
-        <div className="auth-brand">
-          <img className="auth-brand__logo" src={logo} alt="CampusRide logo" />
-          <div>
-            <span className="eyebrow">CampusRide</span>
-            <h2>Créer un compte</h2>
-          </div>
-        </div>
-
-        <div className="auth-copy">
-          <p>Inscris-toi en quelques secondes puis switch entre passager et driver quand tu veux.</p>
-        </div>
-
-        <ModeSwitch
-          mode={form.mode}
-          onChange={(mode) =>
-            updateField({ target: { name: "mode", value: mode } })
-          }
-        />
-
-        {!isConfigured ? (
-          <p className="auth-status auth-status--info">
-            Supabase n'est pas encore configure sur had l'environnement.
+      <div className="login-page">
+        <header className="login-page__header">
+          <img src={logo} alt="CampusRide logo" className="login-page__logo" />
+          <h1 className="login-page__title">Créer un compte</h1>
+          <p className="login-page__subtitle">
+            Inscris-toi en quelques secondes et rejoins la communauté CampusRide.
           </p>
-        ) : null}
+        </header>
+
+        <div className="login-page__card">
+          <button
+            className="auth-back"
+            type="button"
+            onClick={() => navigate("splash")}
+            style={{ position: "absolute", top: "16px", left: "16px" }}
+          >
+            <Icon name="arrow-left" size={18} />
+          </button>
+
+          <ModeSwitch
+            mode={form.mode}
+            onChange={(mode) =>
+              updateField({ target: { name: "mode", value: mode } })
+            }
+          />
+
+          {!isConfigured ? (
+            <p className="auth-status auth-status--info">
+              Supabase n'est pas encore configuré sur cet environnement.
+            </p>
+          ) : null}
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <label className="auth-field">
@@ -241,8 +238,9 @@ export default function Register({ navigate }) {
           type="button"
           onClick={() => navigate("login")}
         >
-          J'ai deja un compte
+          J'ai déjà un compte
         </button>
+      </div>
       </div>
     </div>
   );
