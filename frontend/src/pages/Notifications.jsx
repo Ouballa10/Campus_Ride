@@ -107,19 +107,19 @@ export default function Notifications({
       let title = "";
       let icon = "";
       if (reservation.status === "Confirmee") {
-        title = "Reservation confirmee";
+        title = "Réservation confirmée";
         icon = "✅";
       } else if (reservation.status === "En attente") {
-        title = "Demande envoyee";
+        title = "Demande envoyée";
         icon = "🕐";
       } else if (reservation.status === "Annulee") {
-        title = "Reservation annulee";
+        title = "Réservation annulée";
         icon = "❌";
       } else if (reservation.status === "Refusee") {
-        title = "Demande refusee";
+        title = "Demande refusée";
         icon = "🚫";
       } else {
-        title = "Reservation mise a jour";
+        title = "Réservation mise à jour";
         icon = "📋";
       }
 
@@ -151,16 +151,16 @@ export default function Notifications({
           title = "Nouvelle demande";
           icon = "🔔";
         } else if (reservation.status === "Confirmee") {
-          title = "Passager confirme";
+          title = "Passager confirmé";
           icon = "✅";
         } else if (reservation.status === "Annulee") {
-          title = "Passager a annule";
+          title = "Passager a annulé";
           icon = "❌";
         } else if (reservation.status === "Refusee") {
-          title = "Demande refusee";
+          title = "Demande refusée";
           icon = "🚫";
         } else {
-          title = "Demande traitee";
+          title = "Demande traitée";
           icon = "📋";
         }
 
@@ -230,7 +230,7 @@ export default function Notifications({
         <div className="empty-box">
           <Icon name="bell" size={28} />
           <p>Aucune notification</p>
-          <small style={{ color: "#9ca3af" }}>Les demandes et messages apparaitront ici</small>
+          <small style={{ color: "#9ca3af" }}>Les demandes et messages apparaîtront ici</small>
         </div>
       ) : (
         <div className="notif-list">

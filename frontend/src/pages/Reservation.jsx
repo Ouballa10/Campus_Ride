@@ -46,7 +46,7 @@ export default function Reservation({
       setIsSubmitting(true);
       setFeedback({ message: "", tone: "" });
       await onReserve(selectedTrip, note);
-      setFeedback({ message: "Demande envoyee !", tone: "success" });
+      setFeedback({ message: "Demande envoyée !", tone: "success" });
       setNote("");
       setTimeout(() => navigate("my-reservations"), 1000);
     } catch (e) {
@@ -61,7 +61,7 @@ export default function Reservation({
   return (
     <div className="screen screen--simple">
       <AppHeader
-        title="Reserver"
+        title="Réserver"
         subtitle={`${shortAddress(selectedTrip.depart)} → ${shortAddress(selectedTrip.destination)}`}
         leftIcon="arrow-left"
         onLeftClick={() => navigate("search")}
@@ -79,11 +79,11 @@ export default function Reservation({
           <div className="res-route__names">
             <div>
               <strong>{shortAddress(selectedTrip.depart)}</strong>
-              <small>Depart</small>
+              <small>Départ</small>
             </div>
             <div>
               <strong>{shortAddress(selectedTrip.destination)}</strong>
-              <small>Arrivee</small>
+              <small>Arrivée</small>
             </div>
           </div>
         </div>
@@ -118,7 +118,7 @@ export default function Reservation({
           </div>
           <div className="res-driver__info">
             <strong>{selectedTrip.driver}</strong>
-            <span>{selectedTrip.car || "Vehicule"}</span>
+            <span>{selectedTrip.car || "Véhicule"}</span>
             <Stars value={selectedTrip.rating} />
           </div>
           <Icon name="chevron-right" size={16} />
@@ -161,7 +161,7 @@ export default function Reservation({
             type="button"
             style={{ background: "#e5e7eb", color: "#6b7280", boxShadow: "none" }}
           >
-            ✓ Deja reserve
+            ✓ Déjà réservé
           </button>
           <button
             className="res-cta"

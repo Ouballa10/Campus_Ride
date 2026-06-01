@@ -81,7 +81,7 @@ export default function Register({ navigate }) {
         // If sign in fails, just redirect to login
       }
 
-      setSuccess("Compte cree ! Connecte-toi maintenant.");
+      setSuccess("Compte créé ! Connecte-toi maintenant.");
       setTimeout(() => navigate("login"), 1500);
     } catch (submissionError) {
       setError(submissionError.message);
@@ -123,7 +123,7 @@ export default function Register({ navigate }) {
           <img className="auth-brand__logo" src={logo} alt="CampusRide logo" />
           <div>
             <span className="eyebrow">CampusRide</span>
-            <h2>Creer un compte</h2>
+            <h2>Créer un compte</h2>
           </div>
         </div>
 
@@ -172,7 +172,7 @@ export default function Register({ navigate }) {
           </label>
 
           <label className="auth-field">
-            <span>Telephone</span>
+            <span>Téléphone</span>
             <input
               autoComplete="tel"
               name="phone"
@@ -218,7 +218,7 @@ export default function Register({ navigate }) {
             disabled={isSubmitting || isGoogleSubmitting}
             type="submit"
           >
-            {isSubmitting ? "Creation..." : "Creer mon compte"}
+            {isSubmitting ? "Création..." : "Créer mon compte"}
           </button>
         </form>
 

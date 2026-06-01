@@ -88,7 +88,7 @@ function TripResult({ trip, onSelect, onViewDriver, isReserved }) {
         </div>
         <div className="find-card__driver-info">
           <strong>{trip.driver}</strong>
-          <span>{trip.car || "Vehicule"}</span>
+          <span>{trip.car || "Véhicule"}</span>
         </div>
         <div className="find-card__rating">
           <Stars value={trip.rating} />
@@ -113,7 +113,7 @@ function TripResult({ trip, onSelect, onViewDriver, isReserved }) {
           disabled={isUnavailable || isReserved}
           onClick={(e) => { e.stopPropagation(); onSelect(trip.id); }}
         >
-          {isReserved ? "✓ Reserve" : isUnavailable ? "Complet" : "Reserver"}
+          {isReserved ? "✓ Réservé" : isUnavailable ? "Complet" : "Réserver"}
         </button>
       </div>
 
@@ -128,7 +128,7 @@ function TripResult({ trip, onSelect, onViewDriver, isReserved }) {
       {/* Published time */}
       {publishedAgo && (
         <div className="find-card__published" style={{ fontSize: "0.7rem", color: "#9ca3af", padding: "4px 16px 8px", textAlign: "right" }}>
-          Publie {publishedAgo.toLowerCase()}
+          Publié {publishedAgo.toLowerCase()}
         </div>
       )}
     </article>
@@ -188,8 +188,8 @@ export default function SearchTrajet({ navigate, onOpenChat, onTripSelect, onVie
           <div className="empty-state__icon">
             <Icon name="search" size={32} />
           </div>
-          <h3 className="empty-state__title">Aucun trajet trouve</h3>
-          <p className="empty-state__desc">Essaie un autre depart ou destination pour decouvrir les trajets disponibles.</p>
+          <h3 className="empty-state__title">Aucun trajet trouvé</h3>
+          <p className="empty-state__desc">Essaie un autre départ ou destination pour découvrir les trajets disponibles.</p>
         </div>
       ) : (
         <div className="find-results">

@@ -15,7 +15,7 @@ export default function NotificationDetail({ notification, navigate, mode }) {
     return (
       <div className="screen screen--records">
         <AppHeader
-          title="Detail"
+          title="Détail"
           subtitle="Notification introuvable"
           leftIcon="arrow-left"
           onLeftClick={() => navigate("notifications")}
@@ -36,7 +36,7 @@ export default function NotificationDetail({ notification, navigate, mode }) {
   return (
     <div className="screen screen--records">
       <AppHeader
-        title="Detail notification"
+        title="Détail notification"
         subtitle={notification.title}
         leftIcon="arrow-left"
         onLeftClick={() => navigate("notifications")}
@@ -94,7 +94,7 @@ export default function NotificationDetail({ notification, navigate, mode }) {
               onClick={() => navigate("my-reservations")}
             >
               <Icon name="bookmark" size={16} />
-              Voir mes reservations
+              Voir mes réservations
             </button>
           )}
 
