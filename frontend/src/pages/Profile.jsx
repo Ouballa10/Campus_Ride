@@ -523,7 +523,10 @@ export default function Profile({
         {/* ===== COMPLETION ===== */}
         <div className="pf-progress">
           <div className="pf-progress__top">
-            <span>Profil complété</span>
+            <div>
+              <span>Profil complété</span>
+              <p className="pf-progress__hint">Complétez vos informations pour une meilleure expérience de covoiturage.</p>
+            </div>
             <strong>{Math.round(((form.fullName ? 1 : 0) + (form.email ? 1 : 0) + (form.phone ? 1 : 0) + (form.campus ? 1 : 0) + (avatarSource ? 1 : 0)) / 5 * 100)}%</strong>
           </div>
           <div className="pf-progress__bar">
