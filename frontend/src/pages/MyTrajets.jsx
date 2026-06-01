@@ -56,13 +56,13 @@ export default function MyTrajets({
       {!activeTrips.length && !expiredTrips.length ? (
         <div className="empty-box">
           <Icon name="route" size={28} />
-          <p>Aucun trajet publie</p>
+          <p>Aucun trajet publié</p>
           <button className="primary-button" type="button" onClick={() => navigate("publish")} style={{ marginTop: 12 }}>
             Publier mon premier trajet
           </button>
         </div>
       ) : (
-        <div style={{ display: "grid", gap: "16px" }}>
+        <div className="mt-content">
           {/* Stats bar */}
           <div className="mt-stats">
             <div className="mt-stats__item">
@@ -109,10 +109,10 @@ export default function MyTrajets({
 
                 {/* Meta */}
                 <div className="mt-card__meta">
-                  <span>🕐 {trip.time}</span>
-                  {dateStr && <span>📅 {dateStr}</span>}
-                  <span>💺 {trip.seats}</span>
-                  <span>💰 {trip.earningsEstimate || 0} DH</span>
+                  <span><Icon name="clock" size={13} /> {trip.time}</span>
+                  {dateStr && <span><Icon name="calendar" size={13} /> {dateStr}</span>}
+                  <span><Icon name="seat" size={13} /> {trip.seats}</span>
+                  <span><Icon name="ticket" size={13} /> {trip.earningsEstimate || 0} DH</span>
                 </div>
 
                 {/* Pending requests */}
@@ -158,8 +158,8 @@ export default function MyTrajets({
                           <strong>{r.passenger}</strong>
                         </div>
                         <div className="mt-passenger__actions">
-                          <button className="mt-action-btn mt-action-btn--chat" onClick={() => onOpenChat?.({ reservationId: r.id, otherName: r.passenger, otherAvatar: r.passengerAvatar || "", conducteurId: r.passagerId || "", tripRoute: `${shortAddr(trip.depart)} → ${shortAddr(trip.destination)}`, backRoute: "my-trips" })}>💬</button>
-                          {r.phone && <a className="mt-action-btn mt-action-btn--call" href={`tel:${r.phone}`}>📞</a>}
+                          <button className="mt-action-btn mt-action-btn--chat" onClick={() => onOpenChat?.({ reservationId: r.id, otherName: r.passenger, otherAvatar: r.passengerAvatar || "", conducteurId: r.passagerId || "", tripRoute: `${shortAddr(trip.depart)} → ${shortAddr(trip.destination)}`, backRoute: "my-trips" })}><Icon name="phone" size={14} /></button>
+                          {r.phone && <a className="mt-action-btn mt-action-btn--call" href={`tel:${r.phone}`}><Icon name="phone" size={14} /></a>}
                         </div>
                       </div>
                     ))}
@@ -189,7 +189,7 @@ export default function MyTrajets({
           {/* History */}
           {expiredTrips.length > 0 && (
             <div className="mt-history">
-              <h4 className="mt-history__title">📋 Historique ({expiredTrips.length})</h4>
+              <h4 className="mt-history__title"><Icon name="route" size={15} /> Historique ({expiredTrips.length})</h4>
               {expiredTrips.map((trip) => (
                 <div className="mt-history-item" key={trip.id}>
                   <div>
