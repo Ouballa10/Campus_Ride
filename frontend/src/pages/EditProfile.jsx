@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import AppHeader from "../components/AppHeader";
 import ImageLightbox from "../components/ImageLightbox";
-import { Icon, Stars } from "../components/Icons";
+import { Icon } from "../components/Icons";
 import { useAuth } from "../context/AuthContext";
 import { profileService } from "../services/profileService";
+import "./EditProfile.css";
 
 const maxImageSize = 5 * 1024 * 1024;
 const maxVehiclePhotos = 6;
@@ -85,26 +86,17 @@ function validateImageFile(file, label) {
   return "";
 }
 
-export default function Profile({
-  mode = "passenger",
-  navigate,
-  onModeChange,
-  onThemeChange,
-  user,
-  theme = "light",
-  profileLinks = [],
-}) {
+export default function EditProfile({ mode = "passenger", navigate, user }) {
   const fileInputRef = useRef(null);
   const vehicleInputRef = useRef(null);
   const vehiclePreviewUrlsRef = useRef([]);
   const {
     isConfigured,
-    loading: authLoading,
     profile,
     refreshProfile,
     session,
-    signOut,
   } = useAuth();
+
   const [form, setForm] = useState(() => buildProfileForm(profile, user, mode));
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState("");
@@ -114,34 +106,9 @@ export default function Profile({
   const [uploadStep, setUploadStep] = useState("");
   const [lightboxSrc, setLightboxSrc] = useState("");
 
-  const displayUser = user || {
-    bio: "",
-    campus: "",
-    car: "Vehicule a renseigner",
-    email: "",
-    initials: "CR",
-    name: "CampusRide",
-    phone: "",
-    photo: "",
-    rating: 0,
-    reservationsCount: 0,
-    reviewCount: 0,
-    role: "Etudiant passager",
-    roleValue: "passager",
-    tripsCount: 0,
-    vehicle: {
-      color: "",
-      license: "",
-      make: "",
-      model: "",
-      photos: [],
-      plate: "",
-      seats: "",
-    },
-  };
-
   const isSavingRef = useRef(false);
   const isEditingRef = useRef(false);
+
   useEffect(() => {
     if (!isSavingRef.current && !isEditingRef.current) {
       setForm(buildProfileForm(profile, user, mode));
@@ -165,10 +132,8 @@ export default function Profile({
     };
   }, []);
 
-  const avatarSource = photoPreview || form.photoProfil || displayUser.photo || "";
+  const avatarSource = photoPreview || form.photoProfil || user?.photo || "";
   const isDriverMode = mode === "driver";
-  const roleLabel = isDriverMode ? "Conducteur campus" : "Passager campus";
-  const vehicleLabel = buildVehicleLabel(form);
   const vehiclePhotos = [
     ...form.vehiclePhotos.map((url) => ({ src: url, persisted: true })),
     ...selectedVehiclePhotos.map((item) => ({
@@ -176,19 +141,6 @@ export default function Profile({
       persisted: false,
     })),
   ];
-  const primaryVehiclePhoto = vehiclePhotos[0]?.src || "";
-  const profileRoleDiffers =
-    Boolean(profile?.role) && profile.role !== getRoleFromMode(mode);
-  const visibleProfileLinks = profileLinks.filter((link) =>
-    isDriverMode
-      ? ["trips", "publish", "notifications"].includes(link.id)
-      : ["reservations", "search", "notifications"].includes(link.id),
-  );
-  const formDirty =
-    JSON.stringify(form) !== JSON.stringify(buildProfileForm(profile, user, mode)) ||
-    Boolean(selectedPhoto) ||
-    selectedVehiclePhotos.length > 0 ||
-    profileRoleDiffers;
 
   function updateField(event) {
     const { name, value } = event.target;
@@ -201,15 +153,6 @@ export default function Profile({
     if (feedback.message) {
       setFeedback({ message: "", tone: "" });
     }
-  }
-
-  async function handleSignOut() {
-    try {
-      await signOut();
-    } catch (error) {
-      console.error("Sign out failed:", error);
-    }
-    navigate("login");
   }
 
   function handlePickPhoto() {
@@ -407,7 +350,6 @@ export default function Profile({
       try {
         await refreshProfile();
       } catch (syncError) {
-        // Profile saved successfully but sync failed (lock race) - not critical
         console.warn("Profile sync after save:", syncError.message);
       }
 
@@ -428,6 +370,9 @@ export default function Profile({
         message: "Profil mis a jour avec succes.",
         tone: "success",
       });
+
+      // Navigate back to profile after successful save
+      setTimeout(() => navigate("profile"), 1200);
     } catch (error) {
       setFeedback({
         message: error.message || "Mise a jour impossible pour le moment.",
@@ -441,160 +386,270 @@ export default function Profile({
     }
   }
 
-  // Show loading only briefly if profile hasn't loaded yet (max 3s then show anyway)
-  if (authLoading && isConfigured && session?.user?.id && !profile) {
-    return (
-      <div className="screen screen--simple" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
-        <div style={{ textAlign: "center", color: "#6b7280" }}>
-          <div style={{ fontSize: "1.5rem", marginBottom: "8px" }}>⏳</div>
-          <span style={{ fontSize: "0.85rem" }}>Chargement du profil...</span>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="screen screen--profile page-enter">
       <AppHeader
-        title={isDriverMode ? "Profil conducteur" : "Mon profil"}
-        subtitle={isDriverMode ? "Garage & coordonnées" : "Compte & préférences"}
+        title="Modifier le profil"
         leftIcon="arrow-left"
-        onLeftClick={() => navigate("home")}
+        onLeftClick={() => navigate("profile")}
       />
 
       <div className="screen-panel">
-        {/* ===== AVATAR + NAME ===== */}
-        <div className="pf-identity">
-          <div className="profile-photo-block">
+        <form className="profile-editor-card" onSubmit={handleSave}>
+          {/* Avatar section */}
+          <div className="profile-editor-avatar">
             <div className="profile-photo-frame" onClick={() => avatarSource && setLightboxSrc(avatarSource)} style={avatarSource ? { cursor: "zoom-in" } : {}}>
               {avatarSource ? (
-                <img alt={form.fullName || displayUser.name} className="profile-photo-frame__image" src={avatarSource} />
+                <img alt={form.fullName || "Avatar"} className="profile-photo-frame__image" src={avatarSource} />
               ) : (
-                <span className="profile-photo-frame__fallback">{displayUser.initials}</span>
+                <span className="profile-photo-frame__fallback">{user?.initials || "CR"}</span>
               )}
             </div>
-            <button className="profile-photo-action" type="button" onClick={handlePickPhoto}>
-              <Icon name="camera" size={14} />
-            </button>
+            <div className="profile-editor-avatar__actions">
+              <button className="pf-btn pf-btn--small" type="button" onClick={handlePickPhoto}>
+                <Icon name="camera" size={14} /> Changer la photo
+              </button>
+            </div>
             <input accept="image/*" className="profile-photo-input" ref={fileInputRef} type="file" onChange={handlePhotoChange} />
           </div>
-          <h2 className="pf-identity__name">{form.fullName || displayUser.name}</h2>
-          <p className="pf-identity__role">{roleLabel}</p>
-          <span className="pf-identity__verified"><Icon name="check-badge" size={14} /> Compte vérifié</span>
-          <Stars value={displayUser.rating} />
-          <div className="pf-identity__buttons">
-            <button className="pf-btn pf-btn--primary" type="button" onClick={() => document.querySelector('.profile-editor-field input')?.focus()}>
-              <Icon name="edit" size={14} />
-              Modifier
-            </button>
-            <button className="pf-btn pf-btn--outline" type="button" onClick={() => onModeChange(isDriverMode ? "passenger" : "driver")}>
-              <Icon name={isDriverMode ? "user" : "car"} size={14} />
-              {isDriverMode ? "Mode passager" : "Mode driver"}
-            </button>
-          </div>
 
-          {/* Mini info under profile */}
-          <div className="pf-identity__contact">
-            <span><Icon name="mail" size={13} /> {form.email || "—"}</span>
-            <span><Icon name="phone" size={13} /> {form.phone || "—"}</span>
-            <span><Icon name="location" size={13} /> {form.campus || "—"}</span>
-          </div>
-        </div>
+          {/* Full Name */}
+          <label className="profile-editor-field">
+            <span className="profile-editor-field__label">Nom complet</span>
+            <input
+              className="profile-editor-field__control"
+              name="fullName"
+              type="text"
+              value={form.fullName}
+              onChange={updateField}
+              placeholder="Ton nom complet"
+            />
+          </label>
 
-        {/* ===== STATS ===== */}
-        <div className="pf-stats">
-          <div className="pf-stat">
-            <div className="pf-stat__icon pf-stat__icon--blue"><Icon name="route" size={18} /></div>
-            <strong>{displayUser.tripsCount}</strong>
-            <span>Trajets</span>
-          </div>
-          <div className="pf-stat">
-            <div className="pf-stat__icon pf-stat__icon--cyan"><Icon name="bookmark" size={18} /></div>
-            <strong>{displayUser.reservationsCount}</strong>
-            <span>Réservations</span>
-          </div>
-          <div className="pf-stat">
-            <div className="pf-stat__icon pf-stat__icon--amber"><Icon name="star" size={18} /></div>
-            <strong>{displayUser.reviewCount}</strong>
-            <span>Avis</span>
-          </div>
-        </div>
+          {/* Email (disabled) */}
+          <label className="profile-editor-field">
+            <span className="profile-editor-field__label">Email</span>
+            <input
+              className="profile-editor-field__control"
+              name="email"
+              type="email"
+              value={form.email}
+              disabled
+              readOnly
+            />
+          </label>
 
-        {/* ===== COMPLETION ===== */}
-        <div className="pf-progress">
-          <div className="pf-progress__top">
-            <span>Profil complété</span>
-            <strong>{Math.round(((form.fullName ? 1 : 0) + (form.email ? 1 : 0) + (form.phone ? 1 : 0) + (form.campus ? 1 : 0) + (avatarSource ? 1 : 0)) / 5 * 100)}%</strong>
-          </div>
-          <div className="pf-progress__bar">
-            <div className="pf-progress__fill" style={{ width: `${Math.round(((form.fullName ? 1 : 0) + (form.email ? 1 : 0) + (form.phone ? 1 : 0) + (form.campus ? 1 : 0) + (avatarSource ? 1 : 0)) / 5 * 100)}%` }} />
-          </div>
-        </div>
+          {/* Phone */}
+          <label className="profile-editor-field">
+            <span className="profile-editor-field__label">Téléphone</span>
+            <input
+              className="profile-editor-field__control"
+              name="phone"
+              type="tel"
+              value={form.phone}
+              onChange={updateField}
+              placeholder="06 12 34 56 78"
+            />
+          </label>
 
-        {/* ===== SETTINGS LINKS ===== */}
-        <div className="pf-settings">
-          <h4 className="pf-settings__title">
-            <span className="pf-settings__bar" />
-            Paramètres
-          </h4>
+          {/* Campus */}
+          <label className="profile-editor-field">
+            <span className="profile-editor-field__label">Campus</span>
+            <input
+              className="profile-editor-field__control"
+              name="campus"
+              type="text"
+              value={form.campus}
+              onChange={updateField}
+              placeholder="Ton campus"
+            />
+          </label>
 
-          <div className="pf-settings__list">
-            <button className="pf-settings__item" type="button" onClick={() => navigate("edit-profile")}>
-              <div className="pf-settings__item-icon pf-settings__item-icon--blue">
-                <Icon name="edit" size={18} />
+          {/* Role (disabled) */}
+          <label className="profile-editor-field">
+            <span className="profile-editor-field__label">Rôle</span>
+            <input
+              className="profile-editor-field__control"
+              name="role"
+              type="text"
+              value={form.role}
+              disabled
+              readOnly
+            />
+          </label>
+
+          {/* Bio */}
+          <label className="profile-editor-field">
+            <span className="profile-editor-field__label">Bio</span>
+            <textarea
+              className="profile-editor-field__control profile-editor-field__control--textarea"
+              name="bio"
+              value={form.bio}
+              onChange={updateField}
+              placeholder="Quelques mots sur toi..."
+              rows={3}
+            />
+          </label>
+
+          {/* Vehicle fields (driver mode only) */}
+          {isDriverMode && (
+            <>
+              <div className="profile-editor-section-title">
+                <Icon name="car" size={16} /> Véhicule
               </div>
-              <div className="pf-settings__item-text">
-                <strong>Modifier mes informations</strong>
-                <span>Nom, téléphone, campus, bio...</span>
+
+              <div className="profile-editor-row">
+                <label className="profile-editor-field">
+                  <span className="profile-editor-field__label">Marque</span>
+                  <input
+                    className="profile-editor-field__control"
+                    name="vehicleMake"
+                    type="text"
+                    value={form.vehicleMake}
+                    onChange={updateField}
+                    placeholder="Ex: Renault"
+                  />
+                </label>
+
+                <label className="profile-editor-field">
+                  <span className="profile-editor-field__label">Modèle</span>
+                  <input
+                    className="profile-editor-field__control"
+                    name="vehicleModel"
+                    type="text"
+                    value={form.vehicleModel}
+                    onChange={updateField}
+                    placeholder="Ex: Clio"
+                  />
+                </label>
               </div>
-              <Icon name="chevron-right" size={16} />
-            </button>
 
-            {isDriverMode && (
-              <button className="pf-settings__item" type="button" onClick={() => navigate("edit-profile")}>
-                <div className="pf-settings__item-icon pf-settings__item-icon--cyan">
-                  <Icon name="car" size={18} />
-                </div>
-                <div className="pf-settings__item-text">
-                  <strong>Mon véhicule</strong>
-                  <span>Marque, plaque, photos...</span>
-                </div>
-                <Icon name="chevron-right" size={16} />
-              </button>
-            )}
+              <div className="profile-editor-row">
+                <label className="profile-editor-field">
+                  <span className="profile-editor-field__label">Couleur</span>
+                  <input
+                    className="profile-editor-field__control"
+                    name="vehicleColor"
+                    type="text"
+                    value={form.vehicleColor}
+                    onChange={updateField}
+                    placeholder="Ex: Bleu"
+                  />
+                </label>
 
-            {visibleProfileLinks.map((link) => (
-              <button
-                className="pf-settings__item"
-                key={link.id}
-                type="button"
-                onClick={() => navigate(link.route)}
-              >
-                <div className="pf-settings__item-icon pf-settings__item-icon--light">
-                  <Icon name={link.icon} size={18} />
-                </div>
-                <div className="pf-settings__item-text">
-                  <strong>{link.label}</strong>
-                  <span>{link.description || ""}</span>
-                </div>
-                <Icon name="chevron-right" size={16} />
-              </button>
-            ))}
+              <label className="profile-editor-field">
+                <span className="profile-editor-field__label">Plaque</span>
+                <input
+                  className="profile-editor-field__control"
+                  name="vehiclePlate"
+                  type="text"
+                  value={form.vehiclePlate}
+                  onChange={updateField}
+                  placeholder="Ex: AB-123-CD"
+                />
+              </label>
+              </div>
 
-            {isConfigured && (
-              <button className="pf-settings__item pf-settings__item--danger" type="button" onClick={handleSignOut}>
-                <div className="pf-settings__item-icon pf-settings__item-icon--red">
-                  <Icon name="logout" size={18} />
+              <label className="profile-editor-field">
+                <span className="profile-editor-field__label">Places disponibles</span>
+                <input
+                  className="profile-editor-field__control"
+                  name="vehicleSeats"
+                  type="number"
+                  min="1"
+                  max="8"
+                  value={form.vehicleSeats}
+                  onChange={updateField}
+                  placeholder="4"
+                />
+              </label>
+
+              <label className="profile-editor-field">
+                <span className="profile-editor-field__label">Permis de conduire</span>
+                <input
+                  className="profile-editor-field__control"
+                  name="driverLicense"
+                  type="text"
+                  value={form.driverLicense}
+                  onChange={updateField}
+                  placeholder="Numéro de permis"
+                />
+              </label>
+
+              {/* Vehicle photos */}
+              <div className="profile-editor-field">
+                <span className="profile-editor-field__label">
+                  Photos du véhicule ({vehiclePhotos.length}/{maxVehiclePhotos})
+                </span>
+                <div className="profile-editor-vehicle-photos">
+                  {vehiclePhotos.map((photo, index) => (
+                    <div className="profile-editor-vehicle-photo" key={index}>
+                      <img
+                        src={photo.src}
+                        alt={`Véhicule ${index + 1}`}
+                        className="profile-editor-vehicle-photo__img"
+                        onClick={() => setLightboxSrc(photo.src)}
+                      />
+                      <button
+                        className="profile-editor-vehicle-photo__remove"
+                        type="button"
+                        onClick={() =>
+                          photo.persisted
+                            ? removePersistedVehiclePhoto(index)
+                            : removeSelectedVehiclePhoto(index - form.vehiclePhotos.length)
+                        }
+                      >
+                        <Icon name="x" size={12} />
+                      </button>
+                    </div>
+                  ))}
+                  {vehiclePhotos.length < maxVehiclePhotos && (
+                    <button
+                      className="profile-editor-vehicle-photo profile-editor-vehicle-photo--add"
+                      type="button"
+                      onClick={handlePickVehiclePhotos}
+                    >
+                      <Icon name="camera" size={20} />
+                      <span>Ajouter</span>
+                    </button>
+                  )}
                 </div>
-                <div className="pf-settings__item-text">
-                  <strong>Se déconnecter</strong>
-                  <span>Fermer la session</span>
-                </div>
-                <Icon name="chevron-right" size={16} />
-              </button>
-            )}
-          </div>
-        </div>
+                <input
+                  accept="image/*"
+                  className="profile-photo-input"
+                  multiple
+                  ref={vehicleInputRef}
+                  type="file"
+                  onChange={handleVehiclePhotosChange}
+                />
+              </div>
+            </>
+          )}
+
+          {/* Feedback */}
+          {feedback.message && (
+            <div className={`profile-editor-feedback profile-editor-feedback--${feedback.tone}`}>
+              {feedback.message}
+            </div>
+          )}
+
+          {/* Upload step indicator */}
+          {uploadStep && (
+            <div className="profile-editor-upload-step">
+              <div className="refresh-indicator__spinner" style={{ width: 16, height: 16 }} />
+              <span>{uploadStep}</span>
+            </div>
+          )}
+
+          {/* Save button */}
+          <button
+            className="profile-editor-save"
+            type="submit"
+            disabled={isSaving}
+          >
+            {isSaving ? "Enregistrement..." : "Enregistrer les modifications"}
+          </button>
+        </form>
       </div>
 
       {lightboxSrc && (
