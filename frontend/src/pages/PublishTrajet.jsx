@@ -47,11 +47,11 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
   // Check if profile is complete enough to publish (driver requirements)
   const missingFields = [];
   if (!user?.name || user.name === "CampusRide") missingFields.push("Nom complet");
-  if (!user?.phone) missingFields.push("Telephone");
-  if (!user?.vehicle?.make && !user?.vehicle?.model) missingFields.push("Vehicule (marque/modele)");
+  if (!user?.phone) missingFields.push("Téléphone");
+  if (!user?.vehicle?.make && !user?.vehicle?.model) missingFields.push("Véhicule (marque/modèle)");
   if (!user?.vehicle?.plate) missingFields.push("Plaque d'immatriculation");
-  if (!user?.vehicle?.license) missingFields.push("Numero de permis");
-  if (!user?.vehicle?.photos || user.vehicle.photos.length === 0) missingFields.push("Photo du vehicule (min 1)");
+  if (!user?.vehicle?.license) missingFields.push("Numéro de permis");
+  if (!user?.vehicle?.photos || user.vehicle.photos.length === 0) missingFields.push("Photo du véhicule (min 1)");
   const profileIncomplete = missingFields.length > 0;
 
   const totalPotential = useMemo(
@@ -160,7 +160,7 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
       setFeedback({ message: "", tone: "" });
       await onPublish(form);
       setFeedback({
-        message: "Trajet publie. Il est maintenant visible pour les autres comptes.",
+        message: "Trajet publié. Il est maintenant visible pour les autres comptes.",
         tone: "success",
       });
       setForm(buildInitialForm());
@@ -186,7 +186,7 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
         />
         <div style={{ padding: "32px 20px", textAlign: "center" }}>
           <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🚫</div>
-          <h3 style={{ marginBottom: "8px", color: "#1f2937" }}>Complete ton profil d'abord</h3>
+          <h3 style={{ marginBottom: "8px", color: "#1f2937" }}>Complète ton profil d'abord</h3>
           <p style={{ color: "#6b7280", marginBottom: "16px", fontSize: "0.9rem" }}>
             Pour publier un trajet, les passagers ont besoin de savoir qui tu es. Il te manque :
           </p>
@@ -203,7 +203,7 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
             onClick={() => navigate("profile")}
             style={{ width: "100%", maxWidth: "300px" }}
           >
-            Completer mon profil
+            Compléter mon profil
           </button>
         </div>
       </div>

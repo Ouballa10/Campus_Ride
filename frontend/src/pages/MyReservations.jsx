@@ -12,10 +12,10 @@ function shortAddress(addr = "") {
 }
 
 function statusConfig(status) {
-  if (status === "Confirmee") return { color: "#059669", bg: "#ecfdf5", border: "#a7f3d0", icon: "✅", label: "Confirme" };
+  if (status === "Confirmee") return { color: "#059669", bg: "#ecfdf5", border: "#a7f3d0", icon: "✅", label: "Confirmé" };
   if (status === "En attente") return { color: "#d97706", bg: "#fffbeb", border: "#fde68a", icon: "🕐", label: "En attente" };
-  if (status === "Annulee") return { color: "#dc2626", bg: "#fef2f2", border: "#fecaca", icon: "❌", label: "Annule" };
-  if (status === "Refusee") return { color: "#dc2626", bg: "#fef2f2", border: "#fecaca", icon: "🚫", label: "Refuse" };
+  if (status === "Annulee") return { color: "#dc2626", bg: "#fef2f2", border: "#fecaca", icon: "❌", label: "Annulé" };
+  if (status === "Refusee") return { color: "#dc2626", bg: "#fef2f2", border: "#fecaca", icon: "🚫", label: "Refusé" };
   return { color: "#6b7280", bg: "#f9fafb", border: "#e5e7eb", icon: "📋", label: status };
 }
 
@@ -42,7 +42,7 @@ export default function MyReservations({
       setBusyId(id);
       setFeedback({ message: "", tone: "" });
       await onCancelReservation(id);
-      setFeedback({ message: "Reservation annulee.", tone: "success" });
+      setFeedback({ message: "Réservation annulée.", tone: "success" });
     } catch (e) {
       setFeedback({ message: e.message || "Erreur.", tone: "error" });
     } finally {
@@ -70,7 +70,7 @@ export default function MyReservations({
   return (
     <div className="screen screen--simple page-enter">
       <AppHeader
-        title="Mes reservations"
+        title="Mes réservations"
         subtitle={`${grouped.active.length} active${grouped.active.length > 1 ? "s" : ""}`}
         leftIcon="arrow-left"
         onLeftClick={() => navigate("home")}
@@ -83,7 +83,7 @@ export default function MyReservations({
       {!reservations.length ? (
         <div className="empty-box">
           <Icon name="bookmark" size={28} />
-          <p>Aucune reservation</p>
+          <p>Aucune réservation</p>
           <button className="cta-btn" type="button" onClick={() => navigate("search")}>
             Chercher un trajet
           </button>
