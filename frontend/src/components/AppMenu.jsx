@@ -17,10 +17,10 @@ export default function AppMenu({
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const isDriverMode = mode === "driver";
   const displayName = user?.name || "CampusRide";
-  const roleLabel = isDriverMode ? "Mode driver" : "Mode passager";
+  const userEmail = user?.email || "";
   const isDarkTheme = theme === "dark";
 
-  const menuLinks = useMemo(
+  const navLinks = useMemo(
     () => [
       { route: "home", label: "Accueil", icon: "home" },
       isDriverMode
@@ -28,28 +28,17 @@ export default function AppMenu({
         : { route: "search", label: "Rechercher un trajet", icon: "search" },
       isDriverMode
         ? { route: "my-trips", label: "Mes trajets", icon: "route" }
-        : {
-            route: "my-reservations",
-            label: "Mes reservations",
-            icon: "bookmark",
-          },
+        : { route: "my-reservations", label: "Mes reservations", icon: "bookmark" },
       { route: "notifications", label: "Notifications", icon: "bell" },
-      { route: "profile", label: "Parametres du compte", icon: "settings" },
     ],
     [isDriverMode],
   );
 
   useEffect(() => {
-    if (!isOpen) {
-      return undefined;
-    }
-
+    if (!isOpen) return undefined;
     function handleEscape(event) {
-      if (event.key === "Escape") {
-        setIsOpen(false);
-      }
+      if (event.key === "Escape") setIsOpen(false);
     }
-
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
   }, [isOpen]);
@@ -63,7 +52,6 @@ export default function AppMenu({
     try {
       setIsLoggingOut(true);
       const result = await signOut();
-
       if (result?.error) {
         console.warn("Session cleared locally after sign out error:", result.error);
       }
@@ -79,11 +67,9 @@ export default function AppMenu({
       <button
         aria-expanded={isOpen}
         aria-label="Ouvrir le menu"
-        className={`icon-button app-menu__trigger ${
-          isOpen ? "app-menu__trigger--open" : ""
-        }`.trim()}
+        className={`icon-button app-menu__trigger ${isOpen ? "app-menu__trigger--open" : ""}`.trim()}
         type="button"
-        onClick={() => setIsOpen((currentValue) => !currentValue)}
+        onClick={() => setIsOpen((v) => !v)}
       >
         <Icon name="menu" size={18} />
       </button>
@@ -98,86 +84,101 @@ export default function AppMenu({
           />
 
           <aside className="app-menu__panel" aria-label="Menu principal">
-            <div className="app-menu__header">
-              <div className="app-menu__brand">
-                <img alt="CampusRide" src={logo} />
-                <div>
-                  <strong>{displayName}</strong>
-                  <span>{roleLabel}</span>
-                </div>
+            {/* User profile header */}
+            <div className="app-menu__profile">
+              <div className="app-menu__profile-avatar">
+                {user?.photo ? (
+                  <img alt={displayName} src={user.photo} />
+                ) : (
+                  <span>{user?.initials || "CR"}</span>
+                )}
               </div>
-
-              <button
-                aria-label="Fermer le menu"
-                className="icon-button app-menu__close"
-                type="button"
-                onClick={() => setIsOpen(false)}
-              >
-                <Icon name="x" size={18} />
-              </button>
+              <div className="app-menu__profile-info">
+                <strong>{displayName}</strong>
+                {userEmail && <span>{userEmail}</span>}
+              </div>
             </div>
 
-            <div className="app-menu__mode-card">
-              <div className="app-menu__section-title">
-                <span>Mode</span>
-                <strong>{isDriverMode ? "Publier" : "Reserver"}</strong>
+            {/* Mode switch - at top */}
+            <div className="app-menu__section">
+              <div className="app-menu__mode-card">
+                <ModeSwitch mode={mode} onChange={onModeChange} />
               </div>
-              <ModeSwitch mode={mode} onChange={onModeChange} />
             </div>
 
-            <div className="app-menu__mode-card">
-              <div className="app-menu__section-title">
-                <span>Theme</span>
-                <strong>{isDarkTheme ? "Sombre" : "Clair"}</strong>
-              </div>
-              <button
-                className="theme-toggle"
-                type="button"
-                onClick={() => onThemeChange(isDarkTheme ? "light" : "dark")}
-              >
-                <span className={!isDarkTheme ? "theme-toggle__option theme-toggle__option--active" : "theme-toggle__option"}>
-                  <Icon name="sun" size={16} />
-                  Clair
-                </span>
-                <span className={isDarkTheme ? "theme-toggle__option theme-toggle__option--active" : "theme-toggle__option"}>
-                  <Icon name="moon" size={16} />
-                  Sombre
-                </span>
-              </button>
+            {/* Navigation section */}
+            <div className="app-menu__section">
+              <h4 className="app-menu__section-label">
+                <span className="app-menu__section-bar" />
+                Navigation
+              </h4>
+              <nav className="app-menu__nav">
+                {navLinks.map((link) => (
+                  <button
+                    className="app-menu__item"
+                    key={link.route}
+                    type="button"
+                    onClick={() => openRoute(link.route)}
+                  >
+                    <span className="app-menu__item-icon">
+                      <Icon name={link.icon} size={20} />
+                    </span>
+                    <span className="app-menu__item-label">{link.label}</span>
+                  </button>
+                ))}
+              </nav>
             </div>
 
-            <nav className="app-menu__links" aria-label="Raccourcis">
-              {menuLinks.map((link) => (
-                <button
-                  className="app-menu__link"
-                  key={link.route}
-                  type="button"
-                  onClick={() => openRoute(link.route)}
-                >
-                  <span className="app-menu__link-icon">
-                    <Icon name={link.icon} size={18} />
+            {/* Settings section */}
+            <div className="app-menu__section">
+              <h4 className="app-menu__section-label">
+                <span className="app-menu__section-bar" />
+                Paramètres
+              </h4>
+              <div className="app-menu__nav">
+                {/* Dark mode toggle */}
+                <div className="app-menu__item app-menu__item--toggle">
+                  <span className="app-menu__item-icon">
+                    <Icon name="moon" size={20} />
                   </span>
-                  <span>{link.label}</span>
-                  <Icon name="chevron-right" size={15} />
+                  <span className="app-menu__item-label">Mode sombre</span>
+                  <button
+                    className={`app-menu__toggle ${isDarkTheme ? "app-menu__toggle--on" : ""}`}
+                    type="button"
+                    onClick={() => onThemeChange(isDarkTheme ? "light" : "dark")}
+                    aria-label="Basculer le thème"
+                  >
+                    <span className="app-menu__toggle-thumb" />
+                  </button>
+                </div>
+
+                {/* Profile link */}
+                <button
+                  className="app-menu__item"
+                  type="button"
+                  onClick={() => openRoute("profile")}
+                >
+                  <span className="app-menu__item-icon">
+                    <Icon name="settings" size={20} />
+                  </span>
+                  <span className="app-menu__item-label">Modifier profil</span>
                 </button>
-              ))}
-            </nav>
 
-            <button
-              className="app-menu__logout"
-              disabled={isLoggingOut}
-              type="button"
-              onClick={handleLogout}
-            >
-              <span className="app-menu__logout-icon">
-                <Icon name="logout" size={18} />
-              </span>
-              <span>{isLoggingOut ? "Deconnexion..." : "Se deconnecter"}</span>
-            </button>
-
-            <div className="app-menu__footer">
-              <span>CampusRide</span>
-              <strong>UPM Marrakech</strong>
+                {/* Logout inside settings */}
+                <button
+                  className="app-menu__item app-menu__item--danger"
+                  disabled={isLoggingOut}
+                  type="button"
+                  onClick={handleLogout}
+                >
+                  <span className="app-menu__item-icon app-menu__item-icon--danger">
+                    <Icon name="logout" size={20} />
+                  </span>
+                  <span className="app-menu__item-label">
+                    {isLoggingOut ? "Déconnexion..." : "Se déconnecter"}
+                  </span>
+                </button>
+              </div>
             </div>
           </aside>
         </div>

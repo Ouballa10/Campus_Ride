@@ -15,6 +15,7 @@ import { isTripOwnedByCurrentUser } from "./utils/tripHelpers";
 // Lazy-loaded pages for code splitting
 const Chat = lazy(() => import("./pages/Chat"));
 const DriverProfile = lazy(() => import("./pages/DriverProfile"));
+const EditProfile = lazy(() => import("./pages/EditProfile"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -408,6 +409,13 @@ function AppContent() {
                     onThemeChange={handleThemeChange}
                     profileLinks={profileLinks}
                     theme={theme}
+                    user={currentUser}
+                  />
+                } />
+                <Route path="/edit-profile" element={
+                  <EditProfile
+                    mode={activeMode}
+                    navigate={appNavigate}
                     user={currentUser}
                   />
                 } />
