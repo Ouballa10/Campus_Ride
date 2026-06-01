@@ -56,14 +56,11 @@ export default function Splash({ navigate }) {
   const slide = slides[currentSlide];
   const isLast = currentSlide === slides.length - 1;
 
-  // Auto-advance every 4 seconds
+  // Auto-advance every 4 seconds (only for slides 1 and 2)
   useEffect(() => {
+    if (currentSlide >= slides.length - 1) return; // Don't auto-advance on last slide
     const timer = setTimeout(() => {
-      if (currentSlide < slides.length - 1) {
-        setCurrentSlide(currentSlide + 1);
-      } else {
-        navigate("login");
-      }
+      setCurrentSlide(currentSlide + 1);
     }, 5000);
 
     return () => clearTimeout(timer);

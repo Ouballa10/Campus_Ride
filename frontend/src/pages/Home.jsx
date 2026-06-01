@@ -267,20 +267,6 @@ export default function Home({
           <button
             className="home-action-card"
             type="button"
-            onClick={() => navigate("notifications")}
-          >
-            <div className="home-action-card__icon home-action-card__icon--muted">
-              <Icon name="bell" size={22} />
-            </div>
-            <div className="home-action-card__info">
-              <strong>Alertes</strong>
-              <span>Notifications</span>
-            </div>
-          </button>
-
-          <button
-            className="home-action-card"
-            type="button"
             onClick={() => navigate(isDriverMode ? "my-trips" : "my-reservations")}
           >
             <div className="home-action-card__icon home-action-card__icon--secondary">
@@ -289,6 +275,20 @@ export default function Home({
             <div className="home-action-card__info">
               <strong>{isDriverMode ? "Annonces" : "Réservations"}</strong>
               <span>{isDriverMode ? "Gérer mes trajets" : "Mes réservations"}</span>
+            </div>
+          </button>
+
+          <button
+            className="home-action-card"
+            type="button"
+            onClick={() => navigate("notifications")}
+          >
+            <div className="home-action-card__icon home-action-card__icon--muted">
+              <Icon name="bell" size={22} />
+            </div>
+            <div className="home-action-card__info">
+              <strong>Alertes</strong>
+              <span>Notifications</span>
             </div>
           </button>
         </div>
