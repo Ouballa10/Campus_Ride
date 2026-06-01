@@ -8879,35 +8879,28 @@ a:focus-visible {
   align-items: center;
   text-align: center;
   padding: 0 20px 0;
-  gap: 0;
+  gap: 8px;
 }
 
 .splash-poster__logo {
-  width: min(65vw, 240px);
+  width: min(45vw, 160px);
   height: auto;
   object-fit: contain;
-  margin-top: -60px;
+  margin-top: 0;
   filter: drop-shadow(0 8px 18px rgba(0, 40, 120, 0.15));
   animation: splashPosterFadeDown 0.7s ease both;
 }
 
 .splash-poster__divider {
-  display: block;
-  width: 60px;
-  height: 4px;
-  margin-top: -90px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #1b71ff, #51a2ff);
-  box-shadow: 0 4px 12px rgba(36, 109, 235, 0.22);
-  animation: splashPosterFadeDown 0.9s ease 0.2s both;
+  display: none;
 }
 
 .splash-poster__headline {
-  margin: 2px 0 0;
+  margin: 0;
   color: #122050;
   font-size: clamp(1.3rem, 4.5vw, 2rem);
   font-weight: 900;
-  line-height: 1.12;
+  line-height: 1.15;
   letter-spacing: -0.04em;
   animation: splashPosterFadeDown 1s ease 0.3s both;
 }
@@ -8956,7 +8949,7 @@ a:focus-visible {
 }
 
 .splash-poster--2 .splash-poster__divider {
-  margin-top: -105px;
+  display: none;
 }
 
 .splash-poster--2 .splash-poster__headline {
@@ -8971,7 +8964,7 @@ a:focus-visible {
 
 .splash-poster__features {
   position: absolute;
-  bottom: 30px;
+  bottom: 12px;
   left: 0;
   right: 0;
   z-index: 3;
@@ -9027,7 +9020,7 @@ a:focus-visible {
 }
 
 .splash-poster--3 .splash-poster__logo {
-  margin-top: -60px;
+  margin-top: 0;
 }
 
 .splash-poster--3 .splash-poster__divider {

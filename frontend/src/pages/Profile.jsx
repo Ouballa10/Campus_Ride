@@ -483,7 +483,7 @@ export default function Profile({
           <span className="pf-identity__verified"><Icon name="check-badge" size={14} /> Compte vérifié</span>
           <Stars value={displayUser.rating} />
           <div className="pf-identity__buttons">
-            <button className="pf-btn pf-btn--primary" type="button" onClick={() => document.querySelector('.profile-editor-field input')?.focus()}>
+            <button className="pf-btn pf-btn--primary" type="button" onClick={() => navigate("edit-profile")}>
               <Icon name="edit" size={14} />
               Modifier
             </button>
