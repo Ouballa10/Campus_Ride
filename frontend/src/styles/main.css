@@ -608,14 +608,20 @@ a { color: var(--primary); text-decoration: none; }
 
 /* Section */
 .app-menu__section {
-  padding: 16px 0 8px;
+  padding: 8px 0 8px;
+}
+
+.app-menu__section + .app-menu__section {
+  margin-top: 16px;
+  border-top: 1px solid #f0f9ff;
+  padding-top: 16px;
 }
 
 .app-menu__section-label {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 0 0 12px;
+  margin: 30px 0 12px;
   padding: 0 20px;
   font-size: 0.72rem;
   font-weight: 700;
@@ -643,18 +649,18 @@ a { color: var(--primary); text-decoration: none; }
 .app-menu__item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 16px;
-  border: 1.5px solid #e0f2fe;
-  border-radius: 14px;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid #e0f2fe;
+  border-radius: 10px;
   background: #ffffff;
   color: #334155;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   font-weight: 600;
   text-align: left;
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-bottom: 6px;
+  margin-bottom: 3px;
 }
 
 .app-menu__item:active {
@@ -664,20 +670,20 @@ a { color: var(--primary); text-decoration: none; }
 }
 
 .app-menu__item-icon {
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   display: grid;
   place-items: center;
-  border-radius: 12px;
-  background: #f1f5f9;
-  color: #64748b;
+  border-radius: 8px;
+  background: #f0f9ff;
+  color: #0ea5e9;
   flex-shrink: 0;
   transition: all 0.2s ease;
 }
 
 .app-menu__item:active .app-menu__item-icon {
-  background: #dbeafe;
-  color: #2563eb;
+  background: #e0f2fe;
+  color: #0284c7;
 }
 
 .app-menu__item-label {
@@ -728,15 +734,18 @@ a { color: var(--primary); text-decoration: none; }
 /* Logout */
 .app-menu__item--danger {
   color: #dc2626;
+  background: #fef2f2;
+  border-color: #fecaca;
 }
 
 .app-menu__item-icon--danger {
-  background: #fef2f2 !important;
+  background: #fee2e2 !important;
   color: #dc2626 !important;
 }
 
 .app-menu__item--danger:active {
-  background: #fef2f2;
+  background: #fee2e2;
+  border-color: #f87171;
 }
 
 .app-menu__logout {
