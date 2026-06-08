@@ -184,27 +184,50 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
           leftIcon="arrow-left"
           onLeftClick={() => navigate("home")}
         />
-        <div style={{ padding: "32px 20px", textAlign: "center" }}>
-          <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🚫</div>
-          <h3 style={{ marginBottom: "8px", color: "#1f2937" }}>Complète ton profil d'abord</h3>
-          <p style={{ color: "#6b7280", marginBottom: "16px", fontSize: "0.9rem" }}>
-            Pour publier un trajet, les passagers ont besoin de savoir qui tu es. Il te manque :
-          </p>
-          <ul style={{ listStyle: "none", padding: 0, marginBottom: "24px" }}>
-            {missingFields.map((field) => (
-              <li key={field} style={{ color: "#ef4444", fontSize: "0.9rem", marginBottom: "6px" }}>
-                <strong>• {field}</strong>
-              </li>
-            ))}
-          </ul>
-          <button
-            className="primary-button"
-            type="button"
-            onClick={() => navigate("profile")}
-            style={{ width: "100%", maxWidth: "300px" }}
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "24px 20px",
+          }}
+        >
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: "20px",
+              border: "1.5px solid #e5e7eb",
+              boxShadow: "0 4px 24px rgba(0,0,0,0.07)",
+              padding: "36px 28px",
+              textAlign: "center",
+              width: "100%",
+              maxWidth: "360px",
+            }}
           >
-            Compléter mon profil
-          </button>
+            <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🚫</div>
+            <h3 style={{ marginBottom: "8px", color: "#1f2937", fontSize: "1.1rem" }}>
+              Complète ton profil d'abord
+            </h3>
+            <p style={{ color: "#6b7280", marginBottom: "16px", fontSize: "0.9rem", lineHeight: 1.5 }}>
+              Pour publier un trajet, les passagers ont besoin de savoir qui tu es. Il te manque :
+            </p>
+            <ul style={{ listStyle: "none", padding: 0, marginBottom: "28px" }}>
+              {missingFields.map((field) => (
+                <li key={field} style={{ color: "#ef4444", fontSize: "0.9rem", marginBottom: "6px" }}>
+                  <strong>• {field}</strong>
+                </li>
+              ))}
+            </ul>
+            <button
+              className="primary-button"
+              type="button"
+              onClick={() => navigate("profile")}
+              style={{ width: "100%", display: "block", margin: "0 auto" }}
+            >
+              Compléter mon profil
+            </button>
+          </div>
         </div>
       </div>
     );

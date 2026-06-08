@@ -1,0 +1,176 @@
+@startuml Scénario de réservation d'un trajet - CampusRide
+
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam maxMessageSize 200
+skinparam sequenceArrowThickness 1.5
+skinparam roundcorner 8
+skinparam sequenceParticipant underline
+
+skinparam participant {
+  BackgroundColor #EFF6FF
+  BorderColor #3B82F6
+  FontColor #1E3A5F
+  FontSize 13
+}
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #2563EB
+  FontColor #1E3A5F
+}
+skinparam sequence {
+  ArrowColor #2563EB
+  LifeLineBorderColor #93C5FD
+  LifeLineBackgroundColor #EFF6FF
+  GroupBackgroundColor #F0F9FF
+  GroupBorderColor #BAE6FD
+  GroupFontColor #0369A1
+  DividerBackgroundColor #DBEAFE
+  DividerBorderColor #3B82F6
+}
+
+title Scénario de réservation d'un trajet — CampusRide
+
+actor Passager as P
+actor Conducteur as C
+participant "SearchTrajet\n(Frontend)" as ST
+participant "Reservation\n(Frontend)" as RES
+participant "useAppActions\n(Hook)" as ACT
+participant "reservationService\n(Service)" as SVC
+participant "Supabase\n(RPC / DB)" as DB
+participant "MyReservations\n(Frontend)" as MR
+participant "MyTrajets\n(Frontend)" as MT
+participant "Notifications\n(Frontend)" as NOTIF
+
+== 1. Recherche d'un trajet ==
+
+P -> ST : Ouvre "Trouver un trajet"
+ST -> DB : useAppData() — charge tripOptions\n(trajets disponibles, places > 0,\nnon publiés par l'utilisateur courant)
+DB --> ST : Liste des trajets disponibles
+ST --> P : Affiche les cartes trajets\n(conducteur, prix, places, heure, date)
+
+opt Filtrage par départ / destination
+  P -> ST : Saisit départ et/ou destination
+  ST --> P : Filtre les résultats en temps réel\n(matchesTrip — côté client)
+end
+
+P -> ST : Clique sur "Réserver" sur une carte trajet
+
+== 2. Consultation de la page de réservation ==
+
+ST -> RES : openTripReservation(tripId)\n→ navigate("/reservation")
+RES --> P : Affiche le détail du trajet :\n• Itinéraire départ → destination\n• Heure, durée, places, prix/place\n• Profil conducteur (avatar, voiture, note)\n• Point de RDV (pickup)
+
+opt Voir le profil du conducteur
+  P -> RES : Clique sur la carte conducteur
+  RES -> DB : supabase.from("profiles").select(*)\n.eq("id", conducteurId)\n+ evaluationService.getEvaluationsForDriver()
+  DB --> RES : Profil + évaluations du conducteur
+  RES --> P : Affiche DriverProfile (vue publique)\n(bio, véhicule, note, avis passagers)
+end
+
+P -> RES : Saisit un message optionnel\npour le conducteur (note)
+
+== 3. Envoi de la demande de réservation ==
+
+P -> RES : Clique "Envoyer la demande"
+
+RES -> ACT : onReserve(selectedTrip, message)
+
+group Validation côté client (useAppActions)
+  ACT -> ACT : Vérifie profil passager complet\n(nom, téléphone valide +212 6XX XXX XXX)
+  ACT -> ACT : Vérifie que le trajet n'est pas\ndéjà dans reservedTripIds
+  ACT -> ACT : Vérifie places disponibles > 0
+end
+
+alt Profil incomplet ou trajet déjà réservé
+  ACT --> RES : throw Error (message explicite)
+  RES --> P : Affiche toast erreur\n(ex: "Complete ton profil avant de réserver")
+else Validation OK
+  ACT -> SVC : createReservation({\n  trajetId, passagerId,\n  statut: "en_attente",\n  messagePassager\n})
+end
+
+group Tentative via RPC Supabase
+  SVC -> DB : supabase.rpc("reserve_trajet_seat", {\n  p_trajet_id, p_passager_id,\n  p_statut: "en_attente",\n  p_message_passager\n})
+
+  alt RPC disponible
+    DB --> SVC : Réservation créée (statut: en_attente)\n+ places_disponibles décrémentées atomiquement
+  else RPC introuvable (PGRST202)
+    note over SVC : Fallback : opérations manuelles
+    SVC -> DB : Vérifie trajet (places > 0, conducteur ≠ passager)
+    DB --> SVC : Données trajet
+    SVC -> DB : INSERT INTO reservations\n(trajet_id, passager_id, statut, message_passager)
+    DB --> SVC : Réservation insérée
+    SVC -> DB : UPDATE trajets\nSET places_disponibles = places_disponibles - 1\nWHERE id = trajetId\nAND places_disponibles = valeur_actuelle
+    alt Mise à jour places échouée (race condition)
+      DB --> SVC : 0 lignes mises à jour
+      SVC -> DB : DELETE FROM reservations WHERE id = newId
+      SVC --> ACT : throw Error "Réservation impossible à finaliser"
+    else Succès
+      DB --> SVC : Trajet mis à jour
+    end
+  end
+end
+
+SVC --> ACT : Réservation créée avec succès
+ACT -> ACT : refresh() — recharge appData\n(reservations + tripOptions)
+ACT --> RES : Succès
+RES --> P : Toast "Demande envoyée !"\n→ navigate("/my-reservations") après 1s
+
+== 4. Suivi côté passager ==
+
+P -> MR : Consulte "Mes réservations"
+MR --> P : Affiche la réservation\navec statut "🕐 En attente"\n(itinéraire, conducteur, prix, heure)
+
+note over MR : Le passager peut :\n• Voir le profil du conducteur\n• Ouvrir le chat avec le conducteur\n• Annuler la réservation
+
+== 5. Traitement côté conducteur ==
+
+DB -> C : Realtime Supabase (useRealtime)\n→ nouvelle réservation détectée
+NOTIF --> C : Badge notification +1\n"Nouvelle demande de [Passager]"
+
+C -> MT : Consulte "Mes trajets"\n→ TripDetailPage
+MT -> DB : Charge passengerReservations\ndu trajet concerné
+DB --> MT : Liste des demandes (statut: en_attente)
+MT --> C : Affiche la demande du passager\n(nom, avatar, message, téléphone)
+
+alt Conducteur accepte
+  C -> MT : Clique "Confirmer"
+  MT -> ACT : onConfirmReservation(reservationId)
+  ACT -> SVC : updateReservationStatus({\n  conducteurId, reservationId,\n  statut: "confirmee"\n})
+  SVC -> DB : Vérifie que conducteur_id = sessionUserId
+  DB --> SVC : OK
+  SVC -> DB : UPDATE reservations\nSET statut = "confirmee"\nWHERE id = reservationId
+  DB --> SVC : Réservation confirmée
+  SVC --> ACT : Succès
+  ACT -> ACT : refresh()
+  MT --> C : Statut passager → "✅ Confirmé"
+  DB -> P : Realtime → notification\n"Réservation confirmée !"
+  MR --> P : Statut → "✅ Confirmé"\nBouton ⭐ évaluation activé\nBouton 💬 Chat disponible
+
+else Conducteur refuse
+  C -> MT : Clique "Refuser"
+  MT -> ACT : onRejectReservation(reservationId)
+  ACT -> SVC : updateReservationStatus({\n  conducteurId, reservationId,\n  statut: "refusee"\n})
+  SVC -> DB : UPDATE reservations SET statut = "refusee"
+  note over SVC : Si enum "refusee" absent → fallback "annulee"\n+ place restituée automatiquement
+  DB --> SVC : OK
+  ACT -> ACT : refresh()
+  MT --> C : Statut passager → "🚫 Refusé"
+  DB -> P : Realtime → notification "Réservation refusée"
+  MR --> P : Statut → "🚫 Refusé" (dans Historique)
+end
+
+== 6. Évaluation du conducteur (après trajet) ==
+
+note over P, MR : Après le trajet (statut "Terminee" ou "Confirmee")
+
+P -> MR : Clique ⭐ sur la réservation\n(dans liste active ou historique)
+MR --> P : Ouvre RatingModal\n("Évaluer [Nom conducteur]")
+P -> MR : Sélectionne 1 à 5 étoiles\n+ commentaire optionnel
+P -> MR : Clique "Envoyer l'évaluation"
+MR -> DB : evaluationService.submitEvaluation({\n  trajetId, conducteurId,\n  utilisateurId, note, commentaire\n})
+DB -> DB : INSERT INTO evaluations\nTrigger refresh_conducteur_rating\n→ UPDATE profiles SET note_moyenne
+DB --> MR : Évaluation enregistrée
+MR --> P : Toast "Évaluation envoyée !"
+
+@enduml
