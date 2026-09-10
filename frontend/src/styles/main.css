@@ -13637,3 +13637,267 @@ input, textarea, select {
     display: none;
   }
 }
+
+/* ============================================================
+   BOTTOM NAV — 6 TABS RESPONSIVE FIX
+   ============================================================ */
+
+/* Default mobile: compact — show icons + very short labels */
+.bottom-nav {
+  grid-template-columns: repeat(6, 1fr) !important;
+  padding: 4px 4px calc(env(safe-area-inset-bottom, 4px) + 4px) !important;
+  gap: 0 !important;
+}
+
+.bottom-nav__button {
+  padding: 5px 2px 3px !important;
+  font-size: 0.58rem !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+}
+
+.bottom-nav__button span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  display: block;
+}
+
+/* Very small phones (≤ 375px): icons only, no labels */
+@media (max-width: 375px) {
+  .bottom-nav__button span:last-child {
+    display: none !important;
+  }
+  .bottom-nav__button {
+    padding: 6px 2px !important;
+  }
+}
+
+/* Tablet+ : widen the frame to 520px to give tabs more breathing room */
+@media (min-width: 768px) {
+  .site-stage--single {
+    max-width: 520px !important;
+  }
+  .phone-shell {
+    max-width: 520px !important;
+  }
+  .bottom-nav__button {
+    font-size: 0.64rem !important;
+    padding: 5px 4px 3px !important;
+  }
+  .bottom-nav__button span:last-child {
+    display: block !important;
+  }
+}
+
+/* Desktop 1024px+: comfortable sizing */
+@media (min-width: 1024px) {
+  .site-stage--single {
+    max-width: 440px !important;
+  }
+  .phone-shell {
+    max-width: 440px !important;
+  }
+  .bottom-nav__button {
+    font-size: 0.65rem !important;
+  }
+}
+
+/* ============================================================
+   DESKTOP FULL-SCREEN LAYOUT — overrides phone-shell constraints
+   ============================================================ */
+
+/* ── Mobile default: keep phone-shell look (≤ 767px) ─────── */
+/* Nothing to override — original styles handle mobile fine   */
+
+/* ── Desktop (768px+): fill entire screen ─────────────────── */
+@media (min-width: 768px) {
+
+  /* Remove centered body / padding added by previous responsive block */
+  body {
+    display: block !important;
+    align-items: unset !important;
+    justify-content: unset !important;
+  }
+
+  /* App shell stretches full viewport */
+  .app-shell {
+    width: 100vw !important;
+    min-height: 100dvh !important;
+    padding: 0 !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    background: var(--surface-elevated) !important;
+  }
+
+  /* Stage: full width, no max-width cap */
+  .site-stage {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 100dvh !important;
+    align-items: stretch !important;
+  }
+
+  .site-stage--single {
+    max-width: 100% !important;
+    width: 100% !important;
+    min-height: 100dvh !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+
+  /* Phone shell: full screen */
+  .phone-shell {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+
+  .phone-shell--auth {
+    border-radius: 0 !important;
+  }
+
+  .phone-shell--splash {
+    border-radius: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Scrollable body area takes full remaining height */
+  .phone-shell__body {
+    padding: 16px 24px 32px !important;
+  }
+
+  /* App header: sticky inside scroll container, full width */
+  .app-header {
+    position: sticky !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10px 24px 14px !important;
+  }
+
+  /* Bottom nav: full width, no rounded corners */
+  .bottom-nav {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    padding: 6px 40px calc(env(safe-area-inset-bottom, 6px) + 6px) !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  }
+
+  .bottom-nav__button {
+    font-size: 0.72rem !important;
+    padding: 6px 8px 4px !important;
+    gap: 4px !important;
+  }
+
+  .bottom-nav__button span:last-child {
+    display: block !important;
+  }
+
+  /* Content screens: constrain readable width on very wide screens */
+  .screen {
+    max-width: 900px !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+  }
+
+  .screen--home {
+    max-width: 100% !important;
+    padding-top: 0 !important;
+  }
+
+  /* Home grid: 2-column layout on desktop */
+  .home-section {
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .home-trips-list {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    gap: 16px !important;
+  }
+
+  .home-actions__grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+
+  .home-hero {
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: var(--radius-xl) !important;
+  }
+
+  .home-greeting-card {
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Auth pages: centered card on desktop */
+  .screen--auth {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 100dvh !important;
+    padding: 40px 16px !important;
+  }
+
+  .login-page {
+    max-width: 480px !important;
+    width: 100% !important;
+  }
+}
+
+/* ── Large desktop (1280px+): wider content areas ─────────── */
+@media (min-width: 1280px) {
+
+  .phone-shell__body {
+    padding: 20px 40px 40px !important;
+  }
+
+  .screen {
+    max-width: 1100px !important;
+  }
+
+  .home-trips-list {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+  }
+
+  .home-hero {
+    max-width: 1060px;
+  }
+
+  .home-hero__cta-row {
+    flex-direction: row !important;
+    gap: 16px !important;
+  }
+
+  .home-actions__grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    max-width: 1060px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .bottom-nav {
+    padding: 8px 80px calc(env(safe-area-inset-bottom, 8px) + 8px) !important;
+  }
+
+  .bottom-nav__button {
+    font-size: 0.78rem !important;
+    max-width: 120px !important;
+  }
+}
