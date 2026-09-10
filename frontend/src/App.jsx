@@ -508,6 +508,7 @@ function AppContent() {
             </div>
             {showNav ? (
               <BottomNav
+                role={currentUser?.roleValue || "passager"}
                 notificationCount={notificationCount}
                 route={currentPath}
                 navigate={appNavigate}

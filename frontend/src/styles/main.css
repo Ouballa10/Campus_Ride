@@ -15241,3 +15241,27 @@ input, textarea, select {
   border: 1px solid #fed7aa;
   font-size: 0.72rem !important;
 }
+
+/* ============================================================
+   APP MENU — Role badge
+   ============================================================ */
+.app-menu__role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.app-menu__role-badge--driver {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.app-menu__role-badge--passenger {
+  background: #f0fdf4;
+  color: #15803d;
+}
