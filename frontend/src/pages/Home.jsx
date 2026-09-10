@@ -38,6 +38,7 @@ function getCountdown(departureAt) {
 }
 
 export default function Home({
+  demandes = [],
   navigate,
   onThemeChange,
   onTripSelect,
@@ -544,6 +545,90 @@ export default function Home({
           </div>
         </section>
       )}
+      {/* ===== DEMANDES PASSAGERS SECTION (pour conducteurs) ===== */}
+      <section className="home-section">
+        <div className="home-section__header">
+          <div>
+            <h3 className="home-section__title">
+              <span className="home-section__title-bar home-section__title-bar--orange" />
+              Demandes passagers
+            </h3>
+            <p className="home-section__subtitle">
+              {demandes.length > 0
+                ? `${demandes.length} demande${demandes.length > 1 ? "s" : ""} ouverte${demandes.length > 1 ? "s" : ""}`
+                : "Aucune demande pour l'instant"}
+            </p>
+          </div>
+          <button
+            className="home-section__see-all"
+            type="button"
+            onClick={() => navigate("demandes")}
+          >
+            Tout voir
+            <Icon name="arrow-right" size={14} />
+          </button>
+        </div>
+
+        {demandes.length === 0 ? (
+          <div className="home-empty">
+            <div className="home-empty__icon">
+              <Icon name="search" size={36} />
+            </div>
+            <strong>Aucune demande ouverte</strong>
+            <p>Les passagers publieront leurs demandes ici.</p>
+          </div>
+        ) : (
+          <div className="home-trips-list">
+            {demandes.slice(0, 3).map((d, index) => (
+              <div
+                className="home-demande-card card-animate"
+                key={d.id}
+                style={{ animationDelay: `${index * 0.08}s` }}
+                onClick={() => navigate("demandes")}
+                role="button"
+                tabIndex={0}
+              >
+                {/* Avatar passager */}
+                <div className="home-demande-card__passager">
+                  <div className="home-demande-card__avatar">
+                    {d.passagerAvatar
+                      ? <img src={d.passagerAvatar} alt={d.passagerName} />
+                      : <span>{d.passagerInitials || "P"}</span>
+                    }
+                  </div>
+                  <div className="home-demande-card__passager-info">
+                    <strong>{d.passagerName}</strong>
+                    <small>{d.passagerCampus || "Campus"}</small>
+                  </div>
+                  <div className="home-demande-card__price">
+                    <strong>{d.prixPropose} DH</strong>
+                    <small>proposés</small>
+                  </div>
+                </div>
+
+                {/* Route */}
+                <div className="home-demande-card__route">
+                  <span className="home-demande-card__dot home-demande-card__dot--start" />
+                  <div className="home-demande-card__route-names">
+                    <span>{d.depart}</span>
+                    <span className="home-demande-card__arrow">→</span>
+                    <span>{d.destination}</span>
+                  </div>
+                </div>
+
+                {/* Meta */}
+                <div className="home-demande-card__meta">
+                  <span><Icon name="calendar" size={12} />
+                    {d.departureAt ? new Date(d.departureAt).toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : ""}
+                  </span>
+                  <span className="home-demande-card__tag">Accepter →</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
     </div>
   );
 }

@@ -4,20 +4,20 @@ import { Icon } from "./Icons";
 
 const navItems = [
   { route: "home",            label: "Accueil",   icon: "home" },
-  { route: "search",          label: "Recherche", icon: "search" },
+  { route: "demandes",        label: "Demandes",  icon: "bookmark" },
   { route: "__action__",      label: "Créer",     icon: "plus", featured: true },
-  { route: "my-trips",        label: "Trajets",   icon: "route" },
+  { route: "search",          label: "Recherche", icon: "search" },
   { route: "notifications",   label: "Notifs",    icon: "bell" },
   { route: "profile",         label: "Profil",    icon: "user" },
 ];
 
 function getActiveTab(route) {
-  if (route === "reservation")    return "search";
-  if (route === "my-reservations") return "my-trips";
+  if (route === "reservation")     return "search";
+  if (route === "my-reservations") return "search";
   if (route === "publish")         return "__action__";
   if (route === "publish-demande") return "__action__";
-  if (route === "demandes")        return "my-trips";
-  if (route === "my-demandes")     return "my-trips";
+  if (route === "my-demandes")     return "demandes";
+  if (route === "my-trips")        return "search";
   return route;
 }
 

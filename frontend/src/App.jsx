@@ -10,6 +10,7 @@ import { useAppData } from "./hooks/useAppData";
 import { useRealtime } from "./hooks/useRealtime";
 import { normalizeTheme, readInitialTheme } from "./utils/themeHelpers";
 import { isTripOwnedByCurrentUser } from "./utils/tripHelpers";
+import { demandeService } from "./services/demandeService";
 
 // Lazy-loaded pages for code splitting
 const Chat = lazy(() => import("./pages/Chat"));
@@ -108,6 +109,17 @@ function AppContent() {
 
   // Current user — directly from appData (no mode overlay)
   const currentUser = appData.currentUser;
+
+  // Demandes passagers — fetch for home screen (conducteur sees them)
+  const [homeDemandes, setHomeDemandes] = useState([]);
+  useEffect(() => {
+    if (!canUseSupabaseData) return;
+    let active = true;
+    demandeService.listAvailableDemandes(sessionUserId)
+      .then((data) => { if (active) setHomeDemandes(data.slice(0, 6)); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [canUseSupabaseData, sessionUserId, appData.reservations]);
 
   // Discoverable trips (not owned by current user, with available seats)
   const discoverableTrips = useMemo(() =>
@@ -332,6 +344,7 @@ function AppContent() {
                 <Routes>
                   <Route path="/home" element={
                     <Home
+                      demandes={homeDemandes}
                       navigate={appNavigate}
                       onThemeChange={handleThemeChange}
                       onTripSelect={openTripReservation}
