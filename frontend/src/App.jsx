@@ -13,6 +13,7 @@ import { isTripOwnedByCurrentUser } from "./utils/tripHelpers";
 
 // Lazy-loaded pages for code splitting
 const Chat = lazy(() => import("./pages/Chat"));
+const DemandesDisponibles = lazy(() => import("./pages/DemandesDisponibles"));
 const DriverProfile = lazy(() => import("./pages/DriverProfile"));
 const EditProfile = lazy(() => import("./pages/EditProfile"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
@@ -24,6 +25,7 @@ const NotificationDetail = lazy(() => import("./pages/NotificationDetail"));
 const Notifications = lazy(() => import("./pages/Notifications"));
 const PassengerProfile = lazy(() => import("./pages/PassengerProfile"));
 const Profile = lazy(() => import("./pages/Profile"));
+const PublishDemande = lazy(() => import("./pages/PublishDemande"));
 const PublishTrajet = lazy(() => import("./pages/PublishTrajet"));
 const Register = lazy(() => import("./pages/Register"));
 const Reservation = lazy(() => import("./pages/Reservation"));
@@ -467,6 +469,26 @@ function AppContent() {
                     />
                   } />
                   <Route path="/reset-password" element={<ResetPassword navigate={appNavigate} />} />
+                  <Route path="/publish-demande" element={
+                    <PublishDemande
+                      navigate={appNavigate}
+                      onCreated={refresh}
+                    />
+                  } />
+                  <Route path="/demandes" element={
+                    <DemandesDisponibles
+                      navigate={appNavigate}
+                      onOpenChat={openChat}
+                      sessionUserId={sessionUserId}
+                    />
+                  } />
+                  <Route path="/my-demandes" element={
+                    <DemandesDisponibles
+                      navigate={appNavigate}
+                      onOpenChat={openChat}
+                      sessionUserId={sessionUserId}
+                    />
+                  } />
                   <Route path="*" element={<Navigate to="/home" replace />} />
                 </Routes>
               </Suspense>

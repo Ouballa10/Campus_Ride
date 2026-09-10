@@ -197,6 +197,14 @@ export default function Home({
               <Icon name="search" size={18} />
               <span>Chercher</span>
             </button>
+            <button
+              className="home-hero__cta home-hero__cta--orange"
+              type="button"
+              onClick={() => navigate("publish-demande")}
+            >
+              <Icon name="bookmark" size={18} />
+              <span>Demander</span>
+            </button>
           </div>
         </div>
       </section>
@@ -245,6 +253,16 @@ export default function Home({
             <div className="home-action-card__info">
               <strong>Réservations</strong>
               <span>Mes réservations</span>
+            </div>
+          </button>
+
+          <button className="home-action-card" type="button" onClick={() => navigate("demandes")}>
+            <div className="home-action-card__icon home-action-card__icon--orange">
+              <Icon name="search" size={22} />
+            </div>
+            <div className="home-action-card__info">
+              <strong>Demandes</strong>
+              <span>InDrive-style</span>
             </div>
           </button>
         </div>
