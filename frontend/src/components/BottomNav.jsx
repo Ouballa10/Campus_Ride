@@ -1,38 +1,25 @@
 import React from "react";
 import { Icon } from "./Icons";
 
-const navItemsByMode = {
-  passenger: [
-    { route: "home", label: "Accueil", icon: "home" },
-    { route: "search", label: "Recherche", icon: "search", featured: true },
-    { route: "my-reservations", label: "Resas", icon: "bookmark" },
-    { route: "notifications", label: "Notifs", icon: "bell" },
-    { route: "profile", label: "Profil", icon: "user" },
-  ],
-  driver: [
-    { route: "home", label: "Accueil", icon: "home" },
-    { route: "publish", label: "Publier", icon: "plus", featured: true },
-    { route: "my-trips", label: "Trajets", icon: "route" },
-    { route: "notifications", label: "Notifs", icon: "bell" },
-    { route: "profile", label: "Profil", icon: "user" },
-  ],
-};
+const navItems = [
+  { route: "home", label: "Accueil", icon: "home" },
+  { route: "search", label: "Recherche", icon: "search" },
+  { route: "publish", label: "Publier", icon: "plus", featured: true },
+  { route: "my-trips", label: "Trajets", icon: "route" },
+  { route: "notifications", label: "Notifs", icon: "bell" },
+  { route: "profile", label: "Profil", icon: "user" },
+];
 
-function getActiveTab(route, mode) {
-  if (route === "reservation") {
-    return "search";
-  }
-
-  if (route === "my-reservations" && mode === "driver") {
-    return "my-trips";
-  }
-
+function getActiveTab(route) {
+  // reservation page highlights search tab
+  if (route === "reservation") return "search";
+  // my-reservations highlights my-trips tab (all trips/reservations accessible from there)
+  if (route === "my-reservations") return "my-trips";
   return route;
 }
 
-export default function BottomNav({ mode = "passenger", notificationCount = 0, route, navigate }) {
-  const activeTab = getActiveTab(route, mode);
-  const navItems = navItemsByMode[mode] || navItemsByMode.passenger;
+export default function BottomNav({ notificationCount = 0, route, navigate }) {
+  const activeTab = getActiveTab(route);
 
   return (
     <nav className="bottom-nav" aria-label="Navigation principale">

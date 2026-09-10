@@ -8,10 +8,6 @@ import { profileService } from "../services/profileService";
 const maxImageSize = 5 * 1024 * 1024;
 const maxVehiclePhotos = 6;
 
-function getRoleFromMode(mode = "passenger") {
-  return mode === "driver" ? "conducteur" : "passager";
-}
-
 function normalizeVehiclePhotos(value) {
   if (Array.isArray(value)) {
     return value.filter((item) => typeof item === "string" && item.trim());
@@ -45,7 +41,7 @@ function buildVehicleLabel(form) {
     form.vehicleLabel.trim();
 }
 
-function buildProfileForm(profile, fallbackUser, mode = "passenger") {
+function buildProfileForm(profile, fallbackUser) {
   const fallbackVehicle = fallbackUser?.vehicle || {};
 
   return {
@@ -56,7 +52,7 @@ function buildProfileForm(profile, fallbackUser, mode = "passenger") {
     fullName: profile?.full_name || fallbackUser?.name || "",
     phone: profile?.phone || fallbackUser?.phone || "",
     photoProfil: profile?.photo_profil || fallbackUser?.photo || "",
-    role: getRoleFromMode(mode) || profile?.role || fallbackUser?.roleValue || "passager",
+    role: profile?.role || fallbackUser?.roleValue || "passager",
     vehicleColor: profile?.vehicle_color || fallbackVehicle.color || "",
     vehicleLabel: profile?.vehicle_label || fallbackUser?.car || "",
     vehicleMake: profile?.vehicle_make || fallbackVehicle.make || "",
@@ -86,9 +82,7 @@ function validateImageFile(file, label) {
 }
 
 export default function Profile({
-  mode = "passenger",
   navigate,
-  onModeChange,
   onThemeChange,
   user,
   theme = "light",
@@ -105,7 +99,7 @@ export default function Profile({
     session,
     signOut,
   } = useAuth();
-  const [form, setForm] = useState(() => buildProfileForm(profile, user, mode));
+  const [form, setForm] = useState(() => buildProfileForm(profile, user));
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState("");
   const [selectedVehiclePhotos, setSelectedVehiclePhotos] = useState([]);
@@ -144,9 +138,9 @@ export default function Profile({
   const isEditingRef = useRef(false);
   useEffect(() => {
     if (!isSavingRef.current && !isEditingRef.current) {
-      setForm(buildProfileForm(profile, user, mode));
+      setForm(buildProfileForm(profile, user));
     }
-  }, [mode, profile, user]);
+  }, [profile, user]);
 
   useEffect(() => {
     return () => {
@@ -166,8 +160,7 @@ export default function Profile({
   }, []);
 
   const avatarSource = photoPreview || form.photoProfil || displayUser.photo || "";
-  const isDriverMode = mode === "driver";
-  const roleLabel = isDriverMode ? "Conducteur campus" : "Passager campus";
+  const roleLabel = form.role === "conducteur" ? "Conducteur campus" : "Passager campus";
   const vehicleLabel = buildVehicleLabel(form);
   const vehiclePhotos = [
     ...form.vehiclePhotos.map((url) => ({ src: url, persisted: true })),
@@ -177,18 +170,11 @@ export default function Profile({
     })),
   ];
   const primaryVehiclePhoto = vehiclePhotos[0]?.src || "";
-  const profileRoleDiffers =
-    Boolean(profile?.role) && profile.role !== getRoleFromMode(mode);
-  const visibleProfileLinks = profileLinks.filter((link) =>
-    isDriverMode
-      ? ["trips", "publish", "notifications"].includes(link.id)
-      : ["reservations", "search", "notifications"].includes(link.id),
-  );
+  const visibleProfileLinks = profileLinks;
   const formDirty =
-    JSON.stringify(form) !== JSON.stringify(buildProfileForm(profile, user, mode)) ||
+    JSON.stringify(form) !== JSON.stringify(buildProfileForm(profile, user)) ||
     Boolean(selectedPhoto) ||
-    selectedVehiclePhotos.length > 0 ||
-    profileRoleDiffers;
+    selectedVehiclePhotos.length > 0;
 
   function updateField(event) {
     const { name, value } = event.target;
@@ -392,7 +378,7 @@ export default function Profile({
         full_name: form.fullName.trim() || "CampusRide",
         phone: form.phone.trim(),
         photo_profil: photoProfil || null,
-        role: getRoleFromMode(mode),
+        role: form.role || "passager",
         updated_at: new Date().toISOString(),
         vehicle_color: form.vehicleColor.trim() || null,
         vehicle_label: nextVehicleLabel || null,
@@ -456,8 +442,8 @@ export default function Profile({
   return (
     <div className="screen screen--profile page-enter">
       <AppHeader
-        title={isDriverMode ? "Profil conducteur" : "Mon profil"}
-        subtitle={isDriverMode ? "Garage & coordonnées" : "Compte & préférences"}
+        title="Mon profil"
+        subtitle="Compte & préférences"
         leftIcon="arrow-left"
         onLeftClick={() => navigate("home")}
       />
@@ -486,10 +472,6 @@ export default function Profile({
             <button className="pf-btn pf-btn--primary" type="button" onClick={() => navigate("edit-profile")}>
               <Icon name="edit" size={14} />
               Modifier
-            </button>
-            <button className="pf-btn pf-btn--outline" type="button" onClick={() => onModeChange(isDriverMode ? "passenger" : "driver")}>
-              <Icon name={isDriverMode ? "user" : "car"} size={14} />
-              {isDriverMode ? "Mode passager" : "Mode driver"}
             </button>
           </div>
 
@@ -568,18 +550,17 @@ export default function Profile({
               <Icon name="chevron-right" size={16} />
             </button>
 
-            {isDriverMode && (
-              <button className="pf-settings__item" type="button" onClick={() => navigate("edit-profile")}>
-                <div className="pf-settings__item-icon pf-settings__item-icon--cyan">
-                  <Icon name="car" size={18} />
-                </div>
-                <div className="pf-settings__item-text">
-                  <strong>Mon véhicule</strong>
-                  <span>Marque, plaque, photos...</span>
-                </div>
-                <Icon name="chevron-right" size={16} />
-              </button>
-            )}
+            {/* Vehicle settings — always shown */}
+            <button className="pf-settings__item" type="button" onClick={() => navigate("edit-profile")}>
+              <div className="pf-settings__item-icon pf-settings__item-icon--cyan">
+                <Icon name="car" size={18} />
+              </div>
+              <div className="pf-settings__item-text">
+                <strong>Mon véhicule</strong>
+                <span>Marque, plaque, photos...</span>
+              </div>
+              <Icon name="chevron-right" size={16} />
+            </button>
 
             {visibleProfileLinks.map((link) => (
               <button

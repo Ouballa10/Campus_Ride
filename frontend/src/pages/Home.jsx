@@ -38,9 +38,7 @@ function getCountdown(departureAt) {
 }
 
 export default function Home({
-  mode,
   navigate,
-  onModeChange,
   onThemeChange,
   onTripSelect,
   onViewDriver,
@@ -50,42 +48,32 @@ export default function Home({
   tripOptions,
   user,
 }) {
-  const isDriverMode = mode === "driver";
   const featuredTrips = tripOptions.slice(0, 3);
   const featuredPublishedTrips = publishedTrips
     .filter((trip) => trip.status !== "Passe")
     .slice(0, 3);
-  const activePublishedTrips = publishedTrips.filter(
-    (trip) => trip.status === "Actif",
-  ).length;
-  const confirmedReservations = reservations.filter(
-    (reservation) => reservation.status === "Confirmee",
-  ).length;
-  const pendingReservations = reservations.filter(
-    (reservation) => reservation.status === "En attente",
-  ).length;
+
+  const activePublishedTrips = publishedTrips.filter((t) => t.status === "Actif").length;
+  const pendingPassengerRequests = publishedTrips.reduce(
+    (sum, trip) =>
+      sum + (trip.passengerReservations || []).filter((r) => r.status === "En attente").length,
+    0,
+  );
   const passengerCount = publishedTrips.reduce(
     (total, trip) =>
       total +
-      (trip.passengerReservations || []).filter(
-        (reservation) => reservation.status !== "Annulee",
-      ).length,
+      (trip.passengerReservations || []).filter((r) => r.status !== "Annulee").length,
     0,
   );
-  const totalEarnings = publishedTrips.reduce(
-    (sum, trip) => sum + (trip.earningsEstimate || 0),
-    0,
-  );
+  const totalEarnings = publishedTrips.reduce((sum, trip) => sum + (trip.earningsEstimate || 0), 0);
+
+  const confirmedReservations = reservations.filter((r) => r.status === "Confirmee").length;
+  const pendingReservations = reservations.filter((r) => r.status === "En attente").length;
+
+  const totalNotifBadge = pendingPassengerRequests + pendingReservations;
   const firstName = user.name?.split(" ")[0] || "CampusRider";
 
-  const menuContextForHeader = {
-    mode,
-    navigate,
-    onModeChange,
-    onThemeChange,
-    theme,
-    user,
-  };
+  const menuContextForHeader = { navigate, onThemeChange, theme, user };
 
   return (
     <div className="screen screen--home page-enter">
@@ -105,8 +93,8 @@ export default function Home({
             aria-label="Notifications"
           >
             <Icon name="bell" size={20} />
-            {pendingReservations > 0 && (
-              <span className="home-topbar__notif-badge">{pendingReservations}</span>
+            {totalNotifBadge > 0 && (
+              <span className="home-topbar__notif-badge">{totalNotifBadge}</span>
             )}
           </button>
           <div
@@ -119,9 +107,7 @@ export default function Home({
             {user.photo ? (
               <img src={user.photo} alt={user.name} />
             ) : (
-              <span className="home-topbar__avatar-initials">
-                {user.initials || "CR"}
-              </span>
+              <span className="home-topbar__avatar-initials">{user.initials || "CR"}</span>
             )}
             <span className="home-topbar__online-dot" aria-hidden="true" />
           </div>
@@ -134,9 +120,7 @@ export default function Home({
           <span className="home-greeting-card__date">{getTodayDate()}</span>
           <h2 className="home-greeting-card__name">{getGreeting()}, {firstName} 👋</h2>
           <p className="home-greeting-card__subtitle">
-            {isDriverMode
-              ? "Prêt à publier un trajet aujourd'hui ?"
-              : "Trouvez votre prochain trajet facilement."}
+            Publie un trajet ou réserve une place — tout en un.
           </p>
         </div>
       </section>
@@ -154,78 +138,66 @@ export default function Home({
         <div className="home-hero__content">
           <span className="home-hero__badge">
             <span className="home-hero__badge-dot" />
-            {isDriverMode ? "Conducteur" : "Passager"}
+            CampusRide
           </span>
 
           <h2 className="home-hero__title">
-            {isDriverMode ? (
-              <>
-                Gérez vos <span>trajets</span>
-              </>
-            ) : (
-              <>
-                Trouvez votre <span>trajet idéal</span>
-              </>
-            )}
+            Vos <span>trajets</span> campus
           </h2>
 
           <p className="home-hero__desc">
-            {isDriverMode
-              ? "Publiez et suivez vos passagers en temps réel."
-              : "Réservez en un clic, voyagez sereinement."}
+            Publiez, réservez et voyagez avec vos camarades.
           </p>
 
+          {/* Stats row — driver side */}
           <div className="home-hero__stats">
             <button
               className="home-hero__stat"
               type="button"
-              onClick={() =>
-                navigate(isDriverMode ? "my-trips" : "search")
-              }
+              onClick={() => navigate("my-trips")}
             >
-              <strong>
-                {isDriverMode ? publishedTrips.length : tripOptions.length}
-              </strong>
-              <span>{isDriverMode ? "Trajets" : "Offres"}</span>
+              <strong>{publishedTrips.length}</strong>
+              <span>Annonces</span>
             </button>
             <span className="home-hero__stat-divider" />
             <button
               className="home-hero__stat"
               type="button"
-              onClick={() =>
-                navigate(isDriverMode ? "my-trips" : "my-reservations")
-              }
+              onClick={() => navigate("my-trips")}
             >
-              <strong>
-                {isDriverMode ? passengerCount : reservations.length}
-              </strong>
-              <span>{isDriverMode ? "Passagers" : "Réserv."}</span>
+              <strong>{passengerCount}</strong>
+              <span>Passagers</span>
             </button>
             <span className="home-hero__stat-divider" />
             <button
               className="home-hero__stat"
               type="button"
-              onClick={() =>
-                navigate(isDriverMode ? "my-trips" : "my-reservations")
-              }
+              onClick={() => navigate("my-reservations")}
             >
-              <strong>
-                {isDriverMode ? activePublishedTrips : confirmedReservations}
-              </strong>
-              <span>{isDriverMode ? "Actifs" : "Confirmés"}</span>
+              <strong>{reservations.length}</strong>
+              <span>Réserv.</span>
             </button>
           </div>
 
-          <button
-            className="home-hero__cta"
-            type="button"
-            onClick={() => navigate(isDriverMode ? "publish" : "search")}
-          >
-            <Icon name={isDriverMode ? "plus" : "search"} size={18} />
-            <span>
-              {isDriverMode ? "Publier un trajet" : "Chercher un trajet"}
-            </span>
-          </button>
+          {/* Dual CTA */}
+          <div className="home-hero__cta-row">
+            <button
+              className="home-hero__cta home-hero__cta--primary"
+              type="button"
+              onClick={() => navigate("publish")}
+            >
+              <Icon name="plus" size={18} />
+              <span>Publier</span>
+            </button>
+            <button
+              className="home-hero__cta home-hero__cta--secondary"
+              type="button"
+              onClick={() => navigate("search")}
+            >
+              <Icon name="search" size={18} />
+              <span>Chercher</span>
+            </button>
+          </div>
         </div>
       </section>
 
@@ -236,66 +208,50 @@ export default function Home({
           Actions rapides
         </h3>
         <div className="home-actions__grid">
-          <button
-            className="home-action-card"
-            type="button"
-            onClick={() => navigate("profile")}
-          >
-            <div className="home-action-card__icon home-action-card__icon--accent">
-              <Icon name="user" size={22} />
-            </div>
-            <div className="home-action-card__info">
-              <strong>Mon profil</strong>
-              <span>Mon compte</span>
-            </div>
-          </button>
-
-          <button
-            className="home-action-card"
-            type="button"
-            onClick={() => navigate(isDriverMode ? "publish" : "search")}
-          >
+          <button className="home-action-card" type="button" onClick={() => navigate("publish")}>
             <div className="home-action-card__icon home-action-card__icon--primary">
-              <Icon name={isDriverMode ? "plus" : "search"} size={22} />
+              <Icon name="plus" size={22} />
             </div>
             <div className="home-action-card__info">
-              <strong>{isDriverMode ? "Publier" : "Chercher"}</strong>
-              <span>{isDriverMode ? "Nouveau trajet" : "Trouver un trajet"}</span>
+              <strong>Publier</strong>
+              <span>Nouveau trajet</span>
             </div>
           </button>
 
-          <button
-            className="home-action-card"
-            type="button"
-            onClick={() => navigate(isDriverMode ? "my-trips" : "my-reservations")}
-          >
+          <button className="home-action-card" type="button" onClick={() => navigate("search")}>
+            <div className="home-action-card__icon home-action-card__icon--accent">
+              <Icon name="search" size={22} />
+            </div>
+            <div className="home-action-card__info">
+              <strong>Chercher</strong>
+              <span>Trouver un trajet</span>
+            </div>
+          </button>
+
+          <button className="home-action-card" type="button" onClick={() => navigate("my-trips")}>
             <div className="home-action-card__icon home-action-card__icon--secondary">
-              <Icon name={isDriverMode ? "route" : "bookmark"} size={22} />
+              <Icon name="route" size={22} />
             </div>
             <div className="home-action-card__info">
-              <strong>{isDriverMode ? "Annonces" : "Réservations"}</strong>
-              <span>{isDriverMode ? "Gérer mes trajets" : "Mes réservations"}</span>
+              <strong>Mes trajets</strong>
+              <span>Gérer mes annonces</span>
             </div>
           </button>
 
-          <button
-            className="home-action-card"
-            type="button"
-            onClick={() => navigate("notifications")}
-          >
+          <button className="home-action-card" type="button" onClick={() => navigate("my-reservations")}>
             <div className="home-action-card__icon home-action-card__icon--muted">
-              <Icon name="bell" size={22} />
+              <Icon name="bookmark" size={22} />
             </div>
             <div className="home-action-card__info">
-              <strong>Alertes</strong>
-              <span>Notifications</span>
+              <strong>Réservations</strong>
+              <span>Mes réservations</span>
             </div>
           </button>
         </div>
       </section>
 
-      {/* ===== CONTEXTUAL BANNER ===== */}
-      {isDriverMode && totalEarnings > 0 && (
+      {/* ===== BANNERS ===== */}
+      {totalEarnings > 0 && (
         <div className="home-banner home-banner--blue card-animate">
           <div className="home-banner__icon">
             <Icon name="ticket" size={22} />
@@ -315,7 +271,29 @@ export default function Home({
         </div>
       )}
 
-      {!isDriverMode && pendingReservations > 0 && (
+      {pendingPassengerRequests > 0 && (
+        <div className="home-banner home-banner--green card-animate">
+          <div className="home-banner__icon">
+            <Icon name="user" size={22} />
+          </div>
+          <div className="home-banner__body">
+            <span>Demandes de passagers</span>
+            <strong>
+              {pendingPassengerRequests} en attente
+            </strong>
+          </div>
+          <button
+            className="home-banner__cta"
+            type="button"
+            onClick={() => navigate("my-trips")}
+          >
+            Gérer
+            <Icon name="arrow-right" size={13} />
+          </button>
+        </div>
+      )}
+
+      {pendingReservations > 0 && (
         <div className="home-banner home-banner--orange card-animate">
           <div className="home-banner__icon home-banner__icon--orange">
             <Icon name="clock" size={22} />
@@ -323,8 +301,7 @@ export default function Home({
           <div className="home-banner__body">
             <span>En attente</span>
             <strong>
-              {pendingReservations} réservation
-              {pendingReservations > 1 ? "s" : ""}
+              {pendingReservations} réservation{pendingReservations > 1 ? "s" : ""}
             </strong>
           </div>
           <button
@@ -338,42 +315,31 @@ export default function Home({
         </div>
       )}
 
-      {/* ===== TRIPS SECTION ===== */}
+      {/* ===== DRIVER SECTION — Mes annonces ===== */}
       <section className="home-section">
         <div className="home-section__header">
           <div>
             <h3 className="home-section__title">
               <span className="home-section__title-bar" />
-              {isDriverMode ? "Mes annonces" : "Trajets récents"}
+              Mes annonces
             </h3>
             <p className="home-section__subtitle">
-              {isDriverMode
-                ? "Tes prochains départs"
-                : "Publiés récemment près du campus"}
+              {activePublishedTrips > 0
+                ? `${activePublishedTrips} trajet${activePublishedTrips > 1 ? "s" : ""} actif${activePublishedTrips > 1 ? "s" : ""}`
+                : "Tes prochains départs"}
             </p>
           </div>
           <button
             className="home-section__see-all"
             type="button"
-            onClick={() => navigate(isDriverMode ? "my-trips" : "search")}
+            onClick={() => navigate("my-trips")}
           >
             Tout voir
             <Icon name="arrow-right" size={14} />
           </button>
         </div>
 
-        {/* Empty states */}
-        {!isDriverMode && !featuredTrips.length && (
-          <div className="home-empty">
-            <div className="home-empty__icon">
-              <Icon name="car" size={40} />
-            </div>
-            <strong>Aucun trajet disponible</strong>
-            <p>Les conducteurs n'ont pas encore publié.</p>
-          </div>
-        )}
-
-        {isDriverMode && !featuredPublishedTrips.length && (
+        {featuredPublishedTrips.length === 0 ? (
           <div className="home-empty">
             <div className="home-empty__icon">
               <Icon name="route" size={40} />
@@ -389,30 +355,7 @@ export default function Home({
               Publier
             </button>
           </div>
-        )}
-
-        {/* Trip cards - Passenger mode */}
-        {!isDriverMode && featuredTrips.length > 0 && (
-          <div className="home-trips-list">
-            {featuredTrips.map((trip, index) => (
-              <div
-                className="card-animate"
-                key={trip.id}
-                style={{ animationDelay: `${index * 0.08}s` }}
-              >
-                <TrajetCard
-                  ctaLabel="Réserver"
-                  trip={trip}
-                  onClick={() => onTripSelect(trip.id)}
-                  onViewDriver={onViewDriver}
-                />
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Trip cards - Driver mode */}
-        {isDriverMode && featuredPublishedTrips.length > 0 && (
+        ) : (
           <div className="home-trips-list">
             {featuredPublishedTrips.map((trip, index) => {
               const countdown = getCountdown(trip.departureAt);
@@ -460,8 +403,7 @@ export default function Home({
                   <div className="home-driver-card__bottom">
                     <span className="home-driver-card__passengers">
                       <Icon name="user" size={14} />
-                      {trip.passengers} passager
-                      {(trip.passengers || 0) > 1 ? "s" : ""}
+                      {trip.passengers} passager{(trip.passengers || 0) > 1 ? "s" : ""}
                     </span>
                     <button
                       className="home-driver-card__btn"
@@ -478,6 +420,112 @@ export default function Home({
           </div>
         )}
       </section>
+
+      {/* ===== PASSENGER SECTION — Trajets récents ===== */}
+      <section className="home-section">
+        <div className="home-section__header">
+          <div>
+            <h3 className="home-section__title">
+              <span className="home-section__title-bar" />
+              Trajets récents
+            </h3>
+            <p className="home-section__subtitle">Publiés récemment près du campus</p>
+          </div>
+          <button
+            className="home-section__see-all"
+            type="button"
+            onClick={() => navigate("search")}
+          >
+            Tout voir
+            <Icon name="arrow-right" size={14} />
+          </button>
+        </div>
+
+        {featuredTrips.length === 0 ? (
+          <div className="home-empty">
+            <div className="home-empty__icon">
+              <Icon name="car" size={40} />
+            </div>
+            <strong>Aucun trajet disponible</strong>
+            <p>Les conducteurs n'ont pas encore publié.</p>
+          </div>
+        ) : (
+          <div className="home-trips-list">
+            {featuredTrips.map((trip, index) => (
+              <div
+                className="card-animate"
+                key={trip.id}
+                style={{ animationDelay: `${index * 0.08}s` }}
+              >
+                <TrajetCard
+                  ctaLabel="Réserver"
+                  trip={trip}
+                  onClick={() => onTripSelect(trip.id)}
+                  onViewDriver={onViewDriver}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* ===== MY RESERVATIONS SECTION ===== */}
+      {reservations.length > 0 && (
+        <section className="home-section">
+          <div className="home-section__header">
+            <div>
+              <h3 className="home-section__title">
+                <span className="home-section__title-bar" />
+                Mes réservations
+              </h3>
+              <p className="home-section__subtitle">
+                {confirmedReservations > 0
+                  ? `${confirmedReservations} confirmée${confirmedReservations > 1 ? "s" : ""}`
+                  : "En cours de traitement"}
+              </p>
+            </div>
+            <button
+              className="home-section__see-all"
+              type="button"
+              onClick={() => navigate("my-reservations")}
+            >
+              Tout voir
+              <Icon name="arrow-right" size={14} />
+            </button>
+          </div>
+          <div className="home-trips-list">
+            {reservations.slice(0, 2).map((r, index) => {
+              const statusColor =
+                r.status === "Confirmee" ? "#059669" :
+                r.status === "En attente" ? "#d97706" : "#dc2626";
+              const statusIcon =
+                r.status === "Confirmee" ? "✅" :
+                r.status === "En attente" ? "🕐" : "❌";
+              return (
+                <div
+                  className="home-res-card card-animate"
+                  key={r.id}
+                  style={{ animationDelay: `${index * 0.08}s`, borderLeftColor: statusColor }}
+                  onClick={() => navigate("my-reservations")}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className="home-res-card__route">
+                    <strong>{r.depart}</strong>
+                    <Icon name="arrow-right" size={12} />
+                    <strong>{r.destination}</strong>
+                  </div>
+                  <div className="home-res-card__meta">
+                    <span>{statusIcon} {r.status}</span>
+                    <span>🕐 {r.time}</span>
+                    <span>💰 {r.price} DH</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

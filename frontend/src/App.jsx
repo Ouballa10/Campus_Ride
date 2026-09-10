@@ -8,7 +8,6 @@ import { profileLinks } from "./data/mockData";
 import { useAppActions } from "./hooks/useAppActions";
 import { useAppData } from "./hooks/useAppData";
 import { useRealtime } from "./hooks/useRealtime";
-import { applyModeToUser, appModeConfig, normalizeMode, persistMode, readInitialMode, routeModeHints } from "./utils/modeHelpers";
 import { normalizeTheme, readInitialTheme } from "./utils/themeHelpers";
 import { isTripOwnedByCurrentUser } from "./utils/tripHelpers";
 
@@ -33,7 +32,6 @@ const SearchTrajet = lazy(() => import("./pages/SearchTrajet"));
 const Splash = lazy(() => import("./pages/Splash"));
 const TripDetailPage = lazy(() => import("./pages/TripDetailPage"));
 
-// Loading fallback for lazy pages
 function PageLoader() {
   return (
     <div className="screen screen--simple" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
@@ -45,7 +43,6 @@ function PageLoader() {
   );
 }
 
-// Check if there's a persisted session in localStorage (instant, no async)
 function hasPersistedSession() {
   if (typeof window === "undefined") return false;
   try {
@@ -65,6 +62,7 @@ function AppContent() {
 
   const sessionUserId = session?.user?.id || "";
   const isLoggedIn = Boolean(sessionUserId);
+  const currentPath = location.pathname.replace(/^\//, "");
 
   // OAuth return detection (captured once)
   const [isOAuthReturn] = useState(() => {
@@ -80,13 +78,8 @@ function AppContent() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Mode management
-  const currentPath = location.pathname.replace(/^\//, "");
-  const [activeMode, setActiveMode] = useState(() => readInitialMode(currentPath));
-
   // Theme management
   const [theme, setTheme] = useState(readInitialTheme);
-
   useEffect(() => {
     if (typeof document !== "undefined") {
       document.documentElement.dataset.theme = theme;
@@ -101,31 +94,6 @@ function AppContent() {
     }
   }
 
-  // Mode change handler
-  function handleModeChange(nextMode, preferredRoute = "") {
-    const normalizedMode = normalizeMode(nextMode);
-    setActiveMode(normalizedMode);
-    persistMode(normalizedMode);
-
-    if (preferredRoute) {
-      navigate(`/${preferredRoute}`);
-      return;
-    }
-
-    const routeMode = routeModeHints[currentPath];
-    if (routeMode && routeMode !== normalizedMode) {
-      navigate(`/${appModeConfig[normalizedMode].defaultRoute}`);
-    }
-  }
-
-  // Sync mode from route hints
-  useEffect(() => {
-    const hintedMode = routeModeHints[currentPath];
-    if (hintedMode) {
-      setActiveMode(hintedMode);
-    }
-  }, [currentPath]);
-
   // App data
   const { appData, setAppData, dataError, demoMode, canUseSupabaseData, refresh } = useAppData();
 
@@ -136,8 +104,8 @@ function AppContent() {
     onRefresh: refresh,
   });
 
-  // Current user with mode applied
-  const currentUser = applyModeToUser(appData.currentUser, activeMode);
+  // Current user — directly from appData (no mode overlay)
+  const currentUser = appData.currentUser;
 
   // Discoverable trips (not owned by current user, with available seats)
   const discoverableTrips = useMemo(() =>
@@ -162,13 +130,14 @@ function AppContent() {
     [appData.reservations],
   );
 
-  // Notification count
-  const notificationCount = recentMessages.length + (activeMode === "driver"
-    ? appData.publishedTrips.reduce(
-        (sum, trip) => sum + (trip.passengerReservations || []).filter((r) => r.status === "En attente").length,
+  // Combined notification count: pending passenger requests + pending/confirmed own reservations
+  const notificationCount = recentMessages.length
+    + appData.publishedTrips.reduce(
+        (sum, trip) =>
+          sum + (trip.passengerReservations || []).filter((r) => r.status === "En attente").length,
         0,
       )
-    : appData.reservations.filter((r) => r.status === "Confirmee" || r.status === "En attente").length);
+    + appData.reservations.filter((r) => r.status === "Confirmee" || r.status === "En attente").length;
 
   // Actions
   const actions = useAppActions({
@@ -206,6 +175,7 @@ function AppContent() {
   }
 
   function openNotificationDetail(notification) {
+    // Message notifications → open chat directly
     if (notification.type === "message" || notification.id?.startsWith("msg-")) {
       setChatContext({
         reservationId: notification.reservationId,
@@ -217,9 +187,10 @@ function AppContent() {
       return;
     }
 
-    if (notification.id?.startsWith("driver-")) {
-      const fullId = notification.id.replace("driver-", "");
-      const tripId = fullId.slice(0, 36);
+    // Driver notifications (prefix "drv-") → trip detail page
+    if (notification.type === "driver-reservation" || notification.id?.startsWith("drv-")) {
+      const parts = notification.id?.replace("drv-", "").split("-") || [];
+      const tripId = parts.slice(0, 5).join("-");
       const trip = appData.publishedTrips.find((t) => t.id === tripId);
       if (trip) {
         setSelectedTripDetail({ ...trip, _backRoute: "notifications" });
@@ -230,6 +201,7 @@ function AppContent() {
       return;
     }
 
+    // Passenger reservation notifications → reservation page
     if (notification.reservationId) {
       const reservation = appData.reservations.find((r) => r.id === notification.reservationId);
       if (reservation?.trajetId) {
@@ -243,7 +215,9 @@ function AppContent() {
       }
     }
 
-    navigate("/my-reservations");
+    // Fallback: notification detail page
+    setSelectedNotification(notification);
+    navigate("/notification-detail");
   }
 
   function openDriverProfile(tripData) {
@@ -261,7 +235,7 @@ function AppContent() {
     navigate("/chat");
   }
 
-  // Redirect logic
+  // Redirect logged-in users away from auth routes
   useEffect(() => {
     if (authLoading || !isConfigured) return;
     const authRoutes = ["splash", "login", "register", "forgot-password", ""];
@@ -278,21 +252,19 @@ function AppContent() {
 
   const authRoutes = ["splash", "login", "register", "forgot-password", "reset-password", ""];
   const isAuthRoute = authRoutes.includes(currentPath);
-  const hideNavRoutes = ["chat", "trip-detail", "notification-detail", "driver-profile"];
+  const hideNavRoutes = ["chat", "trip-detail", "notification-detail", "driver-profile", "passenger-profile"];
   const showNav = !isAuthRoute && !hideNavRoutes.includes(currentPath) && isLoggedIn && !isWaitingForOAuth;
   const isSplashRoute = currentPath === "splash" || currentPath === "";
 
-  // Menu context for child components
+  // Menu context (no mode)
   const menuContextValue = useMemo(() => ({
-    mode: activeMode,
     navigate: appNavigate,
-    onModeChange: handleModeChange,
     onThemeChange: handleThemeChange,
     theme,
     user: currentUser,
-  }), [activeMode, theme, currentUser]);
+  }), [theme, currentUser]);
 
-  // Loading screen (OAuth return)
+  // OAuth / loading screen
   if (isWaitingForOAuth) {
     return (
       <MenuProvider value={menuContextValue}>
@@ -342,7 +314,7 @@ function AppContent() {
     );
   }
 
-  // Logged in — app routes
+  // Logged in — main app
   return (
     <MenuProvider value={menuContextValue}>
       <div className={`app-shell app-theme--${theme}`}>
@@ -355,159 +327,152 @@ function AppContent() {
                 <div className="sync-banner sync-banner--error">{dataError}</div>
               ) : null}
               <Suspense fallback={<PageLoader />}>
-              <Routes>
-                <Route path="/home" element={
-                  <Home
-                    mode={activeMode}
-                    navigate={appNavigate}
-                    onModeChange={handleModeChange}
-                    onThemeChange={handleThemeChange}
-                    onTripSelect={openTripReservation}
-                    onViewDriver={openDriverProfile}
-                    publishedTrips={appData.publishedTrips}
-                    reservations={appData.reservations}
-                    theme={theme}
-                    tripOptions={discoverableTrips}
-                    user={currentUser}
-                  />
-                } />
-                <Route path="/search" element={
-                  <SearchTrajet
-                    navigate={appNavigate}
-                    onOpenChat={openChat}
-                    onTripSelect={openTripReservation}
-                    onViewDriver={openDriverProfile}
-                    reservedTripIds={reservedTripIds}
-                    tripOptions={discoverableTrips}
-                  />
-                } />
-                <Route path="/publish" element={
-                  <PublishTrajet
-                    navigate={appNavigate}
-                    onPublish={actions.handlePublish}
-                    user={currentUser}
-                  />
-                } />
-                <Route path="/reservation" element={
-                  <Reservation
-                    navigate={appNavigate}
-                    onOpenChat={openChat}
-                    onReserve={actions.handleReserve}
-                    onTripSelect={openTripReservation}
-                    onViewDriver={openDriverProfile}
-                    reservations={appData.reservations}
-                    reservedTripIds={reservedTripIds}
-                    selectedTrip={selectedTrip}
-                    tripOptions={discoverableTrips}
-                  />
-                } />
-                <Route path="/profile" element={
-                  <Profile
-                    mode={activeMode}
-                    navigate={appNavigate}
-                    onModeChange={handleModeChange}
-                    onThemeChange={handleThemeChange}
-                    profileLinks={profileLinks}
-                    theme={theme}
-                    user={currentUser}
-                  />
-                } />
-                <Route path="/edit-profile" element={
-                  <EditProfile
-                    mode={activeMode}
-                    navigate={appNavigate}
-                    user={currentUser}
-                  />
-                } />
-                <Route path="/my-trips" element={
-                  <MyTrajets
-                    navigate={appNavigate}
-                    onCloseTrip={actions.handleCloseTripReservations}
-                    onConfirmReservation={actions.handleConfirmPassengerReservation}
-                    onDeleteTrip={actions.handleDeleteTrip}
-                    onOpenChat={openChat}
-                    onRejectReservation={actions.handleRejectPassengerReservation}
-                    onViewPassenger={openPassengerProfile}
-                    publishedTrips={appData.publishedTrips}
-                    user={currentUser}
-                  />
-                } />
-                <Route path="/my-reservations" element={
-                  <MyReservations
-                    navigate={appNavigate}
-                    onCancelReservation={actions.handleCancelReservation}
-                    onOpenChat={openChat}
-                    onViewDriver={openDriverProfile}
-                    reservations={appData.reservations}
-                    sessionUserId={sessionUserId}
-                    tripOptions={appData.tripOptions}
-                  />
-                } />
-                <Route path="/notifications" element={
-                  <Notifications
-                    mode={activeMode}
-                    navigate={appNavigate}
-                    onSelectNotification={openNotificationDetail}
-                    publishedTrips={appData.publishedTrips}
-                    recentMessages={recentMessages}
-                    reservations={appData.reservations}
-                  />
-                } />
-                <Route path="/notification-detail" element={
-                  <NotificationDetail
-                    mode={activeMode}
-                    navigate={appNavigate}
-                    notification={selectedNotification}
-                  />
-                } />
-                <Route path="/driver-profile" element={
-                  <DriverProfile
-                    driverData={selectedDriverData}
-                    navigate={appNavigate}
-                  />
-                } />
-                <Route path="/passenger-profile" element={
-                  <PassengerProfile
-                    passengerData={selectedPassengerData}
-                    navigate={appNavigate}
-                    backRoute={selectedPassengerData?._backRoute || "my-trips"}
-                  />
-                } />
-                <Route path="/trip-detail" element={
-                  <TripDetailPage
-                    navigate={appNavigate}
-                    onConfirmReservation={actions.handleConfirmPassengerReservation}
-                    onRejectReservation={actions.handleRejectPassengerReservation}
-                    onCloseTrip={actions.handleCloseTripReservations}
-                    onDeleteTrip={actions.handleDeleteTrip}
-                    onViewPassenger={openPassengerProfile}
-                    trip={selectedTripDetail}
-                    refreshKey={0}
-                    publishedTrips={appData.publishedTrips}
-                  />
-                } />
-                <Route path="/chat" element={
-                  <Chat
-                    chatContext={chatContext}
-                    navigate={appNavigate}
-                    onViewProfile={(ctx) => {
-                      if (ctx?.conducteurId) {
-                        setSelectedDriverData({ conducteurId: ctx.conducteurId, driver: ctx.otherName, driverAvatar: ctx.otherAvatar || "" });
-                        navigate("/driver-profile");
-                      }
-                    }}
-                  />
-                } />
-                <Route path="/reset-password" element={
-                  <ResetPassword navigate={appNavigate} />
-                } />
-                <Route path="*" element={<Navigate to="/home" replace />} />
-              </Routes>
+                <Routes>
+                  <Route path="/home" element={
+                    <Home
+                      navigate={appNavigate}
+                      onThemeChange={handleThemeChange}
+                      onTripSelect={openTripReservation}
+                      onViewDriver={openDriverProfile}
+                      publishedTrips={appData.publishedTrips}
+                      reservations={appData.reservations}
+                      theme={theme}
+                      tripOptions={discoverableTrips}
+                      user={currentUser}
+                    />
+                  } />
+                  <Route path="/search" element={
+                    <SearchTrajet
+                      navigate={appNavigate}
+                      onOpenChat={openChat}
+                      onTripSelect={openTripReservation}
+                      onViewDriver={openDriverProfile}
+                      reservedTripIds={reservedTripIds}
+                      tripOptions={discoverableTrips}
+                    />
+                  } />
+                  <Route path="/publish" element={
+                    <PublishTrajet
+                      navigate={appNavigate}
+                      onPublish={actions.handlePublish}
+                      user={currentUser}
+                    />
+                  } />
+                  <Route path="/reservation" element={
+                    <Reservation
+                      navigate={appNavigate}
+                      onOpenChat={openChat}
+                      onReserve={actions.handleReserve}
+                      onTripSelect={openTripReservation}
+                      onViewDriver={openDriverProfile}
+                      reservations={appData.reservations}
+                      reservedTripIds={reservedTripIds}
+                      selectedTrip={selectedTrip}
+                      tripOptions={discoverableTrips}
+                    />
+                  } />
+                  <Route path="/profile" element={
+                    <Profile
+                      navigate={appNavigate}
+                      onThemeChange={handleThemeChange}
+                      profileLinks={profileLinks}
+                      theme={theme}
+                      user={currentUser}
+                    />
+                  } />
+                  <Route path="/edit-profile" element={
+                    <EditProfile
+                      navigate={appNavigate}
+                      user={currentUser}
+                    />
+                  } />
+                  <Route path="/my-trips" element={
+                    <MyTrajets
+                      navigate={appNavigate}
+                      onCloseTrip={actions.handleCloseTripReservations}
+                      onConfirmReservation={actions.handleConfirmPassengerReservation}
+                      onDeleteTrip={actions.handleDeleteTrip}
+                      onOpenChat={openChat}
+                      onRejectReservation={actions.handleRejectPassengerReservation}
+                      onViewPassenger={openPassengerProfile}
+                      publishedTrips={appData.publishedTrips}
+                      user={currentUser}
+                    />
+                  } />
+                  <Route path="/my-reservations" element={
+                    <MyReservations
+                      navigate={appNavigate}
+                      onCancelReservation={actions.handleCancelReservation}
+                      onOpenChat={openChat}
+                      onViewDriver={openDriverProfile}
+                      reservations={appData.reservations}
+                      sessionUserId={sessionUserId}
+                      tripOptions={appData.tripOptions}
+                    />
+                  } />
+                  <Route path="/notifications" element={
+                    <Notifications
+                      navigate={appNavigate}
+                      onSelectNotification={openNotificationDetail}
+                      publishedTrips={appData.publishedTrips}
+                      recentMessages={recentMessages}
+                      reservations={appData.reservations}
+                    />
+                  } />
+                  <Route path="/notification-detail" element={
+                    <NotificationDetail
+                      navigate={appNavigate}
+                      notification={selectedNotification}
+                    />
+                  } />
+                  <Route path="/driver-profile" element={
+                    <DriverProfile
+                      driverData={selectedDriverData}
+                      navigate={appNavigate}
+                    />
+                  } />
+                  <Route path="/passenger-profile" element={
+                    <PassengerProfile
+                      passengerData={selectedPassengerData}
+                      navigate={appNavigate}
+                      backRoute={selectedPassengerData?._backRoute || "my-trips"}
+                    />
+                  } />
+                  <Route path="/trip-detail" element={
+                    <TripDetailPage
+                      navigate={appNavigate}
+                      onConfirmReservation={actions.handleConfirmPassengerReservation}
+                      onRejectReservation={actions.handleRejectPassengerReservation}
+                      onCloseTrip={actions.handleCloseTripReservations}
+                      onDeleteTrip={actions.handleDeleteTrip}
+                      onViewPassenger={openPassengerProfile}
+                      trip={selectedTripDetail}
+                      publishedTrips={appData.publishedTrips}
+                    />
+                  } />
+                  <Route path="/chat" element={
+                    <Chat
+                      chatContext={chatContext}
+                      navigate={appNavigate}
+                      onViewProfile={(ctx) => {
+                        if (ctx?.conducteurId) {
+                          setSelectedDriverData({
+                            conducteurId: ctx.conducteurId,
+                            driver: ctx.otherName,
+                            driverAvatar: ctx.otherAvatar || "",
+                          });
+                          navigate("/driver-profile");
+                        }
+                      }}
+                    />
+                  } />
+                  <Route path="/reset-password" element={<ResetPassword navigate={appNavigate} />} />
+                  <Route path="*" element={<Navigate to="/home" replace />} />
+                </Routes>
               </Suspense>
             </div>
             {showNav ? (
               <BottomNav
-                mode={activeMode}
                 notificationCount={notificationCount}
                 route={currentPath}
                 navigate={appNavigate}

@@ -1,13 +1,19 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../assets/images/logo.png";
 import { useAuth } from "../context/AuthContext";
 import { Icon } from "./Icons";
-import ModeSwitch from "./ModeSwitch";
+
+const navLinks = [
+  { route: "home",            label: "Accueil",           icon: "home" },
+  { route: "search",          label: "Rechercher un trajet", icon: "search" },
+  { route: "publish",         label: "Publier un trajet", icon: "plus" },
+  { route: "my-trips",        label: "Mes trajets",       icon: "route" },
+  { route: "my-reservations", label: "Mes réservations",  icon: "bookmark" },
+  { route: "notifications",   label: "Notifications",     icon: "bell" },
+];
 
 export default function AppMenu({
-  mode = "passenger",
   navigate,
-  onModeChange = () => {},
   onThemeChange = () => {},
   theme = "light",
   user,
@@ -15,24 +21,9 @@ export default function AppMenu({
   const { signOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const isDriverMode = mode === "driver";
   const displayName = user?.name || "CampusRide";
   const userEmail = user?.email || "";
   const isDarkTheme = theme === "dark";
-
-  const navLinks = useMemo(
-    () => [
-      { route: "home", label: "Accueil", icon: "home" },
-      isDriverMode
-        ? { route: "publish", label: "Publier un trajet", icon: "plus" }
-        : { route: "search", label: "Rechercher un trajet", icon: "search" },
-      isDriverMode
-        ? { route: "my-trips", label: "Mes trajets", icon: "route" }
-        : { route: "my-reservations", label: "Mes reservations", icon: "bookmark" },
-      { route: "notifications", label: "Notifications", icon: "bell" },
-    ],
-    [isDriverMode],
-  );
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -99,13 +90,6 @@ export default function AppMenu({
               </div>
             </div>
 
-            {/* Mode switch - at top */}
-            <div className="app-menu__section">
-              <div className="app-menu__mode-card">
-                <ModeSwitch mode={mode} onChange={onModeChange} />
-              </div>
-            </div>
-
             {/* Navigation section */}
             <div className="app-menu__section">
               <h4 className="app-menu__section-label">
@@ -147,9 +131,7 @@ export default function AppMenu({
                     type="button"
                     onClick={() => onThemeChange(isDarkTheme ? "light" : "dark")}
                     aria-label="Basculer le thème"
-                  >
-                    <span className="app-menu__toggle-thumb" />
-                  </button>
+                  />
                 </div>
 
                 {/* Profile link */}
@@ -159,19 +141,19 @@ export default function AppMenu({
                   onClick={() => openRoute("profile")}
                 >
                   <span className="app-menu__item-icon">
-                    <Icon name="settings" size={20} />
+                    <Icon name="user" size={20} />
                   </span>
-                  <span className="app-menu__item-label">Modifier profil</span>
+                  <span className="app-menu__item-label">Mon profil</span>
                 </button>
 
-                {/* Logout inside settings */}
+                {/* Sign out */}
                 <button
                   className="app-menu__item app-menu__item--danger"
                   disabled={isLoggingOut}
                   type="button"
                   onClick={handleLogout}
                 >
-                  <span className="app-menu__item-icon app-menu__item-icon--danger">
+                  <span className="app-menu__item-icon">
                     <Icon name="logout" size={20} />
                   </span>
                   <span className="app-menu__item-label">
@@ -179,6 +161,12 @@ export default function AppMenu({
                   </span>
                 </button>
               </div>
+            </div>
+
+            {/* Logo footer */}
+            <div className="app-menu__footer">
+              <img alt="CampusRide" className="app-menu__logo" src={logo} />
+              <span>CampusRide</span>
             </div>
           </aside>
         </div>

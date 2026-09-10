@@ -47,25 +47,22 @@ function saveReadIds(ids) {
 }
 
 // Persist notification history so items don't disappear on data refresh
-function getSavedNotifs(currentMode) {
+function getSavedNotifs() {
   try {
-    const key = `campusride-notif-history-${currentMode}`;
-    return JSON.parse(localStorage.getItem(key) || "[]");
+    return JSON.parse(localStorage.getItem("campusride-notif-history") || "[]");
   } catch {
     return [];
   }
 }
 
-function saveNotifHistory(items, currentMode) {
+function saveNotifHistory(items) {
   try {
-    const key = `campusride-notif-history-${currentMode}`;
     const arr = items.slice(0, 100);
-    localStorage.setItem(key, JSON.stringify(arr));
+    localStorage.setItem("campusride-notif-history", JSON.stringify(arr));
   } catch { /* ignore */ }
 }
 
 export default function Notifications({
-  mode = "passenger",
   navigate,
   onSelectNotification,
   publishedTrips = [],
@@ -73,12 +70,12 @@ export default function Notifications({
   recentMessages = [],
 }) {
   const [readIds, setReadIds] = useState(getReadIds);
-  const savedHistoryRef = useRef(getSavedNotifs(mode));
+  const savedHistoryRef = useRef(getSavedNotifs());
 
   useEffect(() => {
     setReadIds(getReadIds());
-    savedHistoryRef.current = getSavedNotifs(mode);
-  }, [mode]);
+    savedHistoryRef.current = getSavedNotifs();
+  }, []);
 
   const items = useMemo(() => {
     // --- Messages ---
@@ -98,11 +95,11 @@ export default function Notifications({
       otherName: msg.senderName || "Contact",
       otherAvatar: msg.senderAvatar || "",
       tripRoute: msg.tripRoute || "",
-      backRoute: mode === "driver" ? "my-trips" : "my-reservations",
+      backRoute: "notifications",
       createdAt: msg.created_at,
     }));
 
-    // --- Passenger notifications (from reservations) ---
+    // --- Passenger notifications (my reservations) ---
     const passengerItems = reservations.map((reservation) => {
       let title = "";
       let icon = "";
@@ -142,7 +139,7 @@ export default function Notifications({
       };
     });
 
-    // --- Driver notifications (from passenger reservations on published trips) ---
+    // --- Driver notifications (passenger requests on my published trips) ---
     const driverItems = publishedTrips.flatMap((trip) =>
       (trip.passengerReservations || []).map((reservation) => {
         let title = "";
@@ -184,8 +181,8 @@ export default function Notifications({
       }),
     );
 
-    const reservationItems = mode === "driver" ? driverItems : passengerItems;
-    const currentItems = [...messageItems, ...reservationItems];
+    // Combine ALL notifications — both driver and passenger side
+    const currentItems = [...messageItems, ...driverItems, ...passengerItems];
 
     // Merge with saved history: keep old items that are no longer in current data
     const currentIds = new Set(currentItems.map((item) => item.id));
@@ -202,10 +199,10 @@ export default function Notifications({
     const result = allItems.slice(0, 60);
 
     savedHistoryRef.current = result;
-    saveNotifHistory(result, mode);
+    saveNotifHistory(result);
 
     return result;
-  }, [mode, publishedTrips, reservations, recentMessages]);
+  }, [publishedTrips, reservations, recentMessages]);
 
   const unreadCount = items.filter((item) => !readIds.has(item.id)).length;
 
