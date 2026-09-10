@@ -13901,3 +13901,343 @@ input, textarea, select {
     max-width: 120px !important;
   }
 }
+
+/* ============================================================
+   CAMPUSRIDE — DEFINITIVE RESPONSIVE SYSTEM  v3
+   Single source of truth — overrides all previous blocks
+   ============================================================ */
+
+/* ─── GLOBAL BASE (all sizes) ────────────────────────────── */
+
+/* Header: always sticky inside its scroll container */
+.app-header {
+  position: sticky !important;
+  top: 0 !important;
+  left: unset !important;
+  right: unset !important;
+  width: 100% !important;
+  z-index: 50;
+}
+
+/* Screen padding-top compensates for sticky header height */
+.screen {
+  padding-top: 0 !important;
+}
+
+/* Remove the 75px padding that was hardcoded for fixed header */
+.screen--simple {
+  padding-top: 0 !important;
+}
+
+/* Bottom nav: always 6 columns */
+.bottom-nav {
+  grid-template-columns: repeat(6, 1fr) !important;
+}
+
+/* fluid typography for hero */
+.home-hero__title {
+  font-size: clamp(1.3rem, 5vw, 1.75rem) !important;
+}
+
+.home-hero__stat strong {
+  font-size: clamp(1.2rem, 4vw, 1.6rem) !important;
+}
+
+/* ─── VERY SMALL PHONES (≤ 375px) ────────────────────────── */
+@media (max-width: 375px) {
+  .home-actions__grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  .home-action-card__info strong {
+    font-size: 0.78rem !important;
+  }
+
+  .home-action-card__info span {
+    font-size: 0.65rem !important;
+  }
+
+  .bottom-nav__button span:last-child {
+    display: none !important;
+  }
+
+  .bottom-nav__button {
+    padding: 7px 2px !important;
+  }
+
+  /* Profile editor: stack side-by-side fields */
+  .profile-editor-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Reservation info: reduce padding */
+  .res-info__item {
+    padding: 12px 4px !important;
+  }
+
+  .res-info__item strong {
+    font-size: 0.82rem !important;
+  }
+}
+
+/* ─── MOBILE (376px – 767px): normal phone layout ───────── */
+/* default styles handle this — nothing extra needed */
+
+/* ─── TABLET & DESKTOP (≥ 768px): FULL SCREEN ────────────── */
+@media (min-width: 768px) {
+
+  /* Reset body to block (undo any flex centering) */
+  body {
+    display: block !important;
+  }
+
+  /* App fills full viewport */
+  .app-shell {
+    width: 100vw !important;
+    min-height: 100dvh !important;
+    padding: 0 !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    background: var(--surface-elevated) !important;
+  }
+
+  /* Stage: full screen, no frame */
+  .site-stage,
+  .site-stage--single {
+    max-width: 100% !important;
+    width: 100% !important;
+    min-height: 100dvh !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Phone shell: full screen */
+  .phone-shell,
+  .phone-shell--auth,
+  .phone-shell--splash {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Scrollable content area */
+  .phone-shell__body {
+    padding: 0 32px 32px !important;
+  }
+
+  /* Header: more padding on wider screens */
+  .app-header {
+    padding: 10px 32px 14px !important;
+    max-width: 100% !important;
+  }
+
+  /* Bottom nav: centered with max width so tabs don't stretch too wide */
+  .bottom-nav {
+    width: 100% !important;
+    border-radius: 0 !important;
+    padding: 6px 48px calc(env(safe-area-inset-bottom, 6px) + 6px) !important;
+    grid-template-columns: repeat(6, minmax(0, 120px)) !important;
+    justify-content: center !important;
+  }
+
+  .bottom-nav__button {
+    font-size: 0.72rem !important;
+    padding: 6px 10px 4px !important;
+    gap: 4px !important;
+  }
+
+  .bottom-nav__button span:last-child {
+    display: block !important;
+  }
+
+  /* Screens: centered readable content */
+  .screen {
+    max-width: 860px !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Home: full width (has own layout) */
+  .screen--home {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .home-topbar {
+    padding: 12px 32px 8px !important;
+  }
+
+  /* Home sections centered */
+  .home-greeting-card,
+  .home-hero,
+  .home-actions,
+  .home-section {
+    max-width: 900px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+  }
+
+  /* Home hero padding */
+  .home-hero {
+    border-radius: var(--radius-xl) !important;
+  }
+
+  /* Quick actions: 4 columns */
+  .home-actions__grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+
+  /* Trip cards: 2-column grid */
+  .home-trips-list {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    gap: 16px !important;
+  }
+
+  /* Home reservation cards: 2-column */
+  .home-res-card {
+    display: grid !important;
+  }
+
+  /* Search results: grid */
+  .find-results {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)) !important;
+    gap: 14px !important;
+  }
+
+  /* My trips cards: 2-column grid */
+  .mt-content {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)) !important;
+    gap: 20px !important;
+    align-items: start !important;
+  }
+
+  /* My reservations: 2-column */
+  .my-res-list {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)) !important;
+    gap: 16px !important;
+  }
+
+  /* Reservation page: centered card */
+  .res-card,
+  .res-note {
+    max-width: 560px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+  }
+
+  .res-cta {
+    max-width: 560px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: block !important;
+  }
+
+  /* Auth pages: centered card */
+  .screen--auth,
+  .phone-shell--auth .phone-shell__body {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 100dvh !important;
+    padding: 32px 16px !important;
+  }
+
+  .login-page {
+    max-width: 460px !important;
+    width: 100% !important;
+  }
+
+  /* Profile: centered form */
+  .screen--profile .screen-panel {
+    max-width: 680px !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+  }
+
+  /* Publish trajet: centered form */
+  .screen--publish .screen-panel,
+  .publish-container {
+    max-width: 640px !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+  }
+
+  /* Vehicle photos: auto-fill */
+  .profile-editor-vehicle-photos {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)) !important;
+  }
+}
+
+/* ─── LARGE DESKTOP (≥ 1280px) ───────────────────────────── */
+@media (min-width: 1280px) {
+
+  .phone-shell__body {
+    padding: 0 60px 40px !important;
+  }
+
+  .app-header {
+    padding: 12px 60px 16px !important;
+  }
+
+  .bottom-nav {
+    padding: 8px 80px calc(env(safe-area-inset-bottom, 8px) + 8px) !important;
+    grid-template-columns: repeat(6, minmax(0, 140px)) !important;
+  }
+
+  .bottom-nav__button {
+    font-size: 0.78rem !important;
+  }
+
+  .screen {
+    max-width: 1000px !important;
+  }
+
+  .home-greeting-card,
+  .home-hero,
+  .home-actions,
+  .home-section {
+    max-width: 1060px !important;
+  }
+
+  .home-trips-list {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+  }
+
+  .find-results {
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)) !important;
+  }
+
+  .mt-content {
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)) !important;
+  }
+}
+
+/* ─── LANDSCAPE PHONES (short height) ────────────────────── */
+@media (orientation: landscape) and (max-height: 500px) {
+  .bottom-nav__button span:last-child {
+    display: none !important;
+  }
+
+  .bottom-nav {
+    padding: 3px 16px !important;
+  }
+
+  .home-hero {
+    padding: 16px !important;
+  }
+}
