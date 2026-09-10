@@ -137,6 +137,7 @@ $$;
 
 -- ============================================================
 --  Auto-expire les demandes passées (trigger)
+--  NOTE: fires only on INSERT (not UPDATE) to avoid recursion
 -- ============================================================
 create or replace function public.expire_old_demandes()
 returns trigger
@@ -145,16 +146,18 @@ security definer
 set search_path = public
 as $$
 begin
+  -- Only expire OTHER rows, never the row being inserted/updated
   update public.demandes
   set statut = 'expiree', updated_at = now()
   where statut = 'ouverte'
-    and departure_at < now();
+    and departure_at < now()
+    and id <> NEW.id;  -- exclude the triggering row to break recursion
   return null;
 end;
 $$;
 
 drop trigger if exists auto_expire_demandes on public.demandes;
 create trigger auto_expire_demandes
-  after insert or update on public.demandes
-  for each statement
+  after insert on public.demandes          -- INSERT only, not UPDATE
+  for each row
   execute function public.expire_old_demandes();
