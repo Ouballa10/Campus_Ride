@@ -14968,3 +14968,52 @@ input, textarea, select {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* ============================================================
+   PROFILE — Role switcher (Passager ↔ Conducteur)
+   ============================================================ */
+.pf-role-switcher {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 4px;
+  background: #f1f5f9;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.pf-role-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.pf-role-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pf-role-btn--active {
+  background: #ffffff;
+  color: #0ea5e9;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.12);
+}
+
+.pf-role-btn--driver.pf-role-btn--active {
+  color: #0369a1;
+  background: #eff6ff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+}

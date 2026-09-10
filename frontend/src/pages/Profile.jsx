@@ -162,6 +162,26 @@ export default function Profile({
   const avatarSource = photoPreview || form.photoProfil || displayUser.photo || "";
   const roleLabel = form.role === "conducteur" ? "Conducteur campus" : "Passager campus";
   const vehicleLabel = buildVehicleLabel(form);
+
+  // Role switch handler — saves directly to Supabase
+  const [isSwitchingRole, setIsSwitchingRole] = useState(false);
+  async function handleRoleSwitch() {
+    if (!isConfigured || !session?.user?.id) return;
+    const newRole = form.role === "conducteur" ? "passager" : "conducteur";
+    try {
+      setIsSwitchingRole(true);
+      await profileService.updateProfile(session.user.id, {
+        role: newRole,
+        updated_at: new Date().toISOString(),
+      });
+      setForm((f) => ({ ...f, role: newRole }));
+      await refreshProfile();
+    } catch (e) {
+      setFeedback({ message: e.message || "Impossible de changer le rôle.", tone: "error" });
+    } finally {
+      setIsSwitchingRole(false);
+    }
+  }
   const vehiclePhotos = [
     ...form.vehiclePhotos.map((url) => ({ src: url, persisted: true })),
     ...selectedVehiclePhotos.map((item) => ({
@@ -474,6 +494,33 @@ export default function Profile({
               Modifier
             </button>
           </div>
+
+          {/* Role switcher */}
+          <div className="pf-role-switcher">
+            <button
+              className={`pf-role-btn ${form.role === "passager" ? "pf-role-btn--active" : ""}`}
+              disabled={isSwitchingRole}
+              type="button"
+              onClick={() => form.role !== "passager" && handleRoleSwitch()}
+            >
+              <Icon name="user" size={15} />
+              Passager
+            </button>
+            <button
+              className={`pf-role-btn ${form.role === "conducteur" ? "pf-role-btn--active pf-role-btn--driver" : ""}`}
+              disabled={isSwitchingRole}
+              type="button"
+              onClick={() => form.role !== "conducteur" && handleRoleSwitch()}
+            >
+              <Icon name="car" size={15} />
+              Conducteur
+            </button>
+          </div>
+          {isSwitchingRole && (
+            <p style={{ fontSize: "0.74rem", color: "#94a3b8", margin: "4px 0 0", textAlign: "center" }}>
+              Changement en cours...
+            </p>
+          )}
 
           {/* Mini info under profile */}
           <div className="pf-identity__contact">
