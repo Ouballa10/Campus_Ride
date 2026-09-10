@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import logo from "../assets/images/logo.png";
 import { Icon } from "../components/Icons";
-import ModeSwitch from "../components/ModeSwitch";
 import { useAuth } from "../context/AuthContext";
 
 const initialForm = {
@@ -128,12 +127,26 @@ export default function Register({ navigate }) {
             <Icon name="arrow-left" size={18} />
           </button>
 
-          <ModeSwitch
-            mode={form.mode}
-            onChange={(mode) =>
-              updateField({ target: { name: "mode", value: mode } })
-            }
-          />
+          <div className="register-role-picker">
+            <button
+              type="button"
+              className={`register-role-btn ${form.mode === "passenger" ? "register-role-btn--active" : ""}`}
+              onClick={() => updateField({ target: { name: "mode", value: "passenger" } })}
+            >
+              <Icon name="user" size={18} />
+              <span>Passager</span>
+              <small>Je réserve des trajets</small>
+            </button>
+            <button
+              type="button"
+              className={`register-role-btn ${form.mode === "driver" ? "register-role-btn--active" : ""}`}
+              onClick={() => updateField({ target: { name: "mode", value: "driver" } })}
+            >
+              <Icon name="car" size={18} />
+              <span>Conducteur</span>
+              <small>Je publie des trajets</small>
+            </button>
+          </div>
 
           {!isConfigured ? (
             <p className="auth-status auth-status--info">
