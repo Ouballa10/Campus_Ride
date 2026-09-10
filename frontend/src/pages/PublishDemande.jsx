@@ -11,11 +11,19 @@ function getDateValue(daysFromNow = 0) {
   return d.toISOString().slice(0, 10);
 }
 
+function getDefaultTime() {
+  const now = new Date();
+  // Default to next round hour + 1h from now
+  now.setMinutes(0, 0, 0);
+  now.setHours(now.getHours() + 2);
+  return `${String(now.getHours()).padStart(2, "0")}:00`;
+}
+
 const initialForm = {
   depart: "",
   destination: "UPM",
   date: getDateValue(0),
-  time: "07:30",
+  time: getDefaultTime(),
   prixPropose: 15,
   message: "",
 };
@@ -53,7 +61,8 @@ export default function PublishDemande({ navigate, onCreated }) {
       return "Le départ et la destination doivent être différents.";
     const dt = new Date(`${form.date}T${form.time}`);
     if (isNaN(dt.getTime())) return "Date ou heure invalide.";
-    if (dt <= new Date()) return "Choisis une date dans le futur.";
+    // Allow up to 5 minutes in the past (clock skew tolerance)
+    if (dt < new Date(Date.now() - 5 * 60 * 1000)) return "Choisis une heure dans le futur.";
     return "";
   }
 
