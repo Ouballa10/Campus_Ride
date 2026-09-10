@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Icon } from "./Icons";
 
 const navItems = [
@@ -62,8 +63,8 @@ export default function BottomNav({ notificationCount = 0, route, navigate }) {
 
   return (
     <>
-      {/* Action sheet overlay */}
-      {showSheet && (
+      {/* Action sheet — rendered via portal to escape overflow:hidden on phone-shell */}
+      {showSheet && createPortal(
         <div className="nav-sheet-overlay" onClick={() => setShowSheet(false)}>
           <div
             className="nav-sheet"
@@ -103,7 +104,8 @@ export default function BottomNav({ notificationCount = 0, route, navigate }) {
               Annuler
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <nav className="bottom-nav" aria-label="Navigation principale">
