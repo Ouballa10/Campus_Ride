@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    CAMPUSRIDE - ULTRA PREMIUM MOBILE UI
    Deep Blue + Electric Blue + Gold - Luxury Edition
    ============================================================ */
@@ -417,7 +417,7 @@ a { color: var(--primary); text-decoration: none; }
   z-index: 100;
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 2px;
   padding: 6px 16px calc(env(safe-area-inset-bottom, 8px) + 6px);
   background: rgba(255, 255, 255, 0.88);
@@ -10484,7 +10484,7 @@ a:focus-visible {
 /* =========================
    MY RESERVATIONS (Passenger tracking)
    ========================= */
-/* Old styles removed — see professional redesign section */
+/* Old styles removed â€” see professional redesign section */
 
 .my-res-card__status {
   padding: 8px 16px;
@@ -13458,4 +13458,182 @@ input, textarea, select {
 
 .register-role-btn--active small {
   color: var(--primary-light, #38bdf8);
+}
+
+
+/* ============================================================
+   RESPONSIVE — Full-width on all devices
+   ============================================================ */
+
+/* ---- MOBILE FIRST (default ≤ 480px) ---- */
+
+/* Header: sticky inside scroll container — no overflow outside phone-shell */
+.app-header {
+  position: sticky !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Bottom nav: 6 equal tabs */
+.bottom-nav {
+  grid-template-columns: repeat(6, 1fr) !important;
+  padding: 4px 8px calc(env(safe-area-inset-bottom, 6px) + 4px);
+}
+
+.bottom-nav__button {
+  padding: 5px 2px 3px;
+  font-size: 0.60rem;
+  gap: 2px;
+}
+
+.bottom-nav__icon {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+/* Very small phones (≤ 360px): even smaller nav text */
+@media (max-width: 360px) {
+  .bottom-nav__button {
+    font-size: 0.56rem;
+    padding: 4px 1px 2px;
+  }
+  .bottom-nav__button span:last-child {
+    display: none; /* hide labels, keep icons only */
+  }
+}
+
+/* ---- TABLET (768px+) ---- */
+@media (min-width: 768px) {
+
+  /* Body fills screen with a subtle background */
+  body {
+    background: linear-gradient(135deg, #e8f4fd 0%, #f0f7ff 50%, #faf5ff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+  }
+
+  .app-theme--dark body,
+  .app-theme--dark {
+    background: linear-gradient(135deg, #0c0a2a 0%, #1a1145 50%, #0f0a2e 100%);
+  }
+
+  /* App shell centers content */
+  .app-shell {
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    padding: 24px;
+  }
+
+  /* Stage: centered, constrained */
+  .site-stage--single {
+    max-width: 480px;
+    width: 100%;
+    min-height: min(844px, calc(100dvh - 48px));
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow:
+      0 32px 80px rgba(14, 165, 233, 0.18),
+      0 16px 40px rgba(0, 0, 0, 0.12),
+      0 0 0 1px rgba(255,255,255,0.1);
+  }
+
+  /* Phone shell fills the stage */
+  .phone-shell {
+    max-width: 100%;
+    height: min(844px, calc(100dvh - 48px));
+    border-radius: 40px;
+    overflow: hidden;
+  }
+
+  .phone-shell--auth {
+    border-radius: 40px;
+  }
+
+  .phone-shell--splash {
+    border-radius: 40px !important;
+  }
+
+  /* Header: sticky inside scrollable body — stays inside phone frame */
+  .app-header {
+    border-radius: 0;
+    left: auto !important;
+    right: auto !important;
+  }
+
+  /* Bottom nav: rounded bottom corners matching phone frame */
+  .bottom-nav {
+    border-bottom-left-radius: 32px;
+    border-bottom-right-radius: 32px;
+  }
+
+  /* Slightly larger nav font on tablet */
+  .bottom-nav__button {
+    font-size: 0.63rem;
+  }
+}
+
+/* ---- DESKTOP (1024px+) ---- */
+@media (min-width: 1024px) {
+
+  /* Center phone with decorative background */
+  .app-shell {
+    padding: 32px;
+  }
+
+  .site-stage--single {
+    min-height: min(900px, calc(100dvh - 64px));
+    max-width: 430px;
+  }
+
+  .phone-shell {
+    height: min(900px, calc(100dvh - 64px));
+  }
+
+  /* Restore nav labels at full size */
+  .bottom-nav__button {
+    font-size: 0.65rem;
+    padding: 5px 3px 3px;
+  }
+
+  .bottom-nav__button span:last-child {
+    display: block !important;
+  }
+}
+
+/* ---- LARGE DESKTOP (1440px+) ---- */
+@media (min-width: 1440px) {
+  .app-shell {
+    padding: 40px;
+    gap: 0;
+  }
+}
+
+/* ---- LANDSCAPE PHONE (short height) ---- */
+@media (orientation: landscape) and (max-height: 500px) {
+  .site-stage--single {
+    border-radius: 0;
+    min-height: 100dvh;
+    max-width: 100%;
+  }
+
+  .phone-shell {
+    height: 100dvh;
+    border-radius: 0;
+    max-width: 100%;
+  }
+
+  .bottom-nav {
+    padding: 2px 16px;
+    border-radius: 0;
+  }
+
+  .bottom-nav__button span:last-child {
+    display: none;
+  }
 }
