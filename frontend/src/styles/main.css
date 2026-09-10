@@ -14241,3 +14241,61 @@ input, textarea, select {
     padding: 16px !important;
   }
 }
+
+/* ============================================================
+   PUBLISH — incomplete profile banner
+   ============================================================ */
+.publish-incomplete-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 20px;
+  background: #fffbeb;
+  border: 1.5px solid #fde68a;
+  border-radius: 18px;
+  margin-bottom: 4px;
+}
+
+.publish-incomplete-banner__icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.publish-incomplete-banner__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.publish-incomplete-banner__body strong {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #92400e;
+  margin-bottom: 4px;
+}
+
+.publish-incomplete-banner__body p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #b45309;
+  line-height: 1.45;
+}
+
+.publish-incomplete-banner__btn {
+  flex-shrink: 0;
+  padding: 9px 18px;
+  border-radius: 12px;
+  border: none;
+  background: #f59e0b;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.publish-incomplete-banner__btn:hover {
+  background: #d97706;
+}

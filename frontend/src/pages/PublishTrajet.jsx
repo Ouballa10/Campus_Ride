@@ -184,51 +184,52 @@ export default function PublishTrajet({ navigate, onPublish, user }) {
           leftIcon="arrow-left"
           onLeftClick={() => navigate("home")}
         />
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "24px 20px",
-          }}
-        >
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: "20px",
-              border: "1.5px solid #e5e7eb",
-              boxShadow: "0 4px 24px rgba(0,0,0,0.07)",
-              padding: "36px 28px",
-              textAlign: "center",
-              width: "100%",
-              maxWidth: "360px",
-            }}
-          >
-            <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🚫</div>
-            <h3 style={{ marginBottom: "8px", color: "#1f2937", fontSize: "1.1rem" }}>
-              Complète ton profil d'abord
-            </h3>
-            <p style={{ color: "#6b7280", marginBottom: "16px", fontSize: "0.9rem", lineHeight: 1.5 }}>
-              Pour publier un trajet, les passagers ont besoin de savoir qui tu es. Il te manque :
+        <div className="publish-incomplete-banner">
+          <div className="publish-incomplete-banner__icon">🚗</div>
+          <div className="publish-incomplete-banner__body">
+            <strong>Complète ton profil conducteur</strong>
+            <p>
+              Les passagers ont besoin de connaître ton véhicule avant de réserver.
+              Il te manque : {missingFields.join(", ")}.
             </p>
-            <ul style={{ listStyle: "none", padding: 0, marginBottom: "28px" }}>
-              {missingFields.map((field) => (
-                <li key={field} style={{ color: "#ef4444", fontSize: "0.9rem", marginBottom: "6px" }}>
-                  <strong>• {field}</strong>
-                </li>
-              ))}
-            </ul>
-            <button
-              className="primary-button"
-              type="button"
-              onClick={() => navigate("profile")}
-              style={{ width: "100%", display: "block", margin: "0 auto" }}
-            >
-              Compléter mon profil
-            </button>
           </div>
+          <button
+            className="publish-incomplete-banner__btn"
+            type="button"
+            onClick={() => navigate("edit-profile")}
+          >
+            Compléter
+          </button>
         </div>
+
+        <form className="publish-flow" onSubmit={handleSubmit} style={{ opacity: 0.5, pointerEvents: "none" }}>
+          <div className="publish-compose">
+            <section className="publish-card">
+              <div className="publish-card__header">
+                <div>
+                  <span className="eyebrow">Itinéraire</span>
+                  <h3>D'où à où ?</h3>
+                </div>
+              </div>
+              <div className="publish-route-fields">
+                <label className="publish-field publish-field--wide">
+                  <span>Point de départ</span>
+                  <div className="publish-field__control">
+                    <Icon name="location" size={18} />
+                    <input name="depart" placeholder="Ex: Gueliz, Massira..." type="text" disabled />
+                  </div>
+                </label>
+                <label className="publish-field publish-field--wide">
+                  <span>Destination</span>
+                  <div className="publish-field__control">
+                    <Icon name="route" size={18} />
+                    <input name="destination" placeholder="Ex: UPM" type="text" disabled />
+                  </div>
+                </label>
+              </div>
+            </section>
+          </div>
+        </form>
       </div>
     );
   }
