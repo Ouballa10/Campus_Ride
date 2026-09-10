@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import AppHeader from "../components/AppHeader";
 import { Icon } from "../components/Icons";
+import InteractiveMap from "../components/InteractiveMap";
+import "../components/InteractiveMap.css";
 import { useAuth } from "../context/AuthContext";
 import { demandeService } from "../services/demandeService";
 
@@ -27,6 +29,16 @@ export default function PublishDemande({ navigate, onCreated }) {
   function update(e) {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
+    if (feedback.message) setFeedback({ message: "", tone: "" });
+  }
+
+  function handleDepartSelect(name) {
+    setForm((f) => ({ ...f, depart: name || "" }));
+    if (feedback.message) setFeedback({ message: "", tone: "" });
+  }
+
+  function handleDestinationSelect(name) {
+    setForm((f) => ({ ...f, destination: name || "" }));
     if (feedback.message) setFeedback({ message: "", tone: "" });
   }
 
@@ -88,48 +100,29 @@ export default function PublishDemande({ navigate, onCreated }) {
       />
 
       <form className="pd-form" onSubmit={handleSubmit}>
-        {/* InDrive-style banner */}
-        <div className="pd-banner">
-          <span className="pd-banner__icon">🚗</span>
-          <div>
-            <strong>Mode InDrive</strong>
-            <p>Tu proposes ton prix, un conducteur accepte et vous partez ensemble.</p>
-          </div>
-        </div>
-
-        {/* Route */}
-        <div className="pd-card">
+        {/* Interactive Map — départ et destination */}
+        <div className="pd-card pd-card--map">
           <h4 className="pd-card__title"><Icon name="route" size={16} /> Itinéraire</h4>
-
-          <label className="pd-field">
-            <span>Départ</span>
-            <div className="pd-field__control">
-              <Icon name="location" size={16} />
-              <input
-                name="depart"
-                placeholder="Ex: Gueliz, Massira, Bab Doukkala..."
-                type="text"
-                value={form.depart}
-                onChange={update}
-                autoComplete="off"
-              />
+          <InteractiveMap
+            onDepartSelect={handleDepartSelect}
+            onDestinationSelect={handleDestinationSelect}
+            departValue={form.depart}
+            destinationValue={form.destination}
+          />
+          {/* Affichage texte des valeurs sélectionnées */}
+          {(form.depart || form.destination) && (
+            <div className="pd-route-summary">
+              <div className="pd-route-summary__item">
+                <span className="pd-dot pd-dot--start" />
+                <span>{form.depart || "Départ non sélectionné"}</span>
+              </div>
+              <div className="pd-route-summary__arrow"><Icon name="arrow-right" size={14} /></div>
+              <div className="pd-route-summary__item">
+                <span className="pd-dot pd-dot--end" />
+                <span>{form.destination || "Destination non sélectionnée"}</span>
+              </div>
             </div>
-          </label>
-
-          <label className="pd-field">
-            <span>Destination</span>
-            <div className="pd-field__control">
-              <Icon name="route" size={16} />
-              <input
-                name="destination"
-                placeholder="Ex: UPM, Guéliz, Médina..."
-                type="text"
-                value={form.destination}
-                onChange={update}
-                autoComplete="off"
-              />
-            </div>
-          </label>
+          )}
         </div>
 
         {/* Date & heure */}

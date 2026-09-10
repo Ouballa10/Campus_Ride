@@ -15017,3 +15017,73 @@ input, textarea, select {
   background: #eff6ff;
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
 }
+
+/* ============================================================
+   PUBLISH DEMANDE — Map card + route summary
+   ============================================================ */
+.pd-card--map {
+  padding-bottom: 0;
+  overflow: hidden;
+}
+
+.pd-card--map .pd-card__title {
+  padding: 18px 18px 12px;
+  margin: 0;
+}
+
+/* Override InteractiveMap container inside pd-card */
+.pd-card--map .interactive-map-container,
+.pd-card--map .leaflet-container,
+.pd-card--map > div:not(.pd-card__title):not(.pd-route-summary) {
+  border-radius: 0 0 0 0;
+}
+
+.pd-route-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: #f0f9ff;
+  border-top: 1px solid #e0f2fe;
+  flex-wrap: wrap;
+  border-radius: 0 0 18px 18px;
+}
+
+.pd-route-summary__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #0f172a;
+  min-width: 0;
+  flex: 1;
+}
+
+.pd-route-summary__item span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pd-route-summary__arrow {
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.pd-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.pd-dot--start {
+  background: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+
+.pd-dot--end {
+  background: #059669;
+  box-shadow: 0 0 0 3px rgba(5,150,105,0.15);
+}
