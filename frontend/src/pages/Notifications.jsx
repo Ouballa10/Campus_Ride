@@ -30,7 +30,7 @@ function formatDate(dateStr) {
   return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 }
 
-// Persist read notification IDs in localStorage
+// Persist only READ notification IDs (not the full history)
 function getReadIds() {
   try {
     return new Set(JSON.parse(localStorage.getItem("campusride-read-notifs") || "[]"));
@@ -41,10 +41,18 @@ function getReadIds() {
 
 function saveReadIds(ids) {
   try {
-    const arr = [...ids].slice(-200);
+    // Keep only last 500 read IDs
+    const arr = [...ids].slice(-500);
     localStorage.setItem("campusride-read-notifs", JSON.stringify(arr));
   } catch { /* ignore */ }
 }
+
+// Clear old history cache (no longer used — notifications come from live data only)
+try {
+  localStorage.removeItem("campusride-notif-history");
+  localStorage.removeItem("campusride-notif-history-driver");
+  localStorage.removeItem("campusride-notif-history-passenger");
+} catch { /* ignore */ }
 
 // Persist notification history so items don't disappear on data refresh
 function getSavedNotifs() {
@@ -70,12 +78,6 @@ export default function Notifications({
   recentMessages = [],
 }) {
   const [readIds, setReadIds] = useState(getReadIds);
-  const savedHistoryRef = useRef(getSavedNotifs());
-
-  useEffect(() => {
-    setReadIds(getReadIds());
-    savedHistoryRef.current = getSavedNotifs();
-  }, []);
 
   const items = useMemo(() => {
     // --- Messages ---
@@ -184,24 +186,14 @@ export default function Notifications({
     // Combine ALL notifications — both driver and passenger side
     const currentItems = [...messageItems, ...driverItems, ...passengerItems];
 
-    // Merge with saved history: keep old items that are no longer in current data
-    const currentIds = new Set(currentItems.map((item) => item.id));
-    const oldItems = savedHistoryRef.current.filter((item) => !currentIds.has(item.id));
-    const allItems = [...currentItems, ...oldItems];
-
-    // Sort by most recent first
-    allItems.sort((a, b) => {
+    // Sort by most recent first — live data only (no old cache)
+    currentItems.sort((a, b) => {
       const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
       const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
       return dateB - dateA;
     });
 
-    const result = allItems.slice(0, 60);
-
-    savedHistoryRef.current = result;
-    saveNotifHistory(result);
-
-    return result;
+    return currentItems.slice(0, 60);
   }, [publishedTrips, reservations, recentMessages]);
 
   const unreadCount = items.filter((item) => !readIds.has(item.id)).length;
@@ -233,6 +225,8 @@ export default function Notifications({
         <div className="notif-list">
           {items.map((item) => {
             const isRead = readIds.has(item.id);
+            const isNew = !isRead && item.createdAt &&
+              (Date.now() - new Date(item.createdAt).getTime()) < 24 * 60 * 60 * 1000;
             return (
               <button
                 className={`notif-item notif-item--${item.tone} ${isRead ? "notif-item--read" : "notif-item--unread"}`}
@@ -242,7 +236,10 @@ export default function Notifications({
               >
                 {!isRead ? <span className="notif-item__dot" /> : null}
                 <div className="notif-item__content">
-                  <strong>{item.title}</strong>
+                  <div className="notif-item__title-row">
+                    <strong>{item.title}</strong>
+                    {isNew && <span className="notif-item__new-badge">Nouveau</span>}
+                  </div>
                   {item.subtitle ? <span className="notif-item__subtitle">{item.subtitle}</span> : null}
                   <span className="notif-item__route">{item.route}</span>
                   <span className="notif-item__meta">{item.time}</span>
